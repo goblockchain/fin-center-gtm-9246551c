@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Tokens da identidade Fin (HSL para combinar com shadcn/ui).
+ * verde-escuro #12351F · verde-medio #1A7A3A · verde-claro #8FD9A8
+ * fundo #F2F8F4 · card #FFF · âmbar (perto do prazo) · vermelho (atraso)
+ */
+@layer base {
+  :root {
+    --background: 140 30% 96%; /* #F2F8F4 */
+    --foreground: 142 49% 14%; /* #12351F */
+
+    --card: 0 0% 100%;
+    --card-foreground: 142 49% 14%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 142 49% 14%;
+
+    --primary: 140 65% 29%; /* #1A7A3A ações */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 140 30% 92%;
+    --secondary-foreground: 142 49% 14%;
+
+    --muted: 140 20% 93%;
+    --muted-foreground: 142 12% 38%;
+
+    --accent: 140 49% 71%; /* #8FD9A8 destaques */
+    --accent-foreground: 142 49% 14%;
+
+    --destructive: 6 63% 46%; /* #C0392B */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 140 20% 87%;
+    --input: 140 20% 87%;
+    --ring: 140 65% 29%;
+
+    /* Tokens semânticos Fin */
+    --fin-dark: 142 49% 14%;
+    --fin: 140 65% 29%;
+    --fin-light: 140 49% 71%;
+
+    --warning: 39 91% 45%; /* âmbar — perto do prazo */
+    --warning-foreground: 0 0% 100%;
+    --danger: 6 63% 46%; /* vermelho — atraso */
+    --danger-foreground: 0 0% 100%;
+
+    /* Sidebar (verde escuro) */
+    --sidebar: 142 49% 14%;
+    --sidebar-foreground: 140 30% 92%;
+    --sidebar-muted: 140 20% 70%;
+    --sidebar-active: 140 65% 29%;
+
+    --radius: 0.625rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
