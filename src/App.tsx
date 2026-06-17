@@ -1,5 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AppShell } from "@/components/layout/AppShell";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { LoginPage } from "@/pages/LoginPage";
 import { DashboardPage } from "@/pages/DashboardPage";
 import { PipelinePage } from "@/pages/PipelinePage";
 import { CrmPage } from "@/pages/CrmPage";
@@ -12,7 +14,17 @@ import { VozPage } from "@/pages/VozPage";
 export default function App() {
   return (
     <Routes>
-      <Route element={<AppShell />}>
+      {/* Pública */}
+      <Route path="/login" element={<LoginPage />} />
+
+      {/* App inteiro atrás do login */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppShell />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<DashboardPage />} />
         <Route path="pipeline" element={<PipelinePage />} />
         <Route path="crm" element={<CrmPage />} />
