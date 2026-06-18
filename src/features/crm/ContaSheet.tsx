@@ -10,6 +10,7 @@ import {
   Pencil,
   Loader2,
   Tag,
+  Pin,
 } from "lucide-react";
 import {
   Sheet,
@@ -40,6 +41,8 @@ import {
   useAtualizarConta,
   useAtualizarPlano,
 } from "./api";
+import { useVozesDaConta } from "@/features/voz/api";
+import { TIPO_VOZ_META } from "@/features/voz/tipos";
 import type {
   Conta,
   PapelContato,
@@ -114,6 +117,7 @@ export function ContaSheet({
   const { data: contatos } = useContatos(cid);
   const { data: interacoes } = useInteracoes(cid);
   const { data: oport } = useContaOportunidade(cid);
+  const { data: vozes } = useVozesDaConta(cid);
   const atualizarConta = useAtualizarConta();
   const atualizarPlano = useAtualizarPlano();
 
@@ -301,9 +305,48 @@ export function ContaSheet({
               </TabsContent>
             </Tabs>
 
-            <div className="mt-auto flex items-center gap-2 rounded-md bg-secondary/50 p-3 text-xs text-muted-foreground">
-              <Quote className="h-4 w-4 shrink-0" />
-              Voz do Cliente vinculada a esta conta aparece aqui no M8.
+            <div className="mt-2">
+              <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-fin-dark">
+                <Quote className="h-4 w-4" /> Voz do Cliente ({vozes?.length ?? 0})
+              </p>
+              {!vozes?.length ? (
+                <p className="text-xs text-muted-foreground">
+                  Nenhum registro vinculado a esta conta ainda.
+                </p>
+              ) : (
+                <ul className="space-y-2">
+                  {vozes.map((v) => (
+                    <li
+                      key={v.id}
+                      className="rounded-md border border-border p-3"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span
+                          className={cn(
+                            "rounded-full px-2 py-0.5 text-xs font-medium",
+                            TIPO_VOZ_META[v.tipo].chip,
+                          )}
+                        >
+                          {TIPO_VOZ_META[v.tipo].label}
+                        </span>
+                        {v.fixado_como_prova && (
+                          <Badge variant="success">
+                            <Pin className="mr-1 h-3 w-3" /> Prova
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="mt-1 text-sm italic text-foreground">
+                        “{v.conteudo}”
+                      </p>
+                      {v.resultado_mensuravel && (
+                        <p className="mt-1 text-xs font-medium text-fin">
+                          {v.resultado_mensuravel}
+                        </p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </>
         )}
