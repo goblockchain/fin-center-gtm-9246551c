@@ -34,3 +34,6 @@ npm-debug.log*
 # supabase local
 supabase/.branches
 supabase/.temp
+
+# arquivo de conveniência (concatenação para colar no SQL Editor)
+supabase/SETUP_CLOUD.sql
