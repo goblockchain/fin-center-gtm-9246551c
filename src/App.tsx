@@ -1,15 +1,43 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { LoginPage } from "@/pages/LoginPage";
-import { DashboardPage } from "@/pages/DashboardPage";
-import { PipelinePage } from "@/pages/PipelinePage";
-import { CrmPage } from "@/pages/CrmPage";
-import { CanaisPage } from "@/pages/CanaisPage";
-import { RoadmapPage } from "@/pages/RoadmapPage";
-import { TarefasPage } from "@/pages/TarefasPage";
-import { MensagensPage } from "@/pages/MensagensPage";
-import { VozPage } from "@/pages/VozPage";
+
+// Rotas com code-splitting: cada módulo carrega só quando acessado
+// (Recharts entra no Dashboard, dnd-kit no Pipeline, etc.).
+const named = <T extends string>(
+  p: Promise<Record<T, React.ComponentType>>,
+  key: T,
+) => p.then((m) => ({ default: m[key] }));
+
+const DashboardPage = lazy(() =>
+  named(import("@/pages/DashboardPage"), "DashboardPage"),
+);
+const PipelinePage = lazy(() =>
+  named(import("@/pages/PipelinePage"), "PipelinePage"),
+);
+const CrmPage = lazy(() => named(import("@/pages/CrmPage"), "CrmPage"));
+const CanaisPage = lazy(() => named(import("@/pages/CanaisPage"), "CanaisPage"));
+const RoadmapPage = lazy(() =>
+  named(import("@/pages/RoadmapPage"), "RoadmapPage"),
+);
+const TarefasPage = lazy(() =>
+  named(import("@/pages/TarefasPage"), "TarefasPage"),
+);
+const MensagensPage = lazy(() =>
+  named(import("@/pages/MensagensPage"), "MensagensPage"),
+);
+const VozPage = lazy(() => named(import("@/pages/VozPage"), "VozPage"));
+
+function Fallback() {
+  return (
+    <div className="flex items-center justify-center py-24 text-muted-foreground">
+      <Loader2 className="h-6 w-6 animate-spin text-fin" />
+    </div>
+  );
+}
 
 export default function App() {
   return (
@@ -25,14 +53,70 @@ export default function App() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<DashboardPage />} />
-        <Route path="pipeline" element={<PipelinePage />} />
-        <Route path="crm" element={<CrmPage />} />
-        <Route path="canais" element={<CanaisPage />} />
-        <Route path="roadmap" element={<RoadmapPage />} />
-        <Route path="tarefas" element={<TarefasPage />} />
-        <Route path="mensagens" element={<MensagensPage />} />
-        <Route path="voz" element={<VozPage />} />
+        <Route
+          index
+          element={
+            <Suspense fallback={<Fallback />}>
+              <DashboardPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="pipeline"
+          element={
+            <Suspense fallback={<Fallback />}>
+              <PipelinePage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="crm"
+          element={
+            <Suspense fallback={<Fallback />}>
+              <CrmPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="canais"
+          element={
+            <Suspense fallback={<Fallback />}>
+              <CanaisPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="roadmap"
+          element={
+            <Suspense fallback={<Fallback />}>
+              <RoadmapPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="tarefas"
+          element={
+            <Suspense fallback={<Fallback />}>
+              <TarefasPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="mensagens"
+          element={
+            <Suspense fallback={<Fallback />}>
+              <MensagensPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="voz"
+          element={
+            <Suspense fallback={<Fallback />}>
+              <VozPage />
+            </Suspense>
+          }
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
