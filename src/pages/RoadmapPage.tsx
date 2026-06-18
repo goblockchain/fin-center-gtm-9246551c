@@ -1,20 +1,28 @@
-import { CalendarRange } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { EmptyState } from "@/components/shared/EmptyState";
+import { GatesPanel } from "@/features/roadmap/GatesPanel";
+import { Gantt } from "@/features/roadmap/Gantt";
 
 export function RoadmapPage() {
   return (
     <div>
       <PageHeader
         title="Roadmap"
-        description="Gantt da sprint (16/jun–24/ago) e gates de decisão com dias restantes."
+        description="Sprint de Validação de Canais (16/jun–24/ago) e os 2 gates de decisão."
       />
-      <EmptyState
-        icon={CalendarRange}
-        title="A linha do tempo da sprint vem aqui"
-        description="O Gantt das frentes e o painel dos 2 gates (18/jul e 22/ago) com contagem regressiva chegam no M6."
-        milestone="Chega no M6 · depende do backend (M2)"
-      />
+      <div className="space-y-6">
+        <section>
+          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-fin-dark">
+            Gates de decisão
+          </h2>
+          <GatesPanel />
+        </section>
+        <section>
+          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-fin-dark">
+            Linha do tempo
+          </h2>
+          <Gantt />
+        </section>
+      </div>
     </div>
   );
 }
