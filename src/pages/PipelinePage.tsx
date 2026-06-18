@@ -1,20 +1,41 @@
-import { KanbanSquare } from "lucide-react";
+import { useState } from "react";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { EmptyState } from "@/components/shared/EmptyState";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { useCanais } from "@/features/canais/api";
+import { PipelineBoard } from "@/features/pipeline/PipelineBoard";
 
 export function PipelinePage() {
+  const [canalId, setCanalId] = useState<string>("all");
+  const { data: canais } = useCanais();
+
   return (
     <div>
       <PageHeader
         title="Pipeline"
-        description="Kanban de oportunidades — de cadastrado a fechado, com filtro por canal."
+        description="Arraste os cards para mudar o estágio — a mudança é salva na hora."
+        actions={
+          <Select value={canalId} onValueChange={setCanalId}>
+            <SelectTrigger className="w-52">
+              <SelectValue placeholder="Canal" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os canais</SelectItem>
+              {(canais ?? []).map((c) => (
+                <SelectItem key={c.id} value={c.id}>
+                  {c.nome}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        }
       />
-      <EmptyState
-        icon={KanbanSquare}
-        title="Pipeline ainda sem oportunidades"
-        description="O quadro arrastável (cadastrado → … → fechado-ganho/perdido) chega no M4, depois que a base for importada no CRM."
-        milestone="Chega no M4 · depende do backend (M2)"
-      />
+      <PipelineBoard canalId={canalId} />
     </div>
   );
 }
