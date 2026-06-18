@@ -38,6 +38,11 @@ export function CrmPage() {
   const canalMap = useMemo(() => canalNomePorId(canais), [canais]);
   const { data: contas, isLoading } = useContas(filters);
 
+  // Mantém a ficha sincronizada com a lista (após editar, reflete na hora).
+  const selectedFresh = selected
+    ? (contas?.find((c) => c.id === selected.id) ?? selected)
+    : null;
+
   function abrir(conta: Conta) {
     setSelected(conta);
     setOpen(true);
@@ -154,8 +159,12 @@ export function CrmPage() {
       </Card>
 
       <ContaSheet
-        conta={selected}
-        canalNome={selected ? canalMap.get(selected.canal_origem_id) : undefined}
+        conta={selectedFresh}
+        canalNome={
+          selectedFresh
+            ? canalMap.get(selectedFresh.canal_origem_id)
+            : undefined
+        }
         open={open}
         onOpenChange={setOpen}
       />

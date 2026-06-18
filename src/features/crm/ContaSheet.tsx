@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   MapPin,
   Phone,
@@ -6,6 +7,9 @@ import {
   CalendarCheck,
   CheckCircle2,
   Quote,
+  Pencil,
+  Loader2,
+  Tag,
 } from "lucide-react";
 import {
   Sheet,
@@ -15,10 +19,33 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { TemperaturaChip } from "./temperatura";
-import { useContatos, useInteracoes } from "./api";
-import type { Conta, PapelContato, TipoInteracao } from "@/types/db";
+import { cn } from "@/lib/utils";
+import { brl } from "@/lib/format";
+import { PLANOS, PLANO_PADRAO, rotuloPlano } from "@/lib/planos";
+import { TemperaturaChip, TEMP_META, TEMPERATURAS } from "./temperatura";
+import {
+  useContatos,
+  useInteracoes,
+  useContaOportunidade,
+  useAtualizarConta,
+  useAtualizarPlano,
+} from "./api";
+import type {
+  Conta,
+  PapelContato,
+  TipoInteracao,
+  Temperatura,
+} from "@/types/db";
 
 const PAPEL_LABEL: Record<PapelContato, string> = {
   decisor: "Decisor",
@@ -26,7 +53,6 @@ const PAPEL_LABEL: Record<PapelContato, string> = {
   influenciador: "Influenciador",
   outro: "Contato",
 };
-
 const TIPO_LABEL: Record<TipoInteracao, string> = {
   whatsapp: "WhatsApp",
   ligacao: "Ligação",
@@ -41,6 +67,7 @@ function fmtData(d: string | null) {
   const [y, m, dd] = d.split("-");
   return `${dd}/${m}/${y}`;
 }
+const nn = (s: string) => (s.trim() ? s.trim() : null);
 
 function Linha({
   icon: Icon,
@@ -57,6 +84,21 @@ function Linha({
   );
 }
 
+type Form = {
+  nome: string;
+  temperatura: Temperatura;
+  responsavel: string;
+  telefone: string;
+  instagram: string;
+  endereco: string;
+  bairro: string;
+  proxima_acao: string;
+  obs: string;
+  visitada: boolean;
+  entrevista_agendada: boolean;
+  valor: number;
+};
+
 export function ContaSheet({
   conta,
   canalNome,
@@ -68,20 +110,83 @@ export function ContaSheet({
   open: boolean;
   onOpenChange: (o: boolean) => void;
 }) {
-  const { data: contatos } = useContatos(open ? conta?.id : undefined);
-  const { data: interacoes } = useInteracoes(open ? conta?.id : undefined);
+  const cid = open ? conta?.id : undefined;
+  const { data: contatos } = useContatos(cid);
+  const { data: interacoes } = useInteracoes(cid);
+  const { data: oport } = useContaOportunidade(cid);
+  const atualizarConta = useAtualizarConta();
+  const atualizarPlano = useAtualizarPlano();
+
+  const [editando, setEditando] = useState(false);
+  const [form, setForm] = useState<Form | null>(null);
+
+  useEffect(() => {
+    setEditando(false);
+  }, [conta?.id, open]);
+
+  function abrirEdicao() {
+    if (!conta) return;
+    setForm({
+      nome: conta.nome ?? "",
+      temperatura: conta.temperatura,
+      responsavel: conta.responsavel ?? "",
+      telefone: conta.telefone ?? "",
+      instagram: conta.instagram ?? "",
+      endereco: conta.endereco ?? "",
+      bairro: conta.bairro ?? "",
+      proxima_acao: conta.proxima_acao ?? "",
+      obs: conta.obs ?? "",
+      visitada: conta.visitada,
+      entrevista_agendada: conta.entrevista_agendada,
+      valor: Number(oport?.valor_mrr ?? PLANO_PADRAO.valor),
+    });
+    setEditando(true);
+  }
+
+  async function salvar() {
+    if (!conta || !form) return;
+    await atualizarConta.mutateAsync({
+      id: conta.id,
+      patch: {
+        nome: form.nome.trim() || conta.nome,
+        temperatura: form.temperatura,
+        responsavel: nn(form.responsavel),
+        telefone: nn(form.telefone),
+        instagram: nn(form.instagram),
+        endereco: nn(form.endereco),
+        bairro: nn(form.bairro),
+        proxima_acao: nn(form.proxima_acao),
+        obs: nn(form.obs),
+        visitada: form.visitada,
+        entrevista_agendada: form.entrevista_agendada,
+      },
+    });
+    if (oport && Number(oport.valor_mrr) !== form.valor) {
+      await atualizarPlano.mutateAsync({ oportId: oport.id, valor: form.valor });
+    }
+    setEditando(false);
+  }
+
+  const salvando = atualizarConta.isPending || atualizarPlano.isPending;
+  const set = <K extends keyof Form>(k: K, v: Form[K]) =>
+    setForm((f) => (f ? { ...f, [k]: v } : f));
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
-        {conta && (
+        {conta && !editando && (
           <>
             <SheetHeader>
               <div className="flex items-center gap-2">
                 <TemperaturaChip temp={conta.temperatura} />
                 {canalNome && <Badge variant="outline">{canalNome}</Badge>}
               </div>
-              <SheetTitle>{conta.nome}</SheetTitle>
+              <div className="flex items-start justify-between gap-2">
+                <SheetTitle>{conta.nome}</SheetTitle>
+                <Button size="sm" variant="outline" onClick={abrirEdicao}>
+                  <Pencil className="h-3.5 w-3.5" /> Editar
+                </Button>
+              </div>
               <SheetDescription>
                 {conta.bairro ?? "Bairro não informado"}
               </SheetDescription>
@@ -96,6 +201,12 @@ export function ContaSheet({
               {conta.responsavel && (
                 <Linha icon={User}>Responsável: {conta.responsavel}</Linha>
               )}
+              <Linha icon={Tag}>
+                Plano: {rotuloPlano(oport?.valor_mrr)}{" "}
+                <span className="text-muted-foreground">
+                  ({brl(oport?.valor_mrr)}/mês)
+                </span>
+              </Linha>
               {conta.proxima_acao && (
                 <Linha icon={CalendarCheck}>
                   Próxima ação: {conta.proxima_acao}
@@ -196,7 +307,189 @@ export function ContaSheet({
             </div>
           </>
         )}
+
+        {conta && editando && form && (
+          <>
+            <SheetHeader>
+              <SheetTitle>Editar lead</SheetTitle>
+              <SheetDescription>
+                Atualize temperatura, responsável, dados e plano.
+              </SheetDescription>
+            </SheetHeader>
+
+            <div className="space-y-3">
+              <Campo label="Nome">
+                <Input
+                  value={form.nome}
+                  onChange={(e) => set("nome", e.target.value)}
+                />
+              </Campo>
+
+              <div className="grid grid-cols-2 gap-3">
+                <Campo label="Temperatura">
+                  <Select
+                    value={form.temperatura}
+                    onValueChange={(v) => set("temperatura", v as Temperatura)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TEMPERATURAS.map((t) => (
+                        <SelectItem key={t} value={t}>
+                          {TEMP_META[t].emoji} {TEMP_META[t].label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Campo>
+                <Campo label="Plano">
+                  <Select
+                    value={String(form.valor)}
+                    onValueChange={(v) => set("valor", Number(v))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PLANOS.map((p) => (
+                        <SelectItem key={p.id} value={String(p.valor)}>
+                          {p.nome} · {brl(p.valor)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Campo>
+              </div>
+
+              <Campo label="Responsável">
+                <Input
+                  value={form.responsavel}
+                  onChange={(e) => set("responsavel", e.target.value)}
+                  placeholder="ex.: Natalia"
+                />
+              </Campo>
+              <div className="grid grid-cols-2 gap-3">
+                <Campo label="Telefone">
+                  <Input
+                    value={form.telefone}
+                    onChange={(e) => set("telefone", e.target.value)}
+                  />
+                </Campo>
+                <Campo label="Instagram">
+                  <Input
+                    value={form.instagram}
+                    onChange={(e) => set("instagram", e.target.value)}
+                  />
+                </Campo>
+              </div>
+              <Campo label="Endereço">
+                <Input
+                  value={form.endereco}
+                  onChange={(e) => set("endereco", e.target.value)}
+                />
+              </Campo>
+              <Campo label="Bairro">
+                <Input
+                  value={form.bairro}
+                  onChange={(e) => set("bairro", e.target.value)}
+                />
+              </Campo>
+              <Campo label="Próxima ação">
+                <Input
+                  value={form.proxima_acao}
+                  onChange={(e) => set("proxima_acao", e.target.value)}
+                />
+              </Campo>
+              <Campo label="Observações">
+                <textarea
+                  value={form.obs}
+                  onChange={(e) => set("obs", e.target.value)}
+                  rows={2}
+                  className="flex w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+              </Campo>
+
+              <div className="flex gap-4 pt-1">
+                <Toggle
+                  label="Visitada"
+                  on={form.visitada}
+                  onToggle={() => set("visitada", !form.visitada)}
+                />
+                <Toggle
+                  label="Entrevista agendada"
+                  on={form.entrevista_agendada}
+                  onToggle={() =>
+                    set("entrevista_agendada", !form.entrevista_agendada)
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="mt-auto flex justify-end gap-2 border-t border-border pt-4">
+              <Button
+                variant="ghost"
+                onClick={() => setEditando(false)}
+                disabled={salvando}
+              >
+                Cancelar
+              </Button>
+              <Button onClick={salvar} disabled={salvando}>
+                {salvando && <Loader2 className="h-4 w-4 animate-spin" />}
+                Salvar
+              </Button>
+            </div>
+          </>
+        )}
       </SheetContent>
     </Sheet>
+  );
+}
+
+function Campo({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-1">
+      <label className="text-xs font-medium text-fin-dark">{label}</label>
+      {children}
+    </div>
+  );
+}
+
+function Toggle({
+  label,
+  on,
+  onToggle,
+}: {
+  label: string;
+  on: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      className={cn(
+        "inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm",
+        on
+          ? "border-fin bg-fin-light/30 text-fin-dark"
+          : "border-input text-muted-foreground",
+      )}
+    >
+      <span
+        className={cn(
+          "grid h-4 w-4 place-items-center rounded-sm border",
+          on ? "border-fin bg-fin text-white" : "border-input",
+        )}
+      >
+        {on && <CheckCircle2 className="h-3 w-3" />}
+      </span>
+      {label}
+    </button>
   );
 }

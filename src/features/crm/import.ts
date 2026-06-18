@@ -87,6 +87,7 @@ function estagioDe(temp: Temperatura, contatado: boolean): EstagioOport {
 export function buildImportPayload(
   rows: CsvRow[],
   canalId: string,
+  valorMrr = 250,
   responsavelPadrao?: string,
 ): ImportPayload {
   const contas: Insert<"contas">[] = [];
@@ -132,7 +133,7 @@ export function buildImportPayload(
       conta_id: id,
       canal_id: canalId,
       estagio,
-      valor_mrr: 850,
+      valor_mrr: valorMrr,
       probabilidade: PROB[estagio],
       data_entrada_estagio: dcontato ?? hoje,
       responsavel,

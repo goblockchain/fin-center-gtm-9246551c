@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { Loader2, Lock, Check } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Loader2, Lock, Check, Pencil } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import {
   useAtualizarStatusTarefa,
   type TarefaComCanal,
 } from "@/features/tarefas/api";
+import { TarefaEditDialog } from "@/features/tarefas/TarefaEditDialog";
 import type { StatusTarefa } from "@/types/db";
 
 const STATUS_OPC: { v: StatusTarefa; label: string }[] = [
@@ -23,11 +24,13 @@ function TarefaRow({
   bloqueada,
   bloqueioCodigo,
   onStatus,
+  onEdit,
 }: {
   t: TarefaComCanal;
   bloqueada: boolean;
   bloqueioCodigo?: string;
   onStatus: (s: StatusTarefa) => void;
+  onEdit: () => void;
 }) {
   const u = urgencia(t.prazo);
   const feito = t.status === "feito";
@@ -67,32 +70,42 @@ function TarefaRow({
         </div>
       </div>
 
-      <div className="inline-flex shrink-0 overflow-hidden rounded-md border border-border">
-        {STATUS_OPC.map((o) => {
-          const ativo = t.status === o.v;
-          const disabled = o.v === "feito" && bloqueada;
-          return (
-            <button
-              key={o.v}
-              type="button"
-              disabled={disabled}
-              onClick={() => !ativo && onStatus(o.v)}
-              className={cn(
-                "px-2.5 py-1 text-xs font-medium transition-colors",
-                ativo
-                  ? "bg-fin text-white"
-                  : "bg-card text-muted-foreground hover:bg-secondary",
-                disabled && "cursor-not-allowed opacity-40 hover:bg-card",
-              )}
-            >
-              {o.v === "feito" && ativo ? (
-                <Check className="h-3.5 w-3.5" />
-              ) : (
-                o.label
-              )}
-            </button>
-          );
-        })}
+      <div className="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          onClick={onEdit}
+          aria-label="Editar tarefa"
+          className="grid h-8 w-8 place-items-center rounded-md border border-border text-muted-foreground hover:bg-secondary hover:text-fin-dark"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
+        <div className="inline-flex overflow-hidden rounded-md border border-border">
+          {STATUS_OPC.map((o) => {
+            const ativo = t.status === o.v;
+            const disabled = o.v === "feito" && bloqueada;
+            return (
+              <button
+                key={o.v}
+                type="button"
+                disabled={disabled}
+                onClick={() => !ativo && onStatus(o.v)}
+                className={cn(
+                  "px-2.5 py-1 text-xs font-medium transition-colors",
+                  ativo
+                    ? "bg-fin text-white"
+                    : "bg-card text-muted-foreground hover:bg-secondary",
+                  disabled && "cursor-not-allowed opacity-40 hover:bg-card",
+                )}
+              >
+                {o.v === "feito" && ativo ? (
+                  <Check className="h-3.5 w-3.5" />
+                ) : (
+                  o.label
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -101,6 +114,7 @@ function TarefaRow({
 export function TarefasPage() {
   const { data: tarefas, isLoading } = useTarefas();
   const mutar = useAtualizarStatusTarefa();
+  const [editando, setEditando] = useState<TarefaComCanal | null>(null);
 
   const { grupos, statusById, codigoById, feitas } = useMemo(() => {
     const statusById = new Map((tarefas ?? []).map((t) => [t.id, t.status]));
@@ -156,6 +170,7 @@ export function TarefasPage() {
                           : undefined
                       }
                       onStatus={(s) => mutar.mutate({ id: t.id, status: s })}
+                      onEdit={() => setEditando(t)}
                     />
                   );
                 })}
@@ -164,6 +179,12 @@ export function TarefasPage() {
           ))}
         </div>
       )}
+
+      <TarefaEditDialog
+        tarefa={editando}
+        open={!!editando}
+        onOpenChange={(o) => !o && setEditando(null)}
+      />
     </div>
   );
 }

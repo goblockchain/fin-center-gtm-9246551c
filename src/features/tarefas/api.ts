@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import type { Tarefa, StatusTarefa } from "@/types/db";
+import type { Tarefa, StatusTarefa, Update } from "@/types/db";
 
 export type TarefaComCanal = Tarefa & {
   canal: { nome: string; slug: string } | null;
@@ -45,6 +45,23 @@ export function useAtualizarStatusTarefa() {
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ["tarefas"] });
       qc.invalidateQueries({ queryKey: ["canal_execucao"] }); // % execução muda
+    },
+  });
+}
+
+/** Edita os campos de uma tarefa (título, responsável, datas/prazo). */
+export function useAtualizarTarefa() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: { id: string; patch: Update<"tarefas"> }) => {
+      const { error } = await supabase
+        .from("tarefas")
+        .update(vars.patch)
+        .eq("id", vars.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["tarefas"] });
     },
   });
 }

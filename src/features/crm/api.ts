@@ -1,6 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import type { Conta, Contato, Interacao, Temperatura } from "@/types/db";
+import type {
+  Conta,
+  Contato,
+  Interacao,
+  Temperatura,
+  Update,
+  Oportunidade,
+} from "@/types/db";
 import type { ImportPayload } from "./import";
 
 export type ContaFilters = {
@@ -101,6 +108,63 @@ export function useImportContas() {
       qc.invalidateQueries({ queryKey: ["contas"] });
       qc.invalidateQueries({ queryKey: ["oportunidades"] });
       qc.invalidateQueries({ queryKey: ["canal_execucao"] });
+      qc.invalidateQueries({ queryKey: ["canal_kpis"] });
+    },
+  });
+}
+
+/** Atualiza os dados de um lead (temperatura, responsável, contato, obs…). */
+export function useAtualizarConta() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: { id: string; patch: Update<"contas"> }) => {
+      const { error } = await supabase
+        .from("contas")
+        .update(vars.patch)
+        .eq("id", vars.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["contas"] });
+      qc.invalidateQueries({ queryKey: ["oportunidades"] });
+      qc.invalidateQueries({ queryKey: ["canal_kpis"] });
+    },
+  });
+}
+
+/** A oportunidade (1:1) da conta — usada para editar o plano (valor_mrr). */
+export function useContaOportunidade(contaId?: string) {
+  return useQuery({
+    queryKey: ["oportunidade", "por-conta", contaId ?? ""],
+    enabled: !!contaId,
+    queryFn: async (): Promise<Oportunidade | null> => {
+      const { data, error } = await supabase
+        .from("oportunidades")
+        .select("*")
+        .eq("conta_id", contaId!)
+        .order("created_at")
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+/** Troca o plano de uma oportunidade (valor_mrr = 250 ou 850). */
+export function useAtualizarPlano() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: { oportId: string; valor: number }) => {
+      const { error } = await supabase
+        .from("oportunidades")
+        .update({ valor_mrr: vars.valor })
+        .eq("id", vars.oportId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["oportunidade", "por-conta"] });
+      qc.invalidateQueries({ queryKey: ["oportunidades"] });
       qc.invalidateQueries({ queryKey: ["canal_kpis"] });
     },
   });

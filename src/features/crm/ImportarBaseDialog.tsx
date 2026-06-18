@@ -16,6 +16,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { brl } from "@/lib/format";
+import { PLANOS, PLANO_PADRAO } from "@/lib/planos";
 import { useCanais } from "@/features/canais/api";
 import { useImportContas } from "./api";
 import { parseCsvFile, buildImportPayload, type CsvRow } from "./import";
@@ -27,6 +29,7 @@ export function ImportarBaseDialog() {
   const [rows, setRows] = useState<CsvRow[] | null>(null);
   const [fileName, setFileName] = useState("");
   const [canalId, setCanalId] = useState("");
+  const [valor, setValor] = useState(PLANO_PADRAO.valor);
   const [erro, setErro] = useState<string | null>(null);
   const [feito, setFeito] = useState<number | null>(null);
 
@@ -38,8 +41,8 @@ export function ImportarBaseDialog() {
   }, [canais, canalId]);
 
   const payload = useMemo(
-    () => (rows && canalId ? buildImportPayload(rows, canalId) : null),
-    [rows, canalId],
+    () => (rows && canalId ? buildImportPayload(rows, canalId, valor) : null),
+    [rows, canalId, valor],
   );
 
   function reset() {
@@ -118,6 +121,31 @@ export function ImportarBaseDialog() {
             </Select>
             <p className="text-xs text-muted-foreground">
               Toda conta importada nasce com este canal (FK). Padrão: Outbound.
+            </p>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-fin-dark">
+              Plano da oportunidade
+            </label>
+            <Select
+              value={String(valor)}
+              onValueChange={(v) => setValor(Number(v))}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PLANOS.map((p) => (
+                  <SelectItem key={p.id} value={String(p.valor)}>
+                    {p.nome} · {brl(p.valor)}/mês
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Cada conta gera 1 oportunidade neste plano. Padrão: Essencial
+              (R$250).
             </p>
           </div>
 
