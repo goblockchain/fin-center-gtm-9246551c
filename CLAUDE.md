@@ -483,3 +483,29 @@ chore: setup/config/tooling       docs:  documentação
 ```
 Commits pequenos e descritivos, **um conjunto por milestone**. Checkpoint com a usuária ao fim de
 cada milestone antes de seguir. Nunca pedir ação destrutiva sem confirmação.
+
+---
+
+## 15. Centro de Receita por Canal (M11 — evolução do Dashboard)
+
+O Dashboard evoluiu de "acompanhamento da sprint" para **centro de decisão de receita**: prioriza
+receita/MRR sobre volume de leads e compara a economia de cada canal. Decisões canônicas:
+
+- **`canais.tipo`** (texto livre, malleável) — categoriza o canal: `outbound`, `inbound`,
+  `comunidade`, `parceria`, `evento`, `conteudo`, `indicacao`, `outro`. Os 5 canais reais seguem
+  existindo; a usuária cria novos canais reais com seus tipos. As visões por categoria
+  (Comunidade/Parcerias/Eventos) filtram por `tipo`.
+- **Funil de receita** (mapeado sobre os estágios canônicos §6.1, em `features/dashboard/receita.ts`):
+  `Lead` = toda oportunidade · `MQL` = qualificado+ · `SQL` = reunião+ · `Proposta` = proposta+ ·
+  `Cliente` = `fechado_ganho`.
+- **Fórmulas** (continuam derivadas, nunca em coluna): `Pipeline Ponderado` = Σ(valor_mrr ×
+  probabilidade) das oportunidades abertas (probabilidade default por estágio quando ausente);
+  `Payback` (meses) = investido ÷ MRR ganho; `CAC`/`ROI` seguem as views `canal_kpis`. Canal **sem
+  custo registrado** (investido = 0) exibe CAC/Payback/ROI como "—" (não "R$0").
+- **Seções implementadas (dado real):** 1 Visão Executiva (cards de receita com período
+  Semana/Mês/Trimestre + variação/tendência + origem dos clientes), 2 Performance por canal,
+  8 Tendências (séries dos snapshots semanais), 9 Heatmap, 10 Recomendações automáticas.
+- **Seções adiadas (placeholder até haver dado):** 4 Economia itemizada (custos: horas, mídia,
+  comissão…), 5 Comunidade, 6 Parcerias, 7 Eventos. Quando entrarem, **estender o schema atual**
+  (ex.: tabela `custos` itemizada e `metas` mensais) — sem entidades paralelas Lead/Cliente.
+- Princípio mantido (§4.2): **KPI só com dado real** — nada de métrica de vaidade nem zero disfarçado.
