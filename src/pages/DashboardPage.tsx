@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/shared/PageHeader";
 import { useRealtime } from "@/hooks/useRealtime";
 import { FocoHoje } from "@/features/dashboard/FocoHoje";
+import { VisaoExecutiva } from "@/features/dashboard/VisaoExecutiva";
 import { SaudeCanais } from "@/features/dashboard/SaudeCanais";
 import { Funil } from "@/features/dashboard/Funil";
 import { FunilDistribuicao } from "@/features/dashboard/FunilDistribuicao";
@@ -43,6 +44,9 @@ export function DashboardPage() {
 
       {/* 1. Foco de hoje (ação antes de qualquer gráfico) */}
       <FocoHoje />
+
+      {/* Visão executiva — receita primeiro (seção 1 do Centro de Receita) */}
+      <VisaoExecutiva />
 
       {/* 2. Saúde dos canais · 3. Funil ao vivo */}
       <div className="grid gap-4 [&>*]:min-w-0 lg:grid-cols-2">

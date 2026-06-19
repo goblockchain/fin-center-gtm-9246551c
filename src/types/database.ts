@@ -29,6 +29,7 @@ export type Database = {
           responsavel: string | null
           slug: string
           teste_minimo: string | null
+          tipo: string
           updated_at: string
         }
         Insert: {
@@ -45,6 +46,7 @@ export type Database = {
           responsavel?: string | null
           slug: string
           teste_minimo?: string | null
+          tipo?: string
           updated_at?: string
         }
         Update: {
@@ -61,6 +63,7 @@ export type Database = {
           responsavel?: string | null
           slug?: string
           teste_minimo?: string | null
+          tipo?: string
           updated_at?: string
         }
         Relationships: []
