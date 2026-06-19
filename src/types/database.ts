@@ -681,6 +681,60 @@ export type Database = {
           },
         ]
       }
+      snapshots_semanais: {
+        Row: {
+          capturado_em: string
+          contatados: number
+          conversao: number | null
+          created_at: string
+          ganhos: number
+          id: string
+          investido: number
+          mrr_ganho: number
+          origem: string
+          perdidos: number
+          por_canal: Json
+          ref_date: string
+          reunioes: number
+          total_contas: number
+          total_oport: number
+        }
+        Insert: {
+          capturado_em?: string
+          contatados?: number
+          conversao?: number | null
+          created_at?: string
+          ganhos?: number
+          id?: string
+          investido?: number
+          mrr_ganho?: number
+          origem?: string
+          perdidos?: number
+          por_canal?: Json
+          ref_date?: string
+          reunioes?: number
+          total_contas?: number
+          total_oport?: number
+        }
+        Update: {
+          capturado_em?: string
+          contatados?: number
+          conversao?: number | null
+          created_at?: string
+          ganhos?: number
+          id?: string
+          investido?: number
+          mrr_ganho?: number
+          origem?: string
+          perdidos?: number
+          por_canal?: Json
+          ref_date?: string
+          reunioes?: number
+          total_contas?: number
+          total_oport?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       canal_execucao: {
@@ -726,7 +780,10 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      capturar_snapshot_semanal: {
+        Args: { p_origem?: string }
+        Returns: string
+      }
     }
     Enums: {
       estagio_oport:

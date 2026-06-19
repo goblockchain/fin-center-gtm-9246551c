@@ -4,6 +4,7 @@ import { FocoHoje } from "@/features/dashboard/FocoHoje";
 import { SaudeCanais } from "@/features/dashboard/SaudeCanais";
 import { Funil } from "@/features/dashboard/Funil";
 import { FunilDistribuicao } from "@/features/dashboard/FunilDistribuicao";
+import { EvolucaoSemanal } from "@/features/dashboard/EvolucaoSemanal";
 import { EfetividadeCanal } from "@/features/dashboard/EfetividadeCanal";
 import { RankingCanais } from "@/features/dashboard/RankingCanais";
 import { EficienciaCanais } from "@/features/dashboard/EficienciaCanais";
@@ -51,6 +52,9 @@ export function DashboardPage() {
 
       {/* Distribuição de contatos (pizza + números) */}
       <FunilDistribuicao />
+
+      {/* Rastreio semanal — grava toda sexta na base; compara a evolução */}
+      <EvolucaoSemanal />
 
       {/* ===== Demonstrativos por canal ===== */}
       <div className="pt-2">
