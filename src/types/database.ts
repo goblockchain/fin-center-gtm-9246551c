@@ -684,6 +684,131 @@ export type Database = {
           },
         ]
       }
+      comunidade_metricas: {
+        Row: {
+          competencia: string
+          conversas_iniciadas: number
+          created_at: string
+          id: string
+          membros_ativos: number
+          membros_totais: number
+          participacao_semanal: number
+          updated_at: string
+        }
+        Insert: {
+          competencia: string
+          conversas_iniciadas?: number
+          created_at?: string
+          id?: string
+          membros_ativos?: number
+          membros_totais?: number
+          participacao_semanal?: number
+          updated_at?: string
+        }
+        Update: {
+          competencia?: string
+          conversas_iniciadas?: number
+          created_at?: string
+          id?: string
+          membros_ativos?: number
+          membros_totais?: number
+          participacao_semanal?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      eventos: {
+        Row: {
+          clientes: number
+          created_at: string
+          custo: number
+          data: string | null
+          id: string
+          leads: number
+          nome: string
+          participantes: number
+          receita: number
+          sqls: number
+          updated_at: string
+        }
+        Insert: {
+          clientes?: number
+          created_at?: string
+          custo?: number
+          data?: string | null
+          id?: string
+          leads?: number
+          nome: string
+          participantes?: number
+          receita?: number
+          sqls?: number
+          updated_at?: string
+        }
+        Update: {
+          clientes?: number
+          created_at?: string
+          custo?: number
+          data?: string | null
+          id?: string
+          leads?: number
+          nome?: string
+          participantes?: number
+          receita?: number
+          sqls?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      parceiros: {
+        Row: {
+          ativo: boolean
+          canal_id: string | null
+          clientes: number
+          created_at: string
+          id: string
+          leads_enviados: number
+          nome: string
+          obs: string | null
+          receita: number
+          sqls: number
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          canal_id?: string | null
+          clientes?: number
+          created_at?: string
+          id?: string
+          leads_enviados?: number
+          nome: string
+          obs?: string | null
+          receita?: number
+          sqls?: number
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          canal_id?: string | null
+          clientes?: number
+          created_at?: string
+          id?: string
+          leads_enviados?: number
+          nome?: string
+          obs?: string | null
+          receita?: number
+          sqls?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parceiros_canal_id_fkey"
+            columns: ["canal_id"]
+            isOneToOne: false
+            referencedRelation: "canais"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       custos: {
         Row: {
           canal_id: string

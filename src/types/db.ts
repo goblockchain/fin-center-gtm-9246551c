@@ -21,6 +21,9 @@ export type VozDoCliente = Tables<"voz_do_cliente">;
 export type Investimento = Tables<"investimentos">;
 export type Custo = Tables<"custos">;
 export type Meta = Tables<"metas">;
+export type ComunidadeMetrica = Tables<"comunidade_metricas">;
+export type Parceiro = Tables<"parceiros">;
+export type Evento = Tables<"eventos">;
 
 // Views calculadas
 export type CanalExecucao = Views<"canal_execucao">;

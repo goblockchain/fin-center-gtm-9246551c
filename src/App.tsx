@@ -33,6 +33,9 @@ const VozPage = lazy(() => named(import("@/pages/VozPage"), "VozPage"));
 const RelatorioPage = lazy(() =>
   named(import("@/pages/RelatorioPage"), "RelatorioPage"),
 );
+const CrescimentoPage = lazy(() =>
+  named(import("@/pages/CrescimentoPage"), "CrescimentoPage"),
+);
 
 function Fallback() {
   return (
@@ -125,6 +128,14 @@ export default function App() {
           element={
             <Suspense fallback={<Fallback />}>
               <RelatorioPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="crescimento"
+          element={
+            <Suspense fallback={<Fallback />}>
+              <CrescimentoPage />
             </Suspense>
           }
         />
