@@ -3,8 +3,8 @@ import { Users, Save } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { brl, pct } from "@/lib/format";
-import { useCanalEconomia, useCanalExecucao } from "@/features/canais/api";
-import { competencia } from "@/features/economia/api";
+import { useCanalExecucao } from "@/features/canais/api";
+import { competencia, useCanalEconomia } from "@/features/economia/api";
 import { useComunidade, useUpsertComunidade } from "./api";
 
 function Tile({ label, valor }: { label: string; valor: React.ReactNode }) {
