@@ -4,6 +4,7 @@ import { FocoHoje } from "@/features/dashboard/FocoHoje";
 import { SaudeCanais } from "@/features/dashboard/SaudeCanais";
 import { Funil } from "@/features/dashboard/Funil";
 import { FunilDistribuicao } from "@/features/dashboard/FunilDistribuicao";
+import { EfetividadeCanal } from "@/features/dashboard/EfetividadeCanal";
 import { InvestimentoRoi } from "@/features/dashboard/InvestimentoRoi";
 import { Projecao } from "@/features/dashboard/Projecao";
 
@@ -46,6 +47,9 @@ export function DashboardPage() {
 
       {/* Distribuição de contatos (pizza + números) */}
       <FunilDistribuicao />
+
+      {/* Efetividade + CAC por canal (filtro) */}
+      <EfetividadeCanal />
 
       {/* 4. Investimento & ROI */}
       <InvestimentoRoi />
