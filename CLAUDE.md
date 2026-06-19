@@ -1,20 +1,20 @@
-# Fin Center — Guia do Projeto (fonte da verdade)
+# UseFin — Guia do Projeto (fonte da verdade)
 
 > Este arquivo é **canônico**. Se qualquer prompt, conversa ou arquivo conflitar com ele,
-> **este arquivo vence**. O nome do produto é **"Fin Center"** em toda a interface e em todos
-> os textos — nunca "Fin Command Center".
+> **este arquivo vence**. O nome do produto é **"UseFin"** em toda a interface e em todos
+> os textos — nunca "Fin Center" nem "Fin Command Center".
 
 ---
 
 ## 1. Contexto
 
 A **Fin** é um time financeiro de contas a pagar para o setor de alimentação — uma empresa
-AI-Service-Native (Florianópolis, BR). O **Fin Center** é a **ferramenta interna de Go-To-Market**
+AI-Service-Native (Florianópolis, BR). O **UseFin** é a **ferramenta interna de Go-To-Market**
 do time comercial: o painel onde a Sprint de Validação de Canais (16/jun → 24/ago/2026) é
 planejada, executada e medida.
 
-**Problema que o Fin Center resolve:** hoje o GTM da Fin está espalhado em planilhas (CRM de
-cafeterias, roadmap de canais, cronograma, tracking semanal). O Fin Center unifica isso num só
+**Problema que o UseFin resolve:** hoje o GTM da Fin está espalhado em planilhas (CRM de
+cafeterias, roadmap de canais, cronograma, tracking semanal). O UseFin unifica isso num só
 lugar onde o **canal é a unidade central**: cada canal tem, no mesmo card, sua execução, seu
 investimento, seus KPIs e seu prazo.
 
@@ -471,7 +471,7 @@ depois das migrations.
 - [ ] **RLS ativa** em todas as tabelas; anônimo bloqueado; nenhuma chave no front além da anon.
 - [ ] **Sem erros de console.**
 - [ ] **Responsivo no mobile.**
-- [ ] Nome **"Fin Center"** em toda a interface.
+- [ ] Nome **"UseFin"** em toda a interface.
 
 ---
 

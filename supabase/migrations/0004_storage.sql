@@ -1,5 +1,5 @@
 -- ============================================================================
--- Fin Center — 0004_storage
+-- UseFin — 0004_storage
 -- Bucket privado 'voz' para imagens de Voz do Cliente. (CLAUDE.md §6.4)
 -- Acesso só para authenticated; URLs assinadas no front.
 -- ============================================================================

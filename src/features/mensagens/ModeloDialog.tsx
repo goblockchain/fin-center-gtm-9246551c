@@ -181,7 +181,7 @@ export function ModeloDialog({
             </div>
             <div className="flex items-center justify-between gap-2">
               <p className="flex items-center gap-1 text-xs text-muted-foreground">
-                <MessageSquareOff className="h-3.5 w-3.5" /> O Fin Center não
+                <MessageSquareOff className="h-3.5 w-3.5" /> O UseFin não
                 envia WhatsApp — só registra.
               </p>
               <Button

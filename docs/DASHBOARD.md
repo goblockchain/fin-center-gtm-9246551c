@@ -1,7 +1,7 @@
-# Fin Center — Dashboard Inteligente + Tempo Real (canônico)
+# UseFin — Dashboard Inteligente + Tempo Real (canônico)
 
 > Spec do módulo `/` (Dashboard). Implementado em **M9**. Complementa `CLAUDE.md`; em conflito,
-> `CLAUDE.md` vence. Nome do produto: **Fin Center**.
+> `CLAUDE.md` vence. Nome do produto: **UseFin**.
 
 O Dashboard não é um amontoado de gráficos: é um **assistente de decisão de GTM**. Ele abre dizendo
 **o que fazer hoje**, depois mostra **onde está o risco**, e só então os números. Tudo se atualiza

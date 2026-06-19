@@ -1,5 +1,5 @@
 -- ============================================================================
--- Fin Center — 0002_rls
+-- UseFin — 0002_rls
 -- RLS ativa em TODAS as tabelas antes de qualquer dado real. (CLAUDE.md §8)
 -- Ferramenta interna: todo usuário autenticado lê/escreve tudo; anônimo negado.
 -- ============================================================================

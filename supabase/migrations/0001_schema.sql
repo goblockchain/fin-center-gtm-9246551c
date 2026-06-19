@@ -1,5 +1,5 @@
 -- ============================================================================
--- Fin Center — 0001_schema
+-- UseFin — 0001_schema
 -- Enums, tabelas, triggers de updated_at. (CLAUDE.md §6)
 -- canal_origem é SEMPRE FK para canais. CAC/ROI NUNCA são colunas (ver 0003_views).
 -- ============================================================================

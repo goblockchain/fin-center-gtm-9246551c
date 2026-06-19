@@ -1,5 +1,5 @@
 -- ============================================================================
--- Fin Center — 0006_snapshots
+-- UseFin — 0006_snapshots
 -- Rastreio semanal: grava um snapshot dos números na própria base toda sexta
 -- (pg_cron, 18:00 BRT) para comparar a evolução semana a semana.
 -- As métricas seguem os parâmetros canônicos: baseline 2% e CAC/ROI vindos das

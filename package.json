@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Fin Center — ferramenta interna de Go-To-Market da Fin",
+  "description": "UseFin — ferramenta interna de Go-To-Market da Fin",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

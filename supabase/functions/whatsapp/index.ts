@@ -1,7 +1,7 @@
-// Fin Center — Edge Function PLACEHOLDER: whatsapp
+// UseFin — Edge Function PLACEHOLDER: whatsapp
 //
 // ⚠️ NÃO envia WhatsApp de verdade. É um stub proposital.
-// O módulo de Mensagens do Fin Center só registra STATUS MANUAL (tabela mensagens_log).
+// O módulo de Mensagens do UseFin só registra STATUS MANUAL (tabela mensagens_log).
 // Este arquivo existe para reservar o ponto de integração futuro, sem nenhum envio real.
 //
 // Deploy (futuro, opcional): supabase functions deploy whatsapp
@@ -18,7 +18,7 @@ Deno.serve(async (req: Request) => {
       sent: false,
       placeholder: true,
       message:
-        "Fin Center não envia WhatsApp. Registre o status manualmente em Mensagens.",
+        "UseFin não envia WhatsApp. Registre o status manualmente em Mensagens.",
       received: payload,
     }),
     { headers: { "Content-Type": "application/json" }, status: 200 },

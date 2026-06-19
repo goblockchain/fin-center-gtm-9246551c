@@ -1,5 +1,5 @@
 -- ============================================================================
--- Fin Center — seed.sql  (dados reais da Sprint de Validação de Canais)
+-- UseFin — seed.sql  (dados reais da Sprint de Validação de Canais)
 -- Gerado a partir de: CRM Consolidado.xlsx, Fin_Roadmap_Validacao_Canais.xlsx,
 --                     Weekly_Review_Tracking_Fin.xlsx
 -- 5 canais · 136 cafeterias (contas) · 136 oportunidades · 29 tarefas · 2 gates

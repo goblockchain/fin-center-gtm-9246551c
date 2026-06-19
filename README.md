@@ -1,4 +1,4 @@
-# Fin Center
+# UseFin
 
 Ferramenta interna de **Go-To-Market** da Fin. O **canal** é a unidade central:
 execução, investimento, KPI e prazo no mesmo lugar.

@@ -1,5 +1,5 @@
 -- ============================================================================
--- Fin Center — 0003_views
+-- UseFin — 0003_views
 -- canal_execucao e canal_kpis. CAC e ROI vivem AQUI — nunca em coluna. (CLAUDE.md §7)
 -- security_invoker = on => as views respeitam a RLS das tabelas-base.
 -- Baseline de conversão (contato→reunião) = 2% (0.02).

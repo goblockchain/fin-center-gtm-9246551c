@@ -43,7 +43,7 @@ export function LoginPage() {
             Fin
           </span>
           <div>
-            <h1 className="text-xl font-semibold text-white">Fin Center</h1>
+            <h1 className="text-xl font-semibold text-white">UseFin</h1>
             <p className="text-sm text-white/60">
               Ferramenta interna de Go-To-Market
             </p>

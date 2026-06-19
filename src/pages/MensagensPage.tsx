@@ -27,7 +27,7 @@ export function MensagensPage() {
     <div>
       <PageHeader
         title="Mensagens"
-        description="Modelos por canal e estágio, com variáveis {nome}, {cafe}, {dor} e variante A/B. O Fin Center não envia WhatsApp — só registra status."
+        description="Modelos por canal e estágio, com variáveis {nome}, {cafe}, {dor} e variante A/B. O UseFin não envia WhatsApp — só registra status."
       />
 
       <div className="mb-4 flex flex-col gap-2 sm:flex-row">

@@ -68,7 +68,7 @@ export function RelatorioPage() {
           <FileBarChart2 className="mt-0.5 h-7 w-7 shrink-0 text-fin" />
           <div>
             <h1 className="text-xl font-bold text-fin-dark">
-              Fin Center — Relatório GTM
+              UseFin — Relatório GTM
             </h1>
             <p className="text-sm text-muted-foreground">
               Sprint de Validação de Canais · {dataCurta(SPRINT_INICIO)} →{" "}
@@ -185,7 +185,7 @@ export function RelatorioPage() {
       </Card>
 
       <p className="pt-2 text-center text-xs text-muted-foreground">
-        Fin Center · relatório gerado a partir do dado ao vivo. Conversões sempre
+        UseFin · relatório gerado a partir do dado ao vivo. Conversões sempre
         comparadas à baseline de 2%.
       </p>
     </div>

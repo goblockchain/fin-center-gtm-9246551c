@@ -1,5 +1,5 @@
 -- ============================================================================
--- Fin Center — 0005_realtime
+-- UseFin — 0005_realtime
 -- Habilita Supabase Realtime (postgres_changes) nas tabelas que o Dashboard
 -- assina para atualizar ao vivo (invalida caches do TanStack Query).
 -- ============================================================================

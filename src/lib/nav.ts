@@ -18,7 +18,7 @@ export type NavItem = {
   description: string;
 };
 
-/** As rotas do Fin Center. O canal é a unidade central. */
+/** As rotas do UseFin. O canal é a unidade central. */
 export const NAV_ITEMS: NavItem[] = [
   {
     to: "/",
