@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
-import { Loader2, Lock, Check, Pencil } from "lucide-react";
+import { Loader2, Lock, Check, Pencil, Plus } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { prazoHumano, urgencia, URGENCIA_TEXT, dataCurta } from "@/lib/datas";
 import {
@@ -10,7 +11,7 @@ import {
   useAtualizarStatusTarefa,
   type TarefaComCanal,
 } from "@/features/tarefas/api";
-import { TarefaEditDialog } from "@/features/tarefas/TarefaEditDialog";
+import { TarefaFormDialog } from "@/features/tarefas/TarefaFormDialog";
 import type { StatusTarefa } from "@/types/db";
 
 const STATUS_OPC: { v: StatusTarefa; label: string }[] = [
@@ -115,6 +116,7 @@ export function TarefasPage() {
   const { data: tarefas, isLoading } = useTarefas();
   const mutar = useAtualizarStatusTarefa();
   const [editando, setEditando] = useState<TarefaComCanal | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
 
   const { grupos, statusById, codigoById, feitas } = useMemo(() => {
     const statusById = new Map((tarefas ?? []).map((t) => [t.id, t.status]));
@@ -135,11 +137,22 @@ export function TarefasPage() {
         title="Tarefas"
         description="Execução da sprint por frente. Uma tarefa fica bloqueada enquanto a dependência não está feita."
         actions={
-          tarefas?.length ? (
-            <Badge variant="secondary">
-              {feitas}/{tarefas.length} feitas
-            </Badge>
-          ) : undefined
+          <div className="flex items-center gap-2">
+            {tarefas?.length ? (
+              <Badge variant="secondary">
+                {feitas}/{tarefas.length} feitas
+              </Badge>
+            ) : null}
+            <Button
+              size="sm"
+              onClick={() => {
+                setEditando(null);
+                setFormOpen(true);
+              }}
+            >
+              <Plus className="h-4 w-4" /> Nova tarefa
+            </Button>
+          </div>
         }
       />
 
@@ -170,7 +183,10 @@ export function TarefasPage() {
                           : undefined
                       }
                       onStatus={(s) => mutar.mutate({ id: t.id, status: s })}
-                      onEdit={() => setEditando(t)}
+                      onEdit={() => {
+                        setEditando(t);
+                        setFormOpen(true);
+                      }}
                     />
                   );
                 })}
@@ -180,10 +196,13 @@ export function TarefasPage() {
         </div>
       )}
 
-      <TarefaEditDialog
+      <TarefaFormDialog
         tarefa={editando}
-        open={!!editando}
-        onOpenChange={(o) => !o && setEditando(null)}
+        open={formOpen}
+        onOpenChange={(o) => {
+          setFormOpen(o);
+          if (!o) setEditando(null);
+        }}
       />
     </div>
   );
