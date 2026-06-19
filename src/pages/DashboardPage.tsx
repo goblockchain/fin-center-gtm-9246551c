@@ -9,6 +9,7 @@ import { SaudeCanais } from "@/features/dashboard/SaudeCanais";
 import { Funil } from "@/features/dashboard/Funil";
 import { FunilDistribuicao } from "@/features/dashboard/FunilDistribuicao";
 import { EvolucaoSemanal } from "@/features/dashboard/EvolucaoSemanal";
+import { TendenciasCanais } from "@/features/dashboard/TendenciasCanais";
 import { EfetividadeCanal } from "@/features/dashboard/EfetividadeCanal";
 import { RankingCanais } from "@/features/dashboard/RankingCanais";
 import { EficienciaCanais } from "@/features/dashboard/EficienciaCanais";
@@ -71,6 +72,9 @@ export function DashboardPage() {
 
       {/* Rastreio semanal — grava toda sexta na base; compara a evolução */}
       <EvolucaoSemanal />
+
+      {/* Tendências por canal (seção 8) — séries dos snapshots semanais */}
+      <TendenciasCanais />
 
       {/* ===== Demonstrativos por canal ===== */}
       <div className="pt-2">
