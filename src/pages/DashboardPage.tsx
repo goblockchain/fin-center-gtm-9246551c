@@ -3,6 +3,8 @@ import { useRealtime } from "@/hooks/useRealtime";
 import { FocoHoje } from "@/features/dashboard/FocoHoje";
 import { VisaoExecutiva } from "@/features/dashboard/VisaoExecutiva";
 import { PerformanceCanais } from "@/features/dashboard/PerformanceCanais";
+import { Recomendacoes } from "@/features/dashboard/Recomendacoes";
+import { HeatmapCanais } from "@/features/dashboard/HeatmapCanais";
 import { SaudeCanais } from "@/features/dashboard/SaudeCanais";
 import { Funil } from "@/features/dashboard/Funil";
 import { FunilDistribuicao } from "@/features/dashboard/FunilDistribuicao";
@@ -51,6 +53,12 @@ export function DashboardPage() {
 
       {/* Performance por canal (seção 2) — qual canal gera mais receita */}
       <PerformanceCanais />
+
+      {/* Recomendações automáticas (seção 10) · Heatmap (seção 9) */}
+      <div className="grid gap-4 [&>*]:min-w-0 lg:grid-cols-2">
+        <Recomendacoes />
+        <HeatmapCanais />
+      </div>
 
       {/* 2. Saúde dos canais · 3. Funil ao vivo */}
       <div className="grid gap-4 [&>*]:min-w-0 lg:grid-cols-2">
