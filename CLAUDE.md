@@ -510,7 +510,8 @@ receita/MRR sobre volume de leads e compara a economia de cada canal. Decisões 
   operacional, com `valor` e `horas`), tabela `metas` (MRR/clientes por mês), view `canal_economia`.
   Lançamento em **Roadmap → "Custos por canal" e "Metas mensais"**. A "Meta do mês" compara o MRR
   fechado no mês calendário com a meta cadastrada.
-- **Seções adiadas (placeholder até haver dado):** 5 Comunidade, 6 Parcerias, 7 Eventos —
-  dependem de dados próprios (membros, parceiros, eventos). Quando entrarem, **estender o schema
-  atual** (sem entidades paralelas Lead/Cliente), filtrando por `canais.tipo`.
+- **Seções da Fase 3 (0009), na página `/crescimento`:** 5 Comunidade, 6 Parcerias, 7 Eventos.
+  Tabelas `comunidade_metricas` (membros/ativos/conversas/participação por mês), `parceiros`
+  (ranking por receita) e `eventos` (CAC/ROI por evento). Entrada manual; o funil (Lead/Cliente/
+  MRR) das frentes continua vindo das oportunidades por `canais.tipo` — sem entidades paralelas.
 - Princípio mantido (§4.2): **KPI só com dado real** — nada de métrica de vaidade nem zero disfarçado.
