@@ -55,22 +55,22 @@ export function Topbar() {
         </nav>
 
         {/* Direita — sino + divisor + usuário */}
-        <div className="flex items-center gap-3 sm:gap-4">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           <button
             type="button"
             aria-label="Notificações"
-            className="text-[#9ca3af] transition-colors hover:text-[#6b7280]"
+            className="shrink-0 text-[#9ca3af] transition-colors hover:text-[#6b7280]"
           >
             <Bell className="h-5 w-5" strokeWidth={1.75} />
           </button>
-          <div className="h-6 w-px bg-[#e5e7eb]" />
-          <div className="relative">
+          <div className="h-6 w-px shrink-0 bg-[#e5e7eb]" />
+          <div className="relative min-w-0">
             <button
               type="button"
               onClick={() => setUserOpen((v) => !v)}
-              className="flex max-w-[180px] items-center gap-1 text-sm text-[#6b7280] hover:text-[#374151]"
+              className="flex min-w-0 max-w-[140px] items-center gap-1 text-sm text-[#6b7280] hover:text-[#374151] sm:max-w-[180px]"
             >
-              <span className="truncate">{email || "Conta"}</span>
+              <span className="min-w-0 truncate">{email || "Conta"}</span>
               <ChevronDown className="h-4 w-4 shrink-0" />
             </button>
             {userOpen && (

@@ -45,7 +45,7 @@ export function DashboardPage() {
       <FocoHoje />
 
       {/* 2. Saúde dos canais · 3. Funil ao vivo */}
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 [&>*]:min-w-0 lg:grid-cols-2">
         <SaudeCanais />
         <Funil />
       </div>
@@ -71,7 +71,7 @@ export function DashboardPage() {
       <RankingCanais />
 
       {/* Eficiência do investimento · Funil por canal */}
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 [&>*]:min-w-0 lg:grid-cols-2">
         <EficienciaCanais />
         <FunilPorCanal />
       </div>

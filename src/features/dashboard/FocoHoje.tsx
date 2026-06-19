@@ -40,7 +40,7 @@ export function FocoHoje() {
                 to={principal.link}
                 className="group mt-0.5 flex items-start gap-1 hover:underline"
               >
-                <span className="text-lg font-semibold leading-snug">
+                <span className="min-w-0 break-words text-lg font-semibold leading-snug">
                   {principal.texto}
                 </span>
                 <ChevronRight className="mt-1 h-4 w-4 shrink-0 opacity-70 transition-transform group-hover:translate-x-0.5" />
