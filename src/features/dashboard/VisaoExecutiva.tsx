@@ -11,6 +11,7 @@ import {
   paybackMeses,
   diasAtras,
 } from "./receita";
+import { useMetas, competencia } from "@/features/economia/api";
 
 const PERIODOS = [
   { label: "Semana", dias: 7 },
@@ -87,6 +88,7 @@ export function VisaoExecutiva() {
   const { data: execucoes } = useCanalExecucao();
   const { data: kpis } = useCanalKpis();
   const { data: canais } = useCanais();
+  const { data: metas } = useMetas();
 
   const dados = useMemo(() => {
     const lista = ops ?? [];
@@ -128,11 +130,25 @@ export function VisaoExecutiva() {
       });
     const origem = [...origemMap.values()].sort((a, b) => b.mrr - a.mrr);
 
-    return { metr, jan, cac, payback, mom, origem };
+    // MRR realizado no mês calendário atual (para a Meta do mês)
+    const iniMes = competencia();
+    const mrrMesAtual = lista
+      .filter(
+        (o) =>
+          o.estagio === "fechado_ganho" && o.data_entrada_estagio >= iniMes,
+      )
+      .reduce((s, o) => s + o.valor_mrr, 0);
+
+    return { metr, jan, cac, payback, mom, origem, mrrMesAtual };
   }, [ops, execucoes, kpis, canais, dias]);
 
-  const { metr, jan, cac, payback, mom, origem } = dados;
+  const { metr, jan, cac, payback, mom, origem, mrrMesAtual } = dados;
   const periodoLabel = PERIODOS.find((p) => p.dias === dias)?.label ?? "Mês";
+  const metaMes = (metas ?? []).find(
+    (m) => m.competencia.slice(0, 7) === competencia().slice(0, 7),
+  );
+  const metaMrr = Number(metaMes?.meta_mrr ?? 0);
+  const pctMeta = metaMrr > 0 ? mrrMesAtual / metaMrr : null;
 
   return (
     <section className="space-y-3">
@@ -203,9 +219,24 @@ export function VisaoExecutiva() {
         </Stat>
         <Stat
           label="Meta do mês"
-          valor="—"
-          hint="configurar (em breve)"
-        />
+          valor={metaMrr > 0 ? pct(pctMeta, 0) : "—"}
+          hint={
+            metaMrr > 0
+              ? `${brl(mrrMesAtual)} de ${brl(metaMrr)}`
+              : "defina em Roadmap › Metas"
+          }
+        >
+          {metaMrr > 0 && (
+            <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+              <div
+                className="h-full rounded-full bg-fin"
+                style={{
+                  width: `${Math.min(100, Math.round((pctMeta ?? 0) * 100))}%`,
+                }}
+              />
+            </div>
+          )}
+        </Stat>
       </div>
 
       {/* Origem dos clientes do período (objetivo 1) */}

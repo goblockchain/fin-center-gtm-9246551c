@@ -4,6 +4,7 @@ import { Gantt } from "@/features/roadmap/Gantt";
 import { InvestimentosCanais } from "@/features/roadmap/InvestimentosCanais";
 import { CustosCanais } from "@/features/economia/CustosCanais";
 import { EconomiaCanais } from "@/features/economia/EconomiaCanais";
+import { MetasMensais } from "@/features/economia/MetasMensais";
 
 export function RoadmapPage() {
   return (
@@ -51,6 +52,18 @@ export function RoadmapPage() {
             <CustosCanais />
             <EconomiaCanais />
           </div>
+        </section>
+        <section>
+          <div className="mb-2">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-fin-dark">
+              Metas mensais
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              A meta de MRR do mês alimenta o card “Meta do mês” no Dashboard (%
+              atingido vs o realizado no mês).
+            </p>
+          </div>
+          <MetasMensais />
         </section>
       </div>
     </div>
