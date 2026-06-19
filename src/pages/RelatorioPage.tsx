@@ -7,6 +7,9 @@ import { BASELINE_CONVERSAO } from "@/lib/baseline";
 import { SPRINT_INICIO, SPRINT_FIM } from "@/features/roadmap/api";
 import { useCanalExecucao, useCanalKpis } from "@/features/canais/api";
 import { useSnapshots } from "@/features/dashboard/snapshots";
+import { PerformanceCanais } from "@/features/dashboard/PerformanceCanais";
+import { Recomendacoes } from "@/features/dashboard/Recomendacoes";
+import { HeatmapCanais } from "@/features/dashboard/HeatmapCanais";
 import { RankingCanais } from "@/features/dashboard/RankingCanais";
 import { EficienciaCanais } from "@/features/dashboard/EficienciaCanais";
 import { FunilPorCanal } from "@/features/dashboard/FunilPorCanal";
@@ -112,6 +115,15 @@ export function RelatorioPage() {
         </CardContent>
       </Card>
 
+      <section className="break-inside-avoid">
+        <PerformanceCanais />
+      </section>
+      <section className="break-inside-avoid">
+        <Recomendacoes />
+      </section>
+      <section className="break-inside-avoid">
+        <HeatmapCanais />
+      </section>
       <section className="break-inside-avoid">
         <RankingCanais />
       </section>
