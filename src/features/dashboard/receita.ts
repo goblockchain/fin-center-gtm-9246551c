@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import type { EstagioOport } from "@/types/db";
+import type { Canal, CanalExecucao, CanalKpis, EstagioOport } from "@/types/db";
 
 /**
  * Mapeamento de funil de RECEITA sobre os estágios canônicos do pipeline
@@ -145,4 +145,65 @@ export function janelaFechamentos(
 /** Payback em meses = investimento executado / MRR ganho (quanto leva p/ pagar). */
 export function paybackMeses(investido: number, mrr: number): number | null {
   return mrr > 0 ? investido / mrr : null;
+}
+
+export type LinhaCanal = {
+  canal_id: string;
+  nome: string;
+  tipo: string;
+  estado: string;
+  leads: number;
+  sql: number;
+  propostas: number;
+  clientes: number;
+  conv: number; // Lead → Cliente
+  mrr: number;
+  investido: number;
+  cac: number | null;
+  payback: number | null;
+  roi: number | null;
+};
+
+/**
+ * Linha consolidada de receita por canal — base da Performance por canal,
+ * do heatmap e das recomendações. CAC/ROI seguem as views canônicas.
+ */
+export function linhasPorCanal(
+  ops: OportReceita[],
+  execucoes: CanalExecucao[],
+  kpis: CanalKpis[],
+  canais: Canal[],
+): LinhaCanal[] {
+  const execPorId = new Map(execucoes.map((e) => [e.canal_id, e]));
+  const kpiPorId = new Map(kpis.map((k) => [k.canal_id, k]));
+  return canais.map((c) => {
+    const m = metricasReceita(ops.filter((o) => o.canal_id === c.id));
+    const exec = execPorId.get(c.id);
+    const kpi = kpiPorId.get(c.id);
+    const investido = Number(exec?.investimento_executado ?? 0);
+    const mrr = Number(kpi?.mrr_ganho ?? m.mrr);
+    return {
+      canal_id: c.id,
+      nome: c.nome,
+      tipo: c.tipo,
+      estado: String(exec?.estado ?? ""),
+      leads: m.leads,
+      sql: m.sql,
+      propostas: m.propostas,
+      clientes: m.clientes,
+      conv: m.leads > 0 ? m.clientes / m.leads : 0,
+      mrr,
+      investido,
+      // Sem custo registrado (investido = 0) => métricas de custo não fazem
+      // sentido (evita "CAC R$0 / payback instantâneo").
+      cac: investido > 0 && m.clientes > 0 ? investido / m.clientes : null,
+      payback: investido > 0 ? paybackMeses(investido, mrr) : null,
+      roi:
+        kpi?.roi != null
+          ? Number(kpi.roi)
+          : investido > 0
+            ? (mrr - investido) / investido
+            : null,
+    };
+  });
 }
