@@ -503,9 +503,14 @@ receita/MRR sobre volume de leads e compara a economia de cada canal. Decisões 
   `Payback` (meses) = investido ÷ MRR ganho; `CAC`/`ROI` seguem as views `canal_kpis`. Canal **sem
   custo registrado** (investido = 0) exibe CAC/Payback/ROI como "—" (não "R$0").
 - **Seções implementadas (dado real):** 1 Visão Executiva (cards de receita com período
-  Semana/Mês/Trimestre + variação/tendência + origem dos clientes), 2 Performance por canal,
-  8 Tendências (séries dos snapshots semanais), 9 Heatmap, 10 Recomendações automáticas.
-- **Seções adiadas (placeholder até haver dado):** 4 Economia itemizada (custos: horas, mídia,
-  comissão…), 5 Comunidade, 6 Parcerias, 7 Eventos. Quando entrarem, **estender o schema atual**
-  (ex.: tabela `custos` itemizada e `metas` mensais) — sem entidades paralelas Lead/Cliente.
+  Semana/Mês/Trimestre + variação/tendência + origem dos clientes + Meta do mês), 2 Performance
+  por canal, 4 Economia do canal (custos itemizados → CAC/MRR-hora/ARR/Payback/ROI na view
+  `canal_economia`), 8 Tendências (séries dos snapshots), 9 Heatmap, 10 Recomendações automáticas.
+- **Schema da Fase 2 (0008):** tabela `custos` (`tipo_custo`: horas/ferramentas/mídia/comissão/
+  operacional, com `valor` e `horas`), tabela `metas` (MRR/clientes por mês), view `canal_economia`.
+  Lançamento em **Roadmap → "Custos por canal" e "Metas mensais"**. A "Meta do mês" compara o MRR
+  fechado no mês calendário com a meta cadastrada.
+- **Seções adiadas (placeholder até haver dado):** 5 Comunidade, 6 Parcerias, 7 Eventos —
+  dependem de dados próprios (membros, parceiros, eventos). Quando entrarem, **estender o schema
+  atual** (sem entidades paralelas Lead/Cliente), filtrando por `canais.tipo`.
 - Princípio mantido (§4.2): **KPI só com dado real** — nada de métrica de vaidade nem zero disfarçado.

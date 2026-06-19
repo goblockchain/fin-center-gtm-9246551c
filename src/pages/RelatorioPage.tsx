@@ -15,6 +15,7 @@ import { EficienciaCanais } from "@/features/dashboard/EficienciaCanais";
 import { FunilPorCanal } from "@/features/dashboard/FunilPorCanal";
 import { ProjecaoPorCanal } from "@/features/dashboard/ProjecaoPorCanal";
 import { InvestimentoRoi } from "@/features/dashboard/InvestimentoRoi";
+import { EconomiaCanais } from "@/features/economia/EconomiaCanais";
 
 function sumBy<T>(arr: T[], f: (x: T) => number) {
   return arr.reduce((s, x) => s + f(x), 0);
@@ -138,6 +139,9 @@ export function RelatorioPage() {
       </section>
       <section className="break-inside-avoid">
         <InvestimentoRoi />
+      </section>
+      <section className="break-inside-avoid">
+        <EconomiaCanais />
       </section>
 
       {/* Evolução semanal — histórico de snapshots */}
