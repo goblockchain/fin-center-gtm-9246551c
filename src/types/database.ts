@@ -684,6 +684,77 @@ export type Database = {
           },
         ]
       }
+      custos: {
+        Row: {
+          canal_id: string
+          competencia: string | null
+          created_at: string
+          descricao: string | null
+          horas: number | null
+          id: string
+          tipo: Database["public"]["Enums"]["tipo_custo"]
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          canal_id: string
+          competencia?: string | null
+          created_at?: string
+          descricao?: string | null
+          horas?: number | null
+          id?: string
+          tipo?: Database["public"]["Enums"]["tipo_custo"]
+          updated_at?: string
+          valor?: number
+        }
+        Update: {
+          canal_id?: string
+          competencia?: string | null
+          created_at?: string
+          descricao?: string | null
+          horas?: number | null
+          id?: string
+          tipo?: Database["public"]["Enums"]["tipo_custo"]
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custos_canal_id_fkey"
+            columns: ["canal_id"]
+            isOneToOne: false
+            referencedRelation: "canais"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      metas: {
+        Row: {
+          competencia: string
+          created_at: string
+          id: string
+          meta_clientes: number
+          meta_mrr: number
+          updated_at: string
+        }
+        Insert: {
+          competencia: string
+          created_at?: string
+          id?: string
+          meta_clientes?: number
+          meta_mrr?: number
+          updated_at?: string
+        }
+        Update: {
+          competencia?: string
+          created_at?: string
+          id?: string
+          meta_clientes?: number
+          meta_mrr?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       snapshots_semanais: {
         Row: {
           capturado_em: string
@@ -781,6 +852,28 @@ export type Database = {
         }
         Relationships: []
       }
+      canal_economia: {
+        Row: {
+          arr: number | null
+          cac: number | null
+          canal_id: string | null
+          clientes: number | null
+          custo_comissao: number | null
+          custo_ferramentas: number | null
+          custo_horas: number | null
+          custo_midia: number | null
+          custo_operacional: number | null
+          custo_total: number | null
+          horas_total: number | null
+          mrr_ganho: number | null
+          mrr_por_hora: number | null
+          nome: string | null
+          payback_meses: number | null
+          roi: number | null
+          tipo: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       capturar_snapshot_semanal: {
@@ -803,6 +896,7 @@ export type Database = {
       status_mensagem: "rascunho" | "enviado" | "respondido" | "sem_resposta"
       status_tarefa: "a_fazer" | "fazendo" | "feito"
       temperatura: "sem_contato" | "frio" | "morno" | "quente"
+      tipo_custo: "horas" | "ferramentas" | "midia" | "comissao" | "operacional"
       tipo_interacao:
         | "whatsapp"
         | "ligacao"

@@ -19,10 +19,13 @@ export type Gate = Tables<"gates">;
 export type ModeloMensagem = Tables<"modelos_mensagem">;
 export type VozDoCliente = Tables<"voz_do_cliente">;
 export type Investimento = Tables<"investimentos">;
+export type Custo = Tables<"custos">;
+export type Meta = Tables<"metas">;
 
 // Views calculadas
 export type CanalExecucao = Views<"canal_execucao">;
 export type CanalKpis = Views<"canal_kpis">;
+export type CanalEconomia = Views<"canal_economia">;
 
 // Enums
 export type Temperatura = Enums<"temperatura">;
@@ -33,3 +36,4 @@ export type PapelContato = Enums<"papel_contato">;
 export type TipoVoz = Enums<"tipo_voz">;
 export type StatusMensagem = Enums<"status_mensagem">;
 export type StatusGate = Enums<"status_gate">;
+export type TipoCusto = Enums<"tipo_custo">;
