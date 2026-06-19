@@ -30,6 +30,9 @@ const MensagensPage = lazy(() =>
   named(import("@/pages/MensagensPage"), "MensagensPage"),
 );
 const VozPage = lazy(() => named(import("@/pages/VozPage"), "VozPage"));
+const RelatorioPage = lazy(() =>
+  named(import("@/pages/RelatorioPage"), "RelatorioPage"),
+);
 
 function Fallback() {
   return (
@@ -114,6 +117,14 @@ export default function App() {
           element={
             <Suspense fallback={<Fallback />}>
               <VozPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="relatorio"
+          element={
+            <Suspense fallback={<Fallback />}>
+              <RelatorioPage />
             </Suspense>
           }
         />

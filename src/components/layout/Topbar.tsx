@@ -13,7 +13,7 @@ export function Topbar() {
   const email = user?.email ?? "";
 
   return (
-    <header className="sticky top-0 z-30 border-b border-[#e5e7eb] bg-white">
+    <header className="sticky top-0 z-30 border-b border-[#e5e7eb] bg-white print:hidden">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         {/* Esquerda — menu mobile + logo + marca */}
         <div className="flex items-center gap-2.5">

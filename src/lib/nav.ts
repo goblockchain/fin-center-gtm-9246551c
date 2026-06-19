@@ -7,6 +7,7 @@ import {
   ListChecks,
   MessageSquareText,
   Quote,
+  FileBarChart2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -17,7 +18,7 @@ export type NavItem = {
   description: string;
 };
 
-/** As 8 rotas do Fin Center. O canal é a unidade central. */
+/** As rotas do Fin Center. O canal é a unidade central. */
 export const NAV_ITEMS: NavItem[] = [
   {
     to: "/",
@@ -66,5 +67,11 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Voz do Cliente",
     icon: Quote,
     description: "Depoimentos, provas e narrativas.",
+  },
+  {
+    to: "/relatorio",
+    label: "Relatório",
+    icon: FileBarChart2,
+    description: "Demonstrativos consolidados e exportação em PDF.",
   },
 ];

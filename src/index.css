@@ -66,3 +66,19 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
+
+/* Impressão / Exportar PDF (aba Relatório). Cores fiéis, margens e sem cortar
+   cartões no meio da página. A top bar e os botões usam `print:hidden`. */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+  body {
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  main {
+    padding: 0 !important;
+  }
+}
