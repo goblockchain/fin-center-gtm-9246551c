@@ -3,6 +3,7 @@ import { useRealtime } from "@/hooks/useRealtime";
 import { FocoHoje } from "@/features/dashboard/FocoHoje";
 import { SaudeCanais } from "@/features/dashboard/SaudeCanais";
 import { Funil } from "@/features/dashboard/Funil";
+import { FunilDistribuicao } from "@/features/dashboard/FunilDistribuicao";
 import { InvestimentoRoi } from "@/features/dashboard/InvestimentoRoi";
 import { Projecao } from "@/features/dashboard/Projecao";
 
@@ -42,6 +43,9 @@ export function DashboardPage() {
         <SaudeCanais />
         <Funil />
       </div>
+
+      {/* Distribuição de contatos (pizza + números) */}
+      <FunilDistribuicao />
 
       {/* 4. Investimento & ROI */}
       <InvestimentoRoi />
