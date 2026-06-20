@@ -227,6 +227,45 @@ export type Database = {
         }
         Relationships: []
       }
+      projetos: {
+        Row: {
+          cor: string | null
+          created_at: string
+          data_inicio: string
+          descricao: string | null
+          id: string
+          nome: string
+          ordem: number
+          prazo: string
+          status: Database["public"]["Enums"]["status_tarefa"]
+          updated_at: string
+        }
+        Insert: {
+          cor?: string | null
+          created_at?: string
+          data_inicio: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          ordem?: number
+          prazo: string
+          status?: Database["public"]["Enums"]["status_tarefa"]
+          updated_at?: string
+        }
+        Update: {
+          cor?: string | null
+          created_at?: string
+          data_inicio?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          ordem?: number
+          prazo?: string
+          status?: Database["public"]["Enums"]["status_tarefa"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       interacoes: {
         Row: {
           autor: string | null

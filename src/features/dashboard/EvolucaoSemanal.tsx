@@ -97,9 +97,9 @@ export function EvolucaoSemanal() {
           <div className="flex items-center gap-3">
             {atual && (
               <span className="text-xs text-muted-foreground">
-                Última: {dataCurta(atual.ref_date)}
-                {atual.origem === "manual" ? " (manual)" : " (automática)"} ·
-                próxima sexta 18h
+                Último registro: {dataCurta(atual.ref_date)}
+                {atual.origem === "manual" ? " (manual)" : " (automático)"} ·
+                próximo na sexta, 18h
               </span>
             )}
             <button
@@ -120,8 +120,8 @@ export function EvolucaoSemanal() {
           </p>
         ) : !atual ? (
           <p className="rounded-md bg-secondary/40 px-3 py-4 text-center text-sm text-muted-foreground">
-            Nenhum snapshot ainda. O sistema grava sozinho toda sexta às 18h —
-            ou use “Capturar agora” para registrar o primeiro.
+            Nenhum registro ainda. O sistema tira uma foto dos números toda
+            sexta, 18h — ou use “Capturar agora” para registrar o primeiro.
           </p>
         ) : (
           <div className="space-y-4">
@@ -215,9 +215,8 @@ export function EvolucaoSemanal() {
               </div>
             ) : (
               <p className="rounded-md bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
-                Primeira captura registrada. A comparação ▲▼ e o gráfico de
-                tendência aparecem a partir do próximo snapshot (sexta, ou outra
-                captura manual).
+                Primeiro registro feito. A comparação ▲▼ e o gráfico aparecem a
+                partir do segundo (na sexta, ou capturando de novo).
               </p>
             )}
           </div>

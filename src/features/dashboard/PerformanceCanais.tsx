@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { brl, pct } from "@/lib/format";
 import { useCanais, useCanalExecucao, useCanalKpis } from "@/features/canais/api";
+import { useCanalEconomia } from "@/features/economia/api";
 import { useOportunidadesReceita, linhasPorCanal } from "./receita";
 
 const TIPO_LABEL: Record<string, string> = {
@@ -20,6 +21,7 @@ export function PerformanceCanais() {
   const { data: execucoes } = useCanalExecucao();
   const { data: kpis } = useCanalKpis();
   const { data: canais } = useCanais();
+  const { data: economia } = useCanalEconomia();
 
   const linhas = useMemo(() => {
     const rows = linhasPorCanal(
@@ -27,6 +29,7 @@ export function PerformanceCanais() {
       execucoes ?? [],
       kpis ?? [],
       canais ?? [],
+      economia ?? [],
     );
     // Ordenação padrão do spec: MRR → ROI → Clientes.
     return rows.sort(
@@ -35,7 +38,7 @@ export function PerformanceCanais() {
         (b.roi ?? -Infinity) - (a.roi ?? -Infinity) ||
         b.clientes - a.clientes,
     );
-  }, [ops, execucoes, kpis, canais]);
+  }, [ops, execucoes, kpis, canais, economia]);
 
   return (
     <Card>
@@ -54,8 +57,8 @@ export function PerformanceCanais() {
               <tr className="text-xs uppercase tracking-wide text-muted-foreground">
                 <th className="px-4 py-2 text-left font-medium">Canal</th>
                 <th className="px-2 py-2 text-right font-medium">Leads</th>
-                <th className="px-2 py-2 text-right font-medium">SQL</th>
-                <th className="px-2 py-2 text-right font-medium">Prop.</th>
+                <th className="px-2 py-2 text-right font-medium">Reuniões</th>
+                <th className="px-2 py-2 text-right font-medium">Propostas</th>
                 <th className="px-2 py-2 text-right font-medium">Clientes</th>
                 <th className="px-2 py-2 text-right font-medium">Conv.</th>
                 <th className="px-2 py-2 text-right font-medium">MRR</th>
@@ -114,8 +117,9 @@ export function PerformanceCanais() {
           </table>
         </div>
         <p className="border-t border-border px-4 py-2 text-[11px] text-muted-foreground">
-          Lead = toda oportunidade · SQL = chegou à reunião · Cliente = fechado
-          ganho. Payback = investido ÷ MRR. CAC/ROI vêm das views canônicas.
+          Lead = toda oportunidade no funil · Reunião = chegou à reunião ·
+          Cliente = fechou. CAC = custo ÷ clientes · Payback = meses para o MRR
+          cobrir o custo. Sem custo lançado, aparece “—”.
         </p>
       </CardContent>
     </Card>

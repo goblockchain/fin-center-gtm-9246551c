@@ -29,7 +29,7 @@ export function AtividadeSemana() {
           <div className="flex items-center gap-2">
             <Activity className="h-4 w-4 text-fin" />
             <h2 className="text-sm font-semibold text-fin-dark">
-              Atividade no pipe por semana
+              Atividade no pipeline por semana
             </h2>
           </div>
           <Select value={canalId} onValueChange={setCanalId}>
@@ -103,9 +103,9 @@ export function AtividadeSemana() {
           </p>
         )}
         <p className="border-t border-border px-4 py-2 text-[11px] text-muted-foreground">
-          Atualiza sozinho a cada mudança de estágio no Pipeline. Contatos =
-          entrou em “contatado” · Reuniões = entrou em “reunião” · Fechamentos =
-          fechado-ganho.
+          Atualiza sozinho quando você move um lead no Pipeline — você não marca
+          data. Cada lead conta na semana em que virou contato, reunião ou
+          fechamento.
         </p>
       </CardContent>
     </Card>

@@ -47,13 +47,12 @@ export function Projecao() {
         <p className="text-xs text-muted-foreground">
           Base: {r.ativos} oportunidades ativas × {pct(taxa, 1)}{" "}
           {usandoBaseline
-            ? "(usando a baseline — sem dado próprio ainda)"
+            ? "(usando a baseline de 2% — você ainda não tem conversão própria)"
             : "(sua conversão atual)"}
           .
         </p>
         <p className="text-xs text-muted-foreground">
-          Cenário baseline (2%): ~{projBaseline} reuniões — mostrado ao lado para
-          transparência.
+          Para comparar: na baseline de 2%, seriam ~{projBaseline} reuniões.
         </p>
       </CardContent>
     </Card>

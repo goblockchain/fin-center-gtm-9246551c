@@ -12,7 +12,7 @@ export function CrescimentoPage() {
     <div className="space-y-4">
       <PageHeader
         title="Crescimento"
-        description="Comunidade, parcerias e eventos. Dados próprios de cada frente — o funil de receita segue vindo das oportunidades por canal."
+        description="Comunidade, parcerias e eventos. Você lança os números de cada frente aqui; a receita continua saindo do pipeline, por canal."
       />
       <ComunidadeSecao />
       <ParceirosSecao />

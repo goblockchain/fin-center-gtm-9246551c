@@ -168,14 +168,14 @@ export function ComunidadeSecao() {
         </div>
         {atual ? (
           <p className="mt-2 text-[11px] text-muted-foreground">
-            Conversão e MRR/membro = clientes/MRR <strong>totais</strong> dos
-            canais de tipo “comunidade” ÷ membros <strong>ativos do mês</strong>.
+            Conversão e MRR por membro: clientes e MRR dos canais de comunidade,
+            divididos pelos membros <strong>ativos do mês</strong>.
           </p>
         ) : (
           <p className="mt-2 text-xs text-muted-foreground">
-            Registre os membros do mês para ver conversão da comunidade e MRR por
-            membro ativo. Leads/reuniões/clientes vêm dos canais de tipo
-            “comunidade”.
+            Registre os membros do mês para ver a conversão da comunidade e o MRR
+            por membro ativo. Leads, reuniões e clientes vêm dos canais marcados
+            como comunidade.
           </p>
         )}
       </CardContent>

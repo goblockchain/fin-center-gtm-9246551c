@@ -9,10 +9,8 @@ import { useCanalExecucao, useCanalKpis } from "@/features/canais/api";
 import { useSnapshots } from "@/features/dashboard/snapshots";
 import { PerformanceCanais } from "@/features/dashboard/PerformanceCanais";
 import { Recomendacoes } from "@/features/dashboard/Recomendacoes";
-import { HeatmapCanais } from "@/features/dashboard/HeatmapCanais";
 import { FunilPorCanal } from "@/features/dashboard/FunilPorCanal";
 import { ProjecaoPorCanal } from "@/features/dashboard/ProjecaoPorCanal";
-import { EconomiaCanais } from "@/features/economia/EconomiaCanais";
 
 function sumBy<T>(arr: T[], f: (x: T) => number) {
   return arr.reduce((s, x) => s + f(x), 0);
@@ -120,16 +118,10 @@ export function RelatorioPage() {
         <Recomendacoes />
       </section>
       <section className="break-inside-avoid">
-        <HeatmapCanais />
-      </section>
-      <section className="break-inside-avoid">
         <FunilPorCanal />
       </section>
       <section className="break-inside-avoid">
         <ProjecaoPorCanal />
-      </section>
-      <section className="break-inside-avoid">
-        <EconomiaCanais />
       </section>
 
       {/* Evolução semanal — histórico de snapshots */}
@@ -137,7 +129,7 @@ export function RelatorioPage() {
         <CardContent className="p-0">
           <div className="border-b border-border px-4 py-3">
             <h2 className="text-sm font-semibold text-fin-dark">
-              Evolução semanal (snapshots)
+              Evolução semana a semana
             </h2>
           </div>
           <div className="overflow-x-auto">
@@ -177,7 +169,7 @@ export function RelatorioPage() {
                       colSpan={8}
                       className="px-4 py-6 text-center text-muted-foreground"
                     >
-                      Sem snapshots ainda. O primeiro é gravado na sexta (ou via
+                      Sem registros ainda. O primeiro é gravado na sexta (ou via
                       “Capturar agora” no Dashboard).
                     </td>
                   </tr>

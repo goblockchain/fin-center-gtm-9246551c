@@ -12,7 +12,7 @@ begin;
 
 truncate table mensagens_log, modelos_mensagem, voz_do_cliente, interacoes, contatos,
   pipeline_eventos, oportunidades, contas, tarefas, gates, investimentos,
-  snapshots_semanais, canais restart identity cascade;
+  snapshots_semanais, projetos, canais restart identity cascade;
 
 -- ---------- Canais (a unidade central) ----------
 insert into canais (id,slug,nome,prioridade,hipotese,teste_minimo,metrica_sucesso,meta_vs_baseline,dependencia,responsavel,gate_data,ordem) values
@@ -93,6 +93,14 @@ insert into modelos_mensagem (canal_id,estagio,titulo,variante,corpo) values
 ('1948d0dd-cc43-5c6b-bff1-4883dd942d44','reuniao','Yungas — piloto de rede','A','{nome}, como vocês são da base Yungas, montei um piloto rápido pro {cafe}: 15 dias com a Fin cuidando das contas a pagar e DRE ao vivo, sem você adotar sistema novo. {dor} Te mando a proposta?'),
 ('c52640de-ec41-5c26-97de-4fc81d8f6c1e','contatado','Member-get-member — pedido de indicação','A','{nome}, que bom que a Fin tá ajudando o {cafe}! Você conhece 1–2 donos que vivem a mesma dor ({dor})? Se topar indicar, libero 1 mês de cortesia pra você. Quem vem à cabeça?'),
 ('ef3be889-0994-57f5-9665-c3e04d1fc4ce','cadastrado','Inbound — resposta a DM de conteúdo','A','Oi {nome}, obrigada por comentar! Esse conteúdo nasceu de um problema real: {dor}. Se quiser, te explico em 10 min como a Fin resolve isso pro {cafe} sem você operar mais um sistema.');
+
+-- ---------- Projetos (linha do tempo — editáveis no Roadmap) ----------
+insert into projetos (nome,descricao,data_inicio,prazo,status,ordem) values
+('Parceria Base Yungas','Acesso à base Yungas (intros/co-mkt/webinar) + piloto com contas do ICP.','2026-06-16','2026-07-18','fazendo',1),
+('Outbound reformulado','ICP estreito + contato direto com o decisor + A/B de mensagens de dor.','2026-06-23','2026-07-18','a_fazer',2),
+('Indicações (rede e advisors)','Mapear 20 conexões de 2º grau no ICP e pedir 10 intros qualificadas.','2026-06-16','2026-07-18','fazendo',3),
+('Member-get-member','Pedir 2 indicações a cada cliente ativo + incentivo (mês grátis/desconto).','2026-06-23','2026-07-18','a_fazer',4),
+('Inbound (site + conteúdo)','Corrigir o site p/ indexação + cadência 3x/sem (negócios×IA×comportamento).','2026-06-23','2026-08-22','a_fazer',5);
 
 -- ---------- Contas (cafeterias reais — base 📋 Prospecção) ----------
 insert into contas (id,nome,endereco,bairro,telefone,instagram,canal_origem_id,temperatura,responsavel,visitada,entrevista_agendada,data_primeiro_contato,proxima_acao,obs,ref_externa) values

@@ -198,17 +198,17 @@ export function VisaoExecutiva() {
         <Stat
           label="Pipeline ponderado"
           valor={brl(metr.pipelinePonderado)}
-          hint="aberto × probabilidade"
+          hint="em aberto × chance de fechar"
         />
         <Stat
           label="CAC médio"
           valor={cac != null ? brl(cac) : "—"}
-          hint="investido / clientes"
+          hint="custo por cliente"
         />
         <Stat
           label="Payback médio"
           valor={payback != null ? `${payback.toFixed(1)} m` : "—"}
-          hint="meses p/ pagar o CAC"
+          hint="meses para pagar o custo"
         />
         <Stat label="Crescimento MRR" valor={mom != null ? pct(mom, 0) : "—"}>
           {mom != null ? (

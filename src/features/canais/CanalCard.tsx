@@ -107,7 +107,7 @@ export function CanalCard({
             </p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Variância</p>
+            <p className="text-xs text-muted-foreground">Diferença</p>
             <p
               className={cn(
                 "font-semibold",

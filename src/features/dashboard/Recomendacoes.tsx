@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { brl, pct } from "@/lib/format";
 import { useCanais, useCanalExecucao, useCanalKpis } from "@/features/canais/api";
+import { useCanalEconomia } from "@/features/economia/api";
 import {
   useOportunidadesReceita,
   linhasPorCanal,
@@ -93,13 +94,20 @@ export function Recomendacoes() {
   const { data: execucoes } = useCanalExecucao();
   const { data: kpis } = useCanalKpis();
   const { data: canais } = useCanais();
+  const { data: economia } = useCanalEconomia();
 
   const insights = useMemo(
     () =>
       gerar(
-        linhasPorCanal(ops ?? [], execucoes ?? [], kpis ?? [], canais ?? []),
+        linhasPorCanal(
+          ops ?? [],
+          execucoes ?? [],
+          kpis ?? [],
+          canais ?? [],
+          economia ?? [],
+        ),
       ),
-    [ops, execucoes, kpis, canais],
+    [ops, execucoes, kpis, canais, economia],
   );
 
   return (

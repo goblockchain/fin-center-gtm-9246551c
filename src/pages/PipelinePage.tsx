@@ -18,7 +18,7 @@ export function PipelinePage() {
     <div>
       <PageHeader
         title="Pipeline"
-        description="Arraste os cards para mudar o estágio — a mudança é salva na hora."
+        description="Arraste os cards para mudar a etapa — salva na hora."
         actions={
           <Select value={canalId} onValueChange={setCanalId}>
             <SelectTrigger className="w-52">

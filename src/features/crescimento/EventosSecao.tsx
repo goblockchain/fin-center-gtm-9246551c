@@ -92,7 +92,7 @@ export function EventosSecao() {
             className="col-span-1 h-9 sm:col-span-1"
             type="number"
             min={0}
-            placeholder="SQLs"
+            placeholder="reuniões"
             value={sqls}
             onChange={(e) => setSqls(e.target.value)}
           />

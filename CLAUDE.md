@@ -98,7 +98,7 @@ Ramp de apoio: `#102A1E · #2D6A4F · #40916C · #74C69D · #D8F3DC`. Marca = ó
 | `/pipeline` | **Pipeline** | Kanban de oportunidades (cadastrado → … → fechado-ganho/perdido), drag-and-drop, filtro por canal. |
 | `/crm` | **CRM** | Tabela de contas (filtro por temperatura e canal) + ficha (contatos, interações, voz do cliente) + **Importar base** (CSV). |
 | `/canais` | **Canais** | Card central por canal: anel de % execução, estado derivado, investimento planejado×executado com variância, bloco de KPIs (só em "Gerando dados"). |
-| `/roadmap` | **Roadmap** | Gantt 16/jun–24/ago + painel de gates com dias restantes. |
+| `/roadmap` | **Roadmap** | Linha do tempo dirigida por **projetos cadastrados** (1 barra por projeto, editável inline; cor por status/prazo) + painel de gates com dias restantes. |
 | `/tarefas` | **Tarefas** | Lista por canal com dependência (bloqueada se a dependência não está "feito") e prazos coloridos relativos a hoje. |
 | `/mensagens` | **Mensagens** | Biblioteca de modelos por canal/estágio (variáveis `{nome}`, `{cafe}`, `{dor}`, variante A/B) + log manual. |
 | `/voz` | **Voz do Cliente** | Registros (depoimento/mensagem/narrativa/relatório) + upload de imagem (Storage) + tags de uso + "fixar como prova". |
@@ -507,12 +507,15 @@ receita/MRR sobre volume de leads e compara a economia de cada canal. Decisões 
   `Cliente` = `fechado_ganho`.
 - **Fórmulas** (continuam derivadas, nunca em coluna): `Pipeline Ponderado` = Σ(valor_mrr ×
   probabilidade) das oportunidades abertas (probabilidade default por estágio quando ausente);
-  `Payback` (meses) = investido ÷ MRR ganho; `CAC`/`ROI` seguem as views `canal_kpis`. Canal **sem
-  custo registrado** (investido = 0) exibe CAC/Payback/ROI como "—" (não "R$0").
+  `Payback` (meses) = investido ÷ MRR ganho. O **custo do CAC** vem dos **custos itemizados**
+  (`canal_economia.custo_total`) quando houver; senão cai no investimento executado
+  (`canal_execucao`). CAC/Payback/ROI derivam todos desse mesmo custo. Canal **sem custo registrado**
+  (investido = 0) exibe CAC/Payback/ROI como "—" (não "R$0").
 - **Seções implementadas (dado real):** 1 Visão Executiva (cards de receita com período
-  Semana/Mês/Trimestre + variação/tendência + origem dos clientes + Meta do mês), 2 Performance
-  por canal, 4 Economia do canal (custos itemizados → CAC/MRR-hora/ARR/Payback/ROI na view
-  `canal_economia`), 8 Tendências (séries dos snapshots), 9 Heatmap, 10 Recomendações automáticas.
+  Semana/Mês/Trimestre + variação/tendência + origem dos clientes + Meta do mês), 2 **Performance
+  por canal** — a **visão ÚNICA** de CAC/MRR/ROI por canal (alimentada pelos custos itemizados),
+  8 Tendências (séries dos snapshots), 10 Recomendações automáticas. *(O heatmap e a tabela
+  "Economia por canal" foram consolidados nessa visão única — evitar 3 leituras quase iguais.)*
 - **Schema da Fase 2 (0008):** tabela `custos` (`tipo_custo`: horas/ferramentas/mídia/comissão/
   operacional, com `valor` e `horas`), tabela `metas` (MRR/clientes por mês), view `canal_economia`.
   Lançamento em **Roadmap → "Custos por canal" e "Metas mensais"**. A "Meta do mês" compara o MRR
@@ -521,4 +524,9 @@ receita/MRR sobre volume de leads e compara a economia de cada canal. Decisões 
   Tabelas `comunidade_metricas` (membros/ativos/conversas/participação por mês), `parceiros`
   (ranking por receita) e `eventos` (CAC/ROI por evento). Entrada manual; o funil (Lead/Cliente/
   MRR) das frentes continua vindo das oportunidades por `canais.tipo` — sem entidades paralelas.
+- **Linha do tempo por projetos (0013):** tabela `projetos` (`nome`, `data_inicio`, `prazo`,
+  `status` a_fazer/fazendo/feito, `ordem`). O Gantt do Roadmap desenha **1 barra por projeto**
+  (cor por status + regra de prazo §10.5: âmbar ≤2 dias, vermelho vencido); a janela se molda aos
+  prazos cadastrados. Edição **inline** (sem lápis) em **Roadmap → Linha do tempo**. Os gates seguem
+  como marcadores tracejados sobre a faixa; tarefas da sprint são coisa separada.
 - Princípio mantido (§4.2): **KPI só com dado real** — nada de métrica de vaidade nem zero disfarçado.

@@ -29,7 +29,7 @@ export function VozPage() {
     <div>
       <PageHeader
         title="Voz do Cliente"
-        description="Depoimentos, mensagens, narrativas e relatórios — prova vinculada à conta de origem."
+        description="Depoimentos, mensagens, histórias e relatórios. Cada prova fica ligada à conta de onde veio."
         actions={
           <Button onClick={() => setOpen(true)}>
             <Plus className="h-4 w-4" /> Nova voz

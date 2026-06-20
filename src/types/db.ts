@@ -25,6 +25,7 @@ export type ComunidadeMetrica = Tables<"comunidade_metricas">;
 export type Parceiro = Tables<"parceiros">;
 export type Evento = Tables<"eventos">;
 export type PipelineEvento = Tables<"pipeline_eventos">;
+export type Projeto = Tables<"projetos">;
 
 // Views calculadas
 export type CanalExecucao = Views<"canal_execucao">;

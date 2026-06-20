@@ -87,7 +87,7 @@ export function ParceirosSecao() {
             className="col-span-1 h-9 sm:col-span-2"
             type="number"
             min={0}
-            placeholder="SQLs"
+            placeholder="reuniões"
             value={sqls}
             onChange={(e) => setSqls(e.target.value)}
           />

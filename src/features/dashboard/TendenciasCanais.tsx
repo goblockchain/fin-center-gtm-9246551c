@@ -119,7 +119,7 @@ export function TendenciasCanais() {
 
         {poucos ? (
           <p className="rounded-md bg-secondary/40 px-3 py-6 text-center text-sm text-muted-foreground">
-            As tendências aparecem conforme os snapshots semanais se acumulam
+            As tendências aparecem conforme os registros semanais se acumulam
             (gravados toda sexta).{" "}
             {serie.length === 0
               ? "Nenhuma captura no período."

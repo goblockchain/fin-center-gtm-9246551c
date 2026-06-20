@@ -1,6 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import type { Canal, CanalExecucao, CanalKpis, EstagioOport } from "@/types/db";
+import type {
+  Canal,
+  CanalExecucao,
+  CanalKpis,
+  CanalEconomia,
+  EstagioOport,
+} from "@/types/db";
 
 /**
  * Mapeamento de funil de RECEITA sobre os estágios canônicos do pipeline
@@ -165,22 +171,30 @@ export type LinhaCanal = {
 };
 
 /**
- * Linha consolidada de receita por canal — base da Performance por canal,
- * do heatmap e das recomendações. CAC/ROI seguem as views canônicas.
+ * Linha consolidada de receita por canal — base ÚNICA da "Performance por canal"
+ * e das recomendações. O custo do CAC vem dos custos itemizados (view
+ * canal_economia) quando houver; senão cai no investimento executado. CAC, Payback
+ * e ROI são todos derivados desse mesmo custo, mantendo a tabela coerente.
  */
 export function linhasPorCanal(
   ops: OportReceita[],
   execucoes: CanalExecucao[],
   kpis: CanalKpis[],
   canais: Canal[],
+  economia: CanalEconomia[] = [],
 ): LinhaCanal[] {
   const execPorId = new Map(execucoes.map((e) => [e.canal_id, e]));
   const kpiPorId = new Map(kpis.map((k) => [k.canal_id, k]));
+  const econPorId = new Map(economia.map((e) => [e.canal_id, e]));
   return canais.map((c) => {
     const m = metricasReceita(ops.filter((o) => o.canal_id === c.id));
     const exec = execPorId.get(c.id);
     const kpi = kpiPorId.get(c.id);
-    const investido = Number(exec?.investimento_executado ?? 0);
+    const econ = econPorId.get(c.id);
+    const custoItem = Number(econ?.custo_total ?? 0);
+    // Custo itemizado tem precedência; investimento executado é o fallback.
+    const investido =
+      custoItem > 0 ? custoItem : Number(exec?.investimento_executado ?? 0);
     const mrr = Number(kpi?.mrr_ganho ?? m.mrr);
     return {
       canal_id: c.id,
@@ -198,12 +212,7 @@ export function linhasPorCanal(
       // sentido (evita "CAC R$0 / payback instantâneo").
       cac: investido > 0 && m.clientes > 0 ? investido / m.clientes : null,
       payback: investido > 0 ? paybackMeses(investido, mrr) : null,
-      roi:
-        kpi?.roi != null
-          ? Number(kpi.roi)
-          : investido > 0
-            ? (mrr - investido) / investido
-            : null,
+      roi: investido > 0 ? (mrr - investido) / investido : null,
     };
   });
 }

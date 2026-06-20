@@ -26,7 +26,7 @@ export function CanaisPage() {
     <div>
       <PageHeader
         title="Canais"
-        description="O canal é a unidade central: execução, investimento, KPI e prazo no mesmo card."
+        description="Cada canal em um card só: o que já foi feito, quanto custou, o resultado e o prazo."
       />
 
       {isLoading ? (

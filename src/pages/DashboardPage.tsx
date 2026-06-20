@@ -4,7 +4,6 @@ import { FocoHoje } from "@/features/dashboard/FocoHoje";
 import { VisaoExecutiva } from "@/features/dashboard/VisaoExecutiva";
 import { PerformanceCanais } from "@/features/dashboard/PerformanceCanais";
 import { Recomendacoes } from "@/features/dashboard/Recomendacoes";
-import { HeatmapCanais } from "@/features/dashboard/HeatmapCanais";
 import { Funil } from "@/features/dashboard/Funil";
 import { FunilDistribuicao } from "@/features/dashboard/FunilDistribuicao";
 import { FunilPorCanal } from "@/features/dashboard/FunilPorCanal";
@@ -48,14 +47,11 @@ export function DashboardPage() {
       {/* Seção 1 — Visão executiva (receita + período + origem) */}
       <VisaoExecutiva />
 
-      {/* Seção 2 — Performance por canal */}
+      {/* Seção 2 — Performance por canal (visão única de CAC/MRR/ROI por canal) */}
       <PerformanceCanais />
 
-      {/* Seção 10 — Recomendações · Seção 9 — Heatmap */}
-      <div className="grid gap-4 [&>*]:min-w-0 lg:grid-cols-2">
-        <Recomendacoes />
-        <HeatmapCanais />
-      </div>
+      {/* Seção 10 — Recomendações automáticas */}
+      <Recomendacoes />
 
       {/* Saúde do pipeline: funil ao vivo + distribuição de contatos */}
       <div className="grid gap-4 [&>*]:min-w-0 lg:grid-cols-2">

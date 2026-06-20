@@ -27,7 +27,7 @@ export function MensagensPage() {
     <div>
       <PageHeader
         title="Mensagens"
-        description="Modelos por canal e estágio, com variáveis {nome}, {cafe}, {dor} e variante A/B. O UseFin não envia WhatsApp — só registra status."
+        description="Modelos de mensagem por canal e etapa. Use {nome}, {cafe}, {dor} (preenchem sozinhos) e versões A/B para testar. O UseFin não envia WhatsApp — só registra o status."
       />
 
       <div className="mb-4 flex flex-col gap-2 sm:flex-row">
@@ -46,10 +46,10 @@ export function MensagensPage() {
         </Select>
         <Select value={estagio} onValueChange={setEstagio}>
           <SelectTrigger className="sm:w-52">
-            <SelectValue placeholder="Estágio" />
+            <SelectValue placeholder="Etapa" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos os estágios</SelectItem>
+            <SelectItem value="all">Todas as etapas</SelectItem>
             {ESTAGIOS.map((e) => (
               <SelectItem key={e} value={e}>
                 {ESTAGIO_META[e].label}

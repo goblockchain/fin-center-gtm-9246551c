@@ -202,7 +202,7 @@ export function TarefasPage() {
     <div>
       <PageHeader
         title="Tarefas"
-        description="Execução da sprint por frente. Clique na tarefa para editar; clique no status para mudar. Bloqueada enquanto a dependência não está feita."
+        description="Tarefas da sprint, agrupadas por frente. Clique na tarefa para editar e no status para mudar. A tarefa fica travada até a tarefa de que ela depende ficar pronta."
         actions={
           <div className="flex items-center gap-2">
             {tarefas?.length ? (
