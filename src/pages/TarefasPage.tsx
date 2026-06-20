@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Loader2, Lock, Check, Pencil, Plus } from "lucide-react";
+import { Loader2, Lock, Plus } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +19,104 @@ const STATUS_OPC: { v: StatusTarefa; label: string }[] = [
   { v: "fazendo", label: "Fazendo" },
   { v: "feito", label: "Feito" },
 ];
+const STATUS_LABEL: Record<StatusTarefa, string> = {
+  a_fazer: "A fazer",
+  fazendo: "Fazendo",
+  feito: "Feito",
+};
+
+/** Ícone de status estilo Linear (círculo vazio / meio-preenchido / concluído). */
+function StatusIcon({
+  status,
+  className,
+}: {
+  status: StatusTarefa;
+  className?: string;
+}) {
+  if (status === "feito") {
+    return (
+      <svg viewBox="0 0 16 16" className={cn("h-4 w-4", className)}>
+        <circle cx="8" cy="8" r="7" className="fill-fin" />
+        <path
+          d="M4.8 8.4l2 2 4.2-4.2"
+          fill="none"
+          stroke="white"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+  if (status === "fazendo") {
+    return (
+      <svg viewBox="0 0 16 16" className={cn("h-4 w-4", className)}>
+        <circle cx="8" cy="8" r="7" fill="none" stroke="#D9920A" strokeWidth="1.6" />
+        <path d="M8 8 L8 1.6 A6.4 6.4 0 0 1 8 14.4 Z" fill="#D9920A" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 16 16" className={cn("h-4 w-4", className)}>
+      <circle cx="8" cy="8" r="7" fill="none" stroke="#94a3b8" strokeWidth="1.6" />
+    </svg>
+  );
+}
+
+/** Controle de status: ícone que abre um menu (estilo Linear). */
+function StatusControl({
+  status,
+  bloqueada,
+  onChange,
+}: {
+  status: StatusTarefa;
+  bloqueada: boolean;
+  onChange: (s: StatusTarefa) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative shrink-0" onClick={(e) => e.stopPropagation()}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-label={`Status: ${STATUS_LABEL[status]}`}
+        className="grid h-7 w-7 place-items-center rounded-md hover:bg-secondary"
+      >
+        <StatusIcon status={status} />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute left-0 z-50 mt-1 w-40 rounded-md border border-border bg-card py-1 shadow-md">
+            {STATUS_OPC.map((o) => {
+              const disabled = o.v === "feito" && bloqueada;
+              const ativo = o.v === status;
+              return (
+                <button
+                  key={o.v}
+                  type="button"
+                  disabled={disabled}
+                  onClick={() => {
+                    if (!disabled && !ativo) onChange(o.v);
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    "flex w-full items-center gap-2 px-2.5 py-1.5 text-sm hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-40",
+                    ativo && "font-medium text-fin-dark",
+                  )}
+                >
+                  <StatusIcon status={o.v} />
+                  {o.label}
+                  {disabled && <Lock className="ml-auto h-3 w-3" />}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 
 function TarefaRow({
   t,
@@ -36,8 +134,14 @@ function TarefaRow({
   const u = urgencia(t.prazo);
   const feito = t.status === "feito";
   return (
-    <div className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="min-w-0">
+    <div
+      onClick={onEdit}
+      className="flex cursor-pointer items-start gap-3 px-4 py-3 transition-colors hover:bg-secondary/40"
+    >
+      <div className="pt-0.5">
+        <StatusControl status={t.status} bloqueada={bloqueada} onChange={onStatus} />
+      </div>
+      <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="shrink-0 text-[11px]">
             {t.codigo}
@@ -52,6 +156,7 @@ function TarefaRow({
           </p>
         </div>
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+          <span className="text-muted-foreground">{STATUS_LABEL[t.status]}</span>
           {t.responsavel && (
             <span className="text-muted-foreground">{t.responsavel}</span>
           )}
@@ -68,44 +173,6 @@ function TarefaRow({
               <Lock className="h-3 w-3" /> bloqueada por {bloqueioCodigo}
             </span>
           )}
-        </div>
-      </div>
-
-      <div className="flex shrink-0 items-center gap-2">
-        <button
-          type="button"
-          onClick={onEdit}
-          aria-label="Editar tarefa"
-          className="grid h-8 w-8 place-items-center rounded-md border border-border text-muted-foreground hover:bg-secondary hover:text-fin-dark"
-        >
-          <Pencil className="h-3.5 w-3.5" />
-        </button>
-        <div className="inline-flex overflow-hidden rounded-md border border-border">
-          {STATUS_OPC.map((o) => {
-            const ativo = t.status === o.v;
-            const disabled = o.v === "feito" && bloqueada;
-            return (
-              <button
-                key={o.v}
-                type="button"
-                disabled={disabled}
-                onClick={() => !ativo && onStatus(o.v)}
-                className={cn(
-                  "px-2.5 py-1 text-xs font-medium transition-colors",
-                  ativo
-                    ? "bg-fin text-white"
-                    : "bg-card text-muted-foreground hover:bg-secondary",
-                  disabled && "cursor-not-allowed opacity-40 hover:bg-card",
-                )}
-              >
-                {o.v === "feito" && ativo ? (
-                  <Check className="h-3.5 w-3.5" />
-                ) : (
-                  o.label
-                )}
-              </button>
-            );
-          })}
         </div>
       </div>
     </div>
@@ -135,7 +202,7 @@ export function TarefasPage() {
     <div>
       <PageHeader
         title="Tarefas"
-        description="Execução da sprint por frente. Uma tarefa fica bloqueada enquanto a dependência não está feita."
+        description="Execução da sprint por frente. Clique na tarefa para editar; clique no status para mudar. Bloqueada enquanto a dependência não está feita."
         actions={
           <div className="flex items-center gap-2">
             {tarefas?.length ? (
@@ -178,9 +245,7 @@ export function TarefasPage() {
                       t={t}
                       bloqueada={bloqueada}
                       bloqueioCodigo={
-                        t.depende_de
-                          ? codigoById.get(t.depende_de)
-                          : undefined
+                        t.depende_de ? codigoById.get(t.depende_de) : undefined
                       }
                       onStatus={(s) => mutar.mutate({ id: t.id, status: s })}
                       onEdit={() => {
