@@ -10,11 +10,8 @@ import { useSnapshots } from "@/features/dashboard/snapshots";
 import { PerformanceCanais } from "@/features/dashboard/PerformanceCanais";
 import { Recomendacoes } from "@/features/dashboard/Recomendacoes";
 import { HeatmapCanais } from "@/features/dashboard/HeatmapCanais";
-import { RankingCanais } from "@/features/dashboard/RankingCanais";
-import { EficienciaCanais } from "@/features/dashboard/EficienciaCanais";
 import { FunilPorCanal } from "@/features/dashboard/FunilPorCanal";
 import { ProjecaoPorCanal } from "@/features/dashboard/ProjecaoPorCanal";
-import { InvestimentoRoi } from "@/features/dashboard/InvestimentoRoi";
 import { EconomiaCanais } from "@/features/economia/EconomiaCanais";
 
 function sumBy<T>(arr: T[], f: (x: T) => number) {
@@ -126,19 +123,10 @@ export function RelatorioPage() {
         <HeatmapCanais />
       </section>
       <section className="break-inside-avoid">
-        <RankingCanais />
-      </section>
-      <section className="break-inside-avoid">
-        <EficienciaCanais />
-      </section>
-      <section className="break-inside-avoid">
         <FunilPorCanal />
       </section>
       <section className="break-inside-avoid">
         <ProjecaoPorCanal />
-      </section>
-      <section className="break-inside-avoid">
-        <InvestimentoRoi />
       </section>
       <section className="break-inside-avoid">
         <EconomiaCanais />

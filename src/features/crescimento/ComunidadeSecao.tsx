@@ -78,9 +78,7 @@ export function ComunidadeSecao() {
       <CardContent className="p-4">
         <div className="mb-3 flex items-center gap-2">
           <Users className="h-4 w-4 text-fin" />
-          <h2 className="text-sm font-semibold text-fin-dark">
-            Comunidade (community-led growth)
-          </h2>
+          <h2 className="text-sm font-semibold text-fin-dark">Comunidade</h2>
         </div>
 
         {/* Entrada mensal */}
