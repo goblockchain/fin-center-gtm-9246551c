@@ -8,6 +8,7 @@ import { HeatmapCanais } from "@/features/dashboard/HeatmapCanais";
 import { Funil } from "@/features/dashboard/Funil";
 import { FunilDistribuicao } from "@/features/dashboard/FunilDistribuicao";
 import { FunilPorCanal } from "@/features/dashboard/FunilPorCanal";
+import { AtividadeSemana } from "@/features/dashboard/AtividadeSemana";
 import { EvolucaoSemanal } from "@/features/dashboard/EvolucaoSemanal";
 import { TendenciasCanais } from "@/features/dashboard/TendenciasCanais";
 import { Projecao } from "@/features/dashboard/Projecao";
@@ -28,6 +29,7 @@ const RT_KEYS = [
   ["tarefas"],
   ["gates"],
   ["oportunidades"],
+  ["pipeline_semana"],
 ] as const;
 
 export function DashboardPage() {
@@ -63,6 +65,9 @@ export function DashboardPage() {
 
       {/* Seção 3 — Funil por canal */}
       <FunilPorCanal />
+
+      {/* Atividade semanal do pipe (contatos/reuniões/fechamentos) + filtro por canal */}
+      <AtividadeSemana />
 
       {/* Rastreio semanal (grava toda sexta) + Seção 8 — Tendências */}
       <EvolucaoSemanal />

@@ -880,6 +880,48 @@ export type Database = {
         }
         Relationships: []
       }
+      pipeline_eventos: {
+        Row: {
+          canal_id: string | null
+          created_at: string
+          data: string
+          estagio: Database["public"]["Enums"]["estagio_oport"]
+          id: string
+          oportunidade_id: string | null
+        }
+        Insert: {
+          canal_id?: string | null
+          created_at?: string
+          data?: string
+          estagio: Database["public"]["Enums"]["estagio_oport"]
+          id?: string
+          oportunidade_id?: string | null
+        }
+        Update: {
+          canal_id?: string | null
+          created_at?: string
+          data?: string
+          estagio?: Database["public"]["Enums"]["estagio_oport"]
+          id?: string
+          oportunidade_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_eventos_canal_id_fkey"
+            columns: ["canal_id"]
+            isOneToOne: false
+            referencedRelation: "canais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pipeline_eventos_oportunidade_id_fkey"
+            columns: ["oportunidade_id"]
+            isOneToOne: false
+            referencedRelation: "oportunidades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       snapshots_semanais: {
         Row: {
           capturado_em: string
@@ -996,6 +1038,16 @@ export type Database = {
           payback_meses: number | null
           roi: number | null
           tipo: string | null
+        }
+        Relationships: []
+      }
+      pipeline_semana: {
+        Row: {
+          canal_id: string | null
+          contatos: number | null
+          fechamentos: number | null
+          reunioes: number | null
+          semana: string | null
         }
         Relationships: []
       }

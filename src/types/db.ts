@@ -24,11 +24,13 @@ export type Meta = Tables<"metas">;
 export type ComunidadeMetrica = Tables<"comunidade_metricas">;
 export type Parceiro = Tables<"parceiros">;
 export type Evento = Tables<"eventos">;
+export type PipelineEvento = Tables<"pipeline_eventos">;
 
 // Views calculadas
 export type CanalExecucao = Views<"canal_execucao">;
 export type CanalKpis = Views<"canal_kpis">;
 export type CanalEconomia = Views<"canal_economia">;
+export type PipelineSemana = Views<"pipeline_semana">;
 
 // Enums
 export type Temperatura = Enums<"temperatura">;
