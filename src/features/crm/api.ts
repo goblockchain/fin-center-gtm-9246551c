@@ -8,6 +8,7 @@ import type {
   Update,
   Oportunidade,
 } from "@/types/db";
+import type { Json } from "@/types/database";
 import type { ImportPayload } from "./import";
 
 export type ContaFilters = {
@@ -72,36 +73,18 @@ export function useInteracoes(contaId?: string) {
   });
 }
 
-function chunk<T>(arr: T[], n: number): T[][] {
-  const out: T[][] = [];
-  for (let i = 0; i < arr.length; i += n) out.push(arr.slice(i, i + n));
-  return out;
-}
-
 export function useImportContas() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: ImportPayload) => {
-      for (const c of chunk(payload.contas, 500)) {
-        const { error } = await supabase.from("contas").insert(c);
-        if (error) throw error;
-      }
-      for (const o of chunk(payload.oportunidades, 500)) {
-        const { error } = await supabase.from("oportunidades").insert(o);
-        if (error) throw error;
-      }
-      for (const c of chunk(payload.contatos, 500)) {
-        if (c.length) {
-          const { error } = await supabase.from("contatos").insert(c);
-          if (error) throw error;
-        }
-      }
-      for (const i of chunk(payload.interacoes, 500)) {
-        if (i.length) {
-          const { error } = await supabase.from("interacoes").insert(i);
-          if (error) throw error;
-        }
-      }
+      // Insert atômico via RPC: se algo falhar, nada é gravado (sem órfãos).
+      const { error } = await supabase.rpc("importar_base", {
+        p_contas: payload.contas as unknown as Json,
+        p_oportunidades: payload.oportunidades as unknown as Json,
+        p_contatos: payload.contatos as unknown as Json,
+        p_interacoes: payload.interacoes as unknown as Json,
+      });
+      if (error) throw error;
       return { inseridas: payload.contas.length };
     },
     onSuccess: () => {

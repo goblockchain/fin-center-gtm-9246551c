@@ -156,7 +156,7 @@ export function ComunidadeSecao() {
           <Tile label="Conversas" valor={atual?.conversas_iniciadas ?? "—"} />
           <Tile label="Leads (canal)" valor={funil.leads} />
           <Tile label="Reuniões" valor={funil.sql} />
-          <Tile label="Clientes" valor={funil.clientes} />
+          <Tile label="Clientes (total)" valor={funil.clientes} />
           <Tile
             label="Conv. comunidade"
             valor={taxa != null ? pct(taxa, 1) : "—"}
@@ -166,7 +166,12 @@ export function ComunidadeSecao() {
             valor={mrrPorMembro != null ? brl(mrrPorMembro) : "—"}
           />
         </div>
-        {!atual && (
+        {atual ? (
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            Conversão e MRR/membro = clientes/MRR <strong>totais</strong> dos
+            canais de tipo “comunidade” ÷ membros <strong>ativos do mês</strong>.
+          </p>
+        ) : (
           <p className="mt-2 text-xs text-muted-foreground">
             Registre os membros do mês para ver conversão da comunidade e MRR por
             membro ativo. Leads/reuniões/clientes vêm dos canais de tipo

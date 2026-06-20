@@ -16,6 +16,7 @@ export function ParceirosSecao() {
 
   const [nome, setNome] = useState("");
   const [leads, setLeads] = useState("");
+  const [sqls, setSqls] = useState("");
   const [clientes, setClientes] = useState("");
   const [receita, setReceita] = useState("");
 
@@ -36,6 +37,7 @@ export function ParceirosSecao() {
       {
         nome: nome.trim(),
         leads_enviados: Number(leads) || 0,
+        sqls: Number(sqls) || 0,
         clientes: Number(clientes) || 0,
         receita: Number(receita) || 0,
       },
@@ -43,6 +45,7 @@ export function ParceirosSecao() {
         onSuccess: () => {
           setNome("");
           setLeads("");
+          setSqls("");
           setClientes("");
           setReceita("");
         },
@@ -67,7 +70,7 @@ export function ParceirosSecao() {
         {/* Novo parceiro */}
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-12">
           <Input
-            className="col-span-2 h-9 sm:col-span-4"
+            className="col-span-2 h-9 sm:col-span-3"
             placeholder="Nome do parceiro"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
@@ -84,15 +87,23 @@ export function ParceirosSecao() {
             className="col-span-1 h-9 sm:col-span-2"
             type="number"
             min={0}
+            placeholder="SQLs"
+            value={sqls}
+            onChange={(e) => setSqls(e.target.value)}
+          />
+          <Input
+            className="col-span-1 h-9 sm:col-span-2"
+            type="number"
+            min={0}
             placeholder="clientes"
             value={clientes}
             onChange={(e) => setClientes(e.target.value)}
           />
           <Input
-            className="col-span-1 h-9 sm:col-span-3"
+            className="col-span-1 h-9 sm:col-span-2"
             type="number"
             min={0}
-            placeholder="R$ receita"
+            placeholder="R$ rec."
             value={receita}
             onChange={(e) => setReceita(e.target.value)}
           />

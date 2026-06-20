@@ -109,6 +109,17 @@ const isSim = (v: string) => {
   return /sim|✓|true/i.test(t) || /^x$/i.test(t);
 };
 
+/** UUID v4 com fallback p/ contexto não-seguro (onde crypto.randomUUID falta). */
+function genId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
+
 function parseTemp(v: string): Temperatura {
   if (/🔥|quente/i.test(v)) return "quente";
   if (/☀|morno/i.test(v)) return "morno";
@@ -178,7 +189,7 @@ export function buildImportPayload(
       ignoradas++;
       continue;
     }
-    const id = crypto.randomUUID();
+    const id = genId();
     const endereco = pick(row, "endereco", "endereço") || null;
     const temperatura = parseTemp(pick(row, "temperatura"));
     const contatado = isSim(pick(row, "primeiro contato", "whatsapp"));

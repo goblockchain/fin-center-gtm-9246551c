@@ -5,7 +5,8 @@ import { useCanalEconomia } from "./api";
 export function EconomiaCanais() {
   const { data: economia } = useCanalEconomia();
   const linhas = economia ?? [];
-  const semCusto = linhas.every((e) => Number(e.custo_total ?? 0) === 0);
+  const semCusto =
+    linhas.length > 0 && linhas.every((e) => Number(e.custo_total ?? 0) === 0);
 
   return (
     <Card>

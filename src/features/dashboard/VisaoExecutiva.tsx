@@ -128,7 +128,9 @@ export function VisaoExecutiva() {
         cur.mrr += o.valor_mrr;
         origemMap.set(o.canal_id, cur);
       });
-    const origem = [...origemMap.values()].sort((a, b) => b.mrr - a.mrr);
+    const origem = [...origemMap.entries()]
+      .map(([id, v]) => ({ id, ...v }))
+      .sort((a, b) => b.mrr - a.mrr);
 
     // MRR realizado no mês calendário atual (para a Meta do mês)
     const iniMes = competencia();
@@ -248,7 +250,7 @@ export function VisaoExecutiva() {
           <div className="flex flex-wrap gap-2">
             {origem.map((o) => (
               <span
-                key={o.nome}
+                key={o.id}
                 className="inline-flex items-center gap-1.5 rounded-full bg-secondary/60 px-2.5 py-1 text-xs"
               >
                 <span className="font-medium text-fin-dark">{o.nome}</span>

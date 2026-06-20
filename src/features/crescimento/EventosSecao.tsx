@@ -14,6 +14,8 @@ export function EventosSecao() {
   const [nome, setNome] = useState("");
   const [data, setData] = useState("");
   const [participantes, setParticipantes] = useState("");
+  const [leads, setLeads] = useState("");
+  const [sqls, setSqls] = useState("");
   const [clientes, setClientes] = useState("");
   const [custo, setCusto] = useState("");
   const [receita, setReceita] = useState("");
@@ -27,6 +29,8 @@ export function EventosSecao() {
         nome: nome.trim(),
         data: data || null,
         participantes: Number(participantes) || 0,
+        leads: Number(leads) || 0,
+        sqls: Number(sqls) || 0,
         clientes: Number(clientes) || 0,
         custo: Number(custo) || 0,
         receita: Number(receita) || 0,
@@ -36,6 +40,8 @@ export function EventosSecao() {
           setNome("");
           setData("");
           setParticipantes("");
+          setLeads("");
+          setSqls("");
           setClientes("");
           setCusto("");
           setReceita("");
@@ -73,6 +79,22 @@ export function EventosSecao() {
             placeholder="particip."
             value={participantes}
             onChange={(e) => setParticipantes(e.target.value)}
+          />
+          <Input
+            className="col-span-1 h-9 sm:col-span-1"
+            type="number"
+            min={0}
+            placeholder="leads"
+            value={leads}
+            onChange={(e) => setLeads(e.target.value)}
+          />
+          <Input
+            className="col-span-1 h-9 sm:col-span-1"
+            type="number"
+            min={0}
+            placeholder="SQLs"
+            value={sqls}
+            onChange={(e) => setSqls(e.target.value)}
           />
           <Input
             className="col-span-1 h-9 sm:col-span-1"

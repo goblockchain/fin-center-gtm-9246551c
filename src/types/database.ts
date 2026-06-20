@@ -1057,6 +1057,15 @@ export type Database = {
         Args: { p_origem?: string }
         Returns: string
       }
+      importar_base: {
+        Args: {
+          p_contas: Json
+          p_oportunidades: Json
+          p_contatos: Json
+          p_interacoes: Json
+        }
+        Returns: number
+      }
     }
     Enums: {
       estagio_oport:
