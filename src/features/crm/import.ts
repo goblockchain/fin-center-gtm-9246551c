@@ -1,4 +1,5 @@
 import Papa from "papaparse";
+import * as XLSX from "xlsx";
 import type { Insert, Temperatura, EstagioOport } from "@/types/db";
 
 export type CsvRow = Record<string, string>;
@@ -22,6 +23,57 @@ export function parseCsvFile(file: File): Promise<CsvRow[]> {
       error: reject,
     });
   });
+}
+
+/** Lê .xlsx/.xls (1ª aba) e devolve linhas no mesmo formato do CSV. */
+export async function parseExcelFile(file: File): Promise<CsvRow[]> {
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, { type: "array" });
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  if (!ws) return [];
+  const linhas = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws, {
+    defval: "",
+    raw: false,
+  });
+  return linhas.map((r) => {
+    const o: CsvRow = {};
+    for (const [k, v] of Object.entries(r)) {
+      o[String(k).trim()] = v == null ? "" : String(v).trim();
+    }
+    return o;
+  });
+}
+
+/** Roteia por extensão: Excel (.xlsx/.xls) ou CSV. */
+export function parseImportFile(file: File): Promise<CsvRow[]> {
+  const nome = file.name.toLowerCase();
+  if (nome.endsWith(".xlsx") || nome.endsWith(".xls")) {
+    return parseExcelFile(file);
+  }
+  return parseCsvFile(file);
+}
+
+/** Cabeçalhos detectados e checagem dos campos-chave (para o passo de revisão). */
+export function inspecionarColunas(rows: CsvRow[]) {
+  const headers = rows.length ? Object.keys(rows[0]) : [];
+  const tem = (...needles: string[]) =>
+    headers.some((h) =>
+      needles.some((n) =>
+        h
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[̀-ͯ]/g, "")
+          .includes(n),
+      ),
+    );
+  return {
+    headers,
+    nome: tem("nome"),
+    telefone: tem("telefone"),
+    decisor: tem("decisor"),
+    temperatura: tem("temperatura"),
+    endereco: tem("endereco", "endereço"),
+  };
 }
 
 const norm = (s: string) =>
