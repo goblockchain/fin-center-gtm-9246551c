@@ -10,47 +10,17 @@ import {
 } from "@/components/ui/select";
 import { dataCurta } from "@/lib/datas";
 import { useCanais } from "@/features/canais/api";
-import { usePipelineSemana } from "./atividade";
+import { usePipelineSemana, agregarSemanas } from "./atividade";
 
 export function AtividadeSemana() {
   const { data: linhas } = usePipelineSemana();
   const { data: canais } = useCanais();
   const [canalId, setCanalId] = useState<string>("all");
 
-  const { semanas, totais } = useMemo(() => {
-    const rows = linhas ?? [];
-    const filtradas =
-      canalId === "all" ? rows : rows.filter((r) => r.canal_id === canalId);
-    const map = new Map<
-      string,
-      { contatos: number; reunioes: number; fechamentos: number }
-    >();
-    filtradas.forEach((r) => {
-      if (!r.semana) return;
-      const cur = map.get(r.semana) ?? {
-        contatos: 0,
-        reunioes: 0,
-        fechamentos: 0,
-      };
-      cur.contatos += Number(r.contatos ?? 0);
-      cur.reunioes += Number(r.reunioes ?? 0);
-      cur.fechamentos += Number(r.fechamentos ?? 0);
-      map.set(r.semana, cur);
-    });
-    const semanas = [...map.entries()]
-      .map(([semana, v]) => ({ semana, ...v }))
-      .sort((a, b) => b.semana.localeCompare(a.semana))
-      .slice(0, 12);
-    const totais = semanas.reduce(
-      (a, s) => ({
-        contatos: a.contatos + s.contatos,
-        reunioes: a.reunioes + s.reunioes,
-        fechamentos: a.fechamentos + s.fechamentos,
-      }),
-      { contatos: 0, reunioes: 0, fechamentos: 0 },
-    );
-    return { semanas, totais };
-  }, [linhas, canalId]);
+  const { semanas, totais } = useMemo(
+    () => agregarSemanas(linhas ?? [], canalId),
+    [linhas, canalId],
+  );
 
   return (
     <Card>
