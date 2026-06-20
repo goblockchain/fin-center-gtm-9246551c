@@ -71,7 +71,7 @@ function Stat({
   return (
     <div className="rounded-lg border border-border bg-card p-4">
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      <p className="mt-1 text-2xl font-bold leading-tight text-fin-dark">
+      <p className="mt-1 font-mono text-2xl font-semibold leading-tight tracking-tight text-fin-dark tabular-nums">
         {valor}
       </p>
       {children}

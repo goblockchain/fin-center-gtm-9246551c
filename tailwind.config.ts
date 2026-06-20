@@ -1,10 +1,11 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Design system da Fin.
- * Cores-base (identidade): verde-escuro #12351F, verde-medio #1A7A3A,
- * verde-claro #8FD9A8, fundo #F2F8F4, card #FFF, âmbar (perto do prazo),
- * vermelho (atraso). Sem gradientes, sem sombras pesadas. Mobile-first.
+ * Design system da Fin — "dark forest, lifted by mint".
+ * Forest #1B4332 · mint #95D5B2 · ramp #102A1E·#2D6A4F·#40916C·#74C69D·#D8F3DC ·
+ * texto #14241C · página #F5F7F2 · card #FFF. Âmbar/vermelho = alertas funcionais.
+ * Tipografia: Bricolage Grotesque (display) · Hanken Grotesk (UI) · JetBrains Mono (figuras).
+ * Sem gradientes, sem sombras pesadas. Mobile-first.
  */
 export default {
   darkMode: ["class"],
@@ -52,9 +53,9 @@ export default {
         },
         // Tokens semânticos da Fin
         fin: {
-          dark: "hsl(var(--fin-dark))", // #12351F sidebar / títulos
-          DEFAULT: "hsl(var(--fin))", // #1A7A3A ações
-          light: "hsl(var(--fin-light))", // #8FD9A8 destaques / sucesso
+          dark: "hsl(var(--fin-dark))", // #1B4332 forest — títulos / marca
+          DEFAULT: "hsl(var(--fin))", // #2D6A4F ações
+          light: "hsl(var(--fin-light))", // #95D5B2 mint — destaques / sucesso
         },
         warning: {
           DEFAULT: "hsl(var(--warning))", // âmbar — perto do prazo
@@ -77,7 +78,9 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "Segoe UI", "Roboto", "sans-serif"],
+        sans: ["Hanken Grotesk", "Inter", "system-ui", "sans-serif"],
+        display: ["Bricolage Grotesque", "Hanken Grotesk", "sans-serif"],
+        mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       keyframes: {
         "accordion-down": {

@@ -3,55 +3,55 @@
 @tailwind utilities;
 
 /**
- * Tokens da identidade Fin (HSL para combinar com shadcn/ui).
- * verde-escuro #12351F · verde-medio #1A7A3A · verde-claro #8FD9A8
- * fundo #F2F8F4 · card #FFF · âmbar (perto do prazo) · vermelho (atraso)
+ * Tokens da identidade Fin — "dark forest, lifted by mint" (HSL p/ shadcn/ui).
+ * forest #1B4332 · mint #95D5B2 · texto #14241C · página #F5F7F2 · card #FFF.
+ * Âmbar (perto do prazo) e vermelho (atraso) seguem como alertas funcionais.
  */
 @layer base {
   :root {
-    --background: 140 30% 96%; /* #F2F8F4 */
-    --foreground: 142 49% 14%; /* #12351F */
+    --background: 120 16% 96%; /* #F5F7F2 página cream */
+    --foreground: 150 29% 11%; /* #14241C texto */
 
     --card: 0 0% 100%;
-    --card-foreground: 142 49% 14%;
+    --card-foreground: 150 29% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 142 49% 14%;
+    --popover-foreground: 150 29% 11%;
 
-    --primary: 140 65% 29%; /* #1A7A3A ações */
+    --primary: 153 40% 30%; /* #2D6A4F ações */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 140 30% 92%;
-    --secondary-foreground: 142 49% 14%;
+    --secondary: 140 20% 94%;
+    --secondary-foreground: 150 29% 11%;
 
-    --muted: 140 20% 93%;
-    --muted-foreground: 142 12% 38%;
+    --muted: 140 14% 93%;
+    --muted-foreground: 150 12% 38%;
 
-    --accent: 140 49% 71%; /* #8FD9A8 destaques */
-    --accent-foreground: 142 49% 14%;
+    --accent: 129 53% 90%; /* #D8F3DC mint claro — destaques */
+    --accent-foreground: 150 29% 11%;
 
-    --destructive: 6 63% 46%; /* #C0392B */
+    --destructive: 6 63% 46%; /* #C0392B atraso/perdido */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 140 20% 87%;
-    --input: 140 20% 87%;
-    --ring: 140 65% 29%;
+    --border: 140 18% 88%;
+    --input: 140 18% 88%;
+    --ring: 153 40% 30%;
 
     /* Tokens semânticos Fin */
-    --fin-dark: 142 49% 14%;
-    --fin: 140 65% 29%;
-    --fin-light: 140 49% 71%;
+    --fin-dark: 154 43% 18%; /* #1B4332 forest */
+    --fin: 153 40% 30%; /* #2D6A4F ação */
+    --fin-light: 147 43% 71%; /* #95D5B2 mint */
 
     --warning: 39 91% 45%; /* âmbar — perto do prazo */
     --warning-foreground: 0 0% 100%;
     --danger: 6 63% 46%; /* vermelho — atraso */
     --danger-foreground: 0 0% 100%;
 
-    /* Sidebar (verde escuro) */
-    --sidebar: 142 49% 14%;
+    /* Sidebar (forest) — legado, hoje a navegação é a top bar */
+    --sidebar: 154 43% 18%;
     --sidebar-foreground: 140 30% 92%;
     --sidebar-muted: 140 20% 70%;
-    --sidebar-active: 140 65% 29%;
+    --sidebar-active: 153 40% 30%;
 
     --radius: 0.625rem;
   }

@@ -55,18 +55,25 @@ poucos usuários, todos do mesmo time.
 
 ## 3. Identidade visual da Fin (não-negociável)
 
+**"Dark forest, lifted by mint"** (Fin Design System / `Fin_Design_System.pptx`).
+
 | Token | Cor | Uso |
 |---|---|---|
-| `verde-escuro` | `#12351F` | Sidebar, títulos |
-| `verde-medio` | `#1A7A3A` | Ações primárias, botões |
-| `verde-claro` | `#8FD9A8` | Destaques, sucesso |
-| `fundo` | `#F2F8F4` | Fundo da aplicação |
-| `card` | `#FFFFFF` | Cards |
-| `ambar` | `#D9920A` (sugestão) | **Perto do prazo** |
-| `vermelho` | `#C0392B` (sugestão) | **Atraso** |
+| `forest` (verde-escuro) | `#1B4332` | Títulos, marca, superfícies escuras |
+| `verde-medio` | `#2D6A4F` | Ações primárias, botões |
+| `mint` (verde-claro) | `#95D5B2` | Destaques, sucesso |
+| `texto` | `#14241C` | Texto principal |
+| `página` | `#F5F7F2` | Fundo da aplicação (cream) |
+| `card` | `#FFFFFF` | Cards / superfícies |
+| `ambar` | `#D9920A` | **Perto do prazo** (alerta funcional) |
+| `vermelho` | `#C0392B` | **Atraso / perdido** (alerta funcional) |
 
-- Tipografia **sans-serif limpa** (Inter ou similar). Layout **arejado**, **sem gradientes** nem
-  sombras pesadas. **Mobile-first** (a usuária roda o GTM do celular em campo).
+Ramp de apoio: `#102A1E · #2D6A4F · #40916C · #74C69D · #D8F3DC`. Marca = óculos redondos
+(forest em superfície clara, mint em superfície verde-escura).
+
+- **Tipografia:** **Bricolage Grotesque** (display 800 — títulos/marca), **Hanken Grotesk** (corpo e
+  UI) e **JetBrains Mono** (figuras tabulares — valores/MRR). Layout **arejado**, **sem gradientes**
+  nem sombras pesadas. **Mobile-first** (a usuária roda o GTM do celular em campo).
 
 ---
 

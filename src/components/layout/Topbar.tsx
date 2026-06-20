@@ -26,8 +26,8 @@ export function Topbar() {
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
           <Link to="/" className="flex items-center gap-2.5">
-            <UseFinLogo className="h-[26px] w-auto text-[#1a6e5f]" />
-            <span className="text-[16px] font-semibold tracking-[-0.01em] text-[#111827]">
+            <UseFinLogo className="h-[26px] w-auto text-fin-dark" />
+            <span className="font-display text-[17px] font-extrabold tracking-[-0.02em] text-fin-dark">
               UseFin
             </span>
           </Link>
