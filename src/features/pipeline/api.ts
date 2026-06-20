@@ -1,9 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import type { Oportunidade, EstagioOport } from "@/types/db";
+import type {
+  Oportunidade,
+  EstagioOport,
+  Conta,
+  PapelContato,
+} from "@/types/db";
 
 export type OportunidadeCard = Oportunidade & {
-  conta: { nome: string; bairro: string | null } | null;
+  conta:
+    | (Conta & { contatos: { nome: string; papel: PapelContato }[] })
+    | null;
   canal: { nome: string; slug: string } | null;
 };
 
@@ -15,7 +22,9 @@ export function useOportunidades(canalId: string | "all") {
     queryFn: async (): Promise<OportunidadeCard[]> => {
       let q = supabase
         .from("oportunidades")
-        .select("*, conta:contas(nome,bairro), canal:canais(nome,slug)")
+        .select(
+          "*, conta:contas(*, contatos(nome, papel)), canal:canais(nome, slug)",
+        )
         .order("data_entrada_estagio", { ascending: false });
       if (canalId !== "all") q = q.eq("canal_id", canalId);
       const { data, error } = await q.returns<OportunidadeCard[]>();
