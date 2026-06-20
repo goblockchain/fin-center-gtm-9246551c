@@ -16,7 +16,11 @@ export const supabase = createClient<Database>(
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-      detectSessionInUrl: true,
+      // Os links de acesso/recuperação do admin chegam com os tokens no #hash
+      // (fluxo implícito). O AuthProvider lê esse hash e chama setSession
+      // explicitamente — mais robusto que o detectSessionInUrl automático.
+      detectSessionInUrl: false,
+      flowType: "implicit",
     },
   },
 );
