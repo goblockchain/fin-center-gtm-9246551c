@@ -32,12 +32,18 @@ export function ComunidadeSecao() {
     () => (metricas ?? []).find((m) => m.competencia.slice(0, 7) === comp),
     [metricas, comp],
   );
+  // Depende de valores primitivos (não da ref do objeto) para um refetch não
+  // sobrescrever o que está sendo digitado (WR-05).
+  const exTot = existente ? existente.membros_totais : null;
+  const exAtivos = existente ? existente.membros_ativos : null;
+  const exConversas = existente ? existente.conversas_iniciadas : null;
+  const exPart = existente ? existente.participacao_semanal : null;
   useEffect(() => {
-    setTot(existente ? String(existente.membros_totais) : "");
-    setAtivos(existente ? String(existente.membros_ativos) : "");
-    setConversas(existente ? String(existente.conversas_iniciadas) : "");
-    setPart(existente ? String(existente.participacao_semanal) : "");
-  }, [existente]);
+    setTot(exTot != null ? String(exTot) : "");
+    setAtivos(exAtivos != null ? String(exAtivos) : "");
+    setConversas(exConversas != null ? String(exConversas) : "");
+    setPart(exPart != null ? String(exPart) : "");
+  }, [comp, exTot, exAtivos, exConversas, exPart]);
 
   // Funil derivado dos canais de tipo "comunidade".
   const funil = useMemo(() => {

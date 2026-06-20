@@ -83,9 +83,17 @@ const norm = (s: string) =>
     .replace(/[̀-ͯ]/g, "")
     .trim();
 
-/** Pega o valor da primeira coluna cujo cabeçalho casa (por substring normalizada). */
+/**
+ * Pega o valor da coluna cujo cabeçalho casa. 1ª passada: match EXATO normalizado
+ * (evita "no" casar com "Nome"); 2ª passada: substring normalizada (flexível).
+ */
 function pick(row: CsvRow, ...needles: string[]): string {
   const entries = Object.entries(row);
+  for (const n of needles) {
+    const nn = norm(n);
+    const hit = entries.find(([k]) => norm(k) === nn);
+    if (hit && hit[1] != null) return String(hit[1]).trim();
+  }
   for (const n of needles) {
     const nn = norm(n);
     const hit = entries.find(([k]) => norm(k).includes(nn));
@@ -94,7 +102,12 @@ function pick(row: CsvRow, ...needles: string[]): string {
   return "";
 }
 
-const isSim = (v: string) => /sim|✓|true|x/i.test(v) && !/não|nao/i.test(v);
+/** "✓ Sim"/"Sim"/"true"/célula exatamente "x" => true. Não casa "Box"/"Next". */
+const isSim = (v: string) => {
+  const t = v.trim();
+  if (/n[aã]o/i.test(t)) return false;
+  return /sim|✓|true/i.test(t) || /^x$/i.test(t);
+};
 
 function parseTemp(v: string): Temperatura {
   if (/🔥|quente/i.test(v)) return "quente";
@@ -114,7 +127,17 @@ function dataBR(v: string): string | null {
   if (!m) return null;
   const [, d, mo, y] = m;
   const yyyy = y.length === 2 ? `20${y}` : y;
-  return `${yyyy}-${mo.padStart(2, "0")}-${d.padStart(2, "0")}`;
+  const iso = `${yyyy}-${mo.padStart(2, "0")}-${d.padStart(2, "0")}`;
+  // valida que é uma data real (rejeita 32/13, 31/02 etc. — senão o insert falha)
+  const dt = new Date(`${iso}T00:00:00`);
+  if (
+    Number.isNaN(dt.getTime()) ||
+    dt.getMonth() + 1 !== Number(mo) ||
+    dt.getDate() !== Number(d)
+  ) {
+    return null;
+  }
+  return iso;
 }
 
 const PROB: Record<EstagioOport, number> = {
@@ -177,7 +200,7 @@ export function buildImportPayload(
       data_primeiro_contato: dcontato,
       proxima_acao: pick(row, "prox", "próx", "proxima acao") || null,
       obs: pick(row, "obs", "notes", "observ") || null,
-      ref_externa: pick(row, "no", "nº", "numero") || null,
+      ref_externa: pick(row, "nº", "n°", "nro", "numero") || null,
     });
 
     const estagio = estagioDe(temperatura, contatado);

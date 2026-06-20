@@ -76,3 +76,38 @@ describe("inspecionarColunas — revisão da planilha", () => {
     expect(c.nome).toBe(false);
   });
 });
+
+describe("correções do code review (import)", () => {
+  it("WR-01: ref_externa pega o Nº, não o Nome", () => {
+    const p = buildImportPayload([{ "Nº": "101", Nome: "Café X" }], "c1");
+    expect(p.contas[0].ref_externa).toBe("101");
+    expect(p.contas[0].nome).toBe("Café X");
+  });
+
+  it("WR-02: data inválida vira null (não corrompe o insert)", () => {
+    const ruim = buildImportPayload(
+      [{ Nome: "Café Y", "Data Contato": "32/13/2026" }],
+      "c1",
+    );
+    expect(ruim.contas[0].data_primeiro_contato).toBeNull();
+    const overflow = buildImportPayload(
+      [{ Nome: "Café W", "Data Contato": "31/02/2026" }],
+      "c1",
+    );
+    expect(overflow.contas[0].data_primeiro_contato).toBeNull();
+    const ok = buildImportPayload(
+      [{ Nome: "Café Z", "Data Contato": "05/06/2026" }],
+      "c1",
+    );
+    expect(ok.contas[0].data_primeiro_contato).toBe("2026-06-05");
+  });
+
+  it("WR-04: isSim não casa 'x' embutido em palavras", () => {
+    const box = buildImportPayload([{ Nome: "A", "Visitada?": "Box" }], "c1");
+    expect(box.contas[0].visitada).toBe(false);
+    const sim = buildImportPayload([{ Nome: "B", "Visitada?": "✓ Sim" }], "c1");
+    expect(sim.contas[0].visitada).toBe(true);
+    const x = buildImportPayload([{ Nome: "C", "Visitada?": "x" }], "c1");
+    expect(x.contas[0].visitada).toBe(true);
+  });
+});

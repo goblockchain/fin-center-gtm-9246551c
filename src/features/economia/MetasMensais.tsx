@@ -16,11 +16,14 @@ export function MetasMensais() {
     () => (metas ?? []).find((m) => m.competencia.slice(0, 7) === comp),
     [metas, comp],
   );
-  // Pré-preenche com a meta já salva do mês escolhido.
+  // Pré-preenche com a meta salva. Depende de valores primitivos (não da ref do
+  // objeto), senão um refetch sobrescreveria o que está sendo digitado (WR-05).
+  const exMrr = existente ? Number(existente.meta_mrr) : null;
+  const exClientes = existente ? existente.meta_clientes : null;
   useEffect(() => {
-    setMrr(existente ? String(Number(existente.meta_mrr)) : "");
-    setClientes(existente ? String(existente.meta_clientes) : "");
-  }, [existente]);
+    setMrr(exMrr != null ? String(exMrr) : "");
+    setClientes(exClientes != null ? String(exClientes) : "");
+  }, [comp, exMrr, exClientes]);
 
   function salvar() {
     if (!comp) return;
