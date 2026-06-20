@@ -28,12 +28,18 @@ function ProjetoRow({ p }: { p: Projeto }) {
   const atualizar = useAtualizarProjeto();
   const excluir = useExcluirProjeto();
   const [nome, setNome] = useState(p.nome);
+  const [erro, setErro] = useState<string | null>(null);
 
   // Sincroniza só quando o valor canônico muda (não enquanto digito).
   useEffect(() => setNome(p.nome), [p.nome]);
 
-  const salvar = (patch: Partial<Projeto>) =>
-    atualizar.mutate({ id: p.id, patch });
+  const salvar = (patch: Partial<Projeto>) => {
+    setErro(null);
+    atualizar.mutate(
+      { id: p.id, patch },
+      { onError: () => setErro("Não salvou — tente de novo.") },
+    );
+  };
 
   return (
     <tr>
@@ -48,12 +54,20 @@ function ProjetoRow({ p }: { p: Projeto }) {
           }}
           className="w-full rounded bg-transparent px-1 py-0.5 text-sm font-medium text-fin-dark outline-none hover:bg-secondary/50 focus:bg-secondary"
         />
+        {erro && (
+          <p className="mt-0.5 px-1 text-[10px] text-destructive">{erro}</p>
+        )}
       </td>
       <td className="px-2 py-1.5">
         <Input
           type="date"
           value={p.data_inicio}
-          onChange={(e) => e.target.value && salvar({ data_inicio: e.target.value })}
+          onChange={(e) => {
+            const v = e.target.value;
+            if (!v) return;
+            if (v > p.prazo) setErro("Início não pode ser depois do prazo.");
+            else salvar({ data_inicio: v });
+          }}
           className="h-8 w-36"
         />
       </td>
@@ -61,7 +75,12 @@ function ProjetoRow({ p }: { p: Projeto }) {
         <Input
           type="date"
           value={p.prazo}
-          onChange={(e) => e.target.value && salvar({ prazo: e.target.value })}
+          onChange={(e) => {
+            const v = e.target.value;
+            if (!v) return;
+            if (v < p.data_inicio) setErro("Prazo não pode ser antes do início.");
+            else salvar({ prazo: v });
+          }}
           className="h-8 w-36"
         />
       </td>
@@ -85,7 +104,11 @@ function ProjetoRow({ p }: { p: Projeto }) {
       <td className="px-2 py-1.5 text-right">
         <button
           type="button"
-          onClick={() => excluir.mutate(p.id)}
+          onClick={() =>
+            excluir.mutate(p.id, {
+              onError: () => setErro("Não foi possível excluir."),
+            })
+          }
           className="text-muted-foreground hover:text-destructive"
           aria-label={`Excluir projeto ${p.nome}`}
         >
@@ -104,10 +127,17 @@ export function ProjetosPanel() {
   const [inicio, setInicio] = useState("");
   const [prazo, setPrazo] = useState("");
   const [status, setStatus] = useState<StatusTarefa>("a_fazer");
+  const [addErro, setAddErro] = useState<string | null>(null);
 
   function adicionar() {
     if (!nome.trim() || !inicio || !prazo) return;
-    const ordem = (projetos ?? []).length + 1;
+    if (prazo < inicio) {
+      setAddErro("O prazo não pode ser antes do início.");
+      return;
+    }
+    setAddErro(null);
+    // ordem = maior existente + 1 (não a contagem, que colide após exclusões).
+    const ordem = Math.max(0, ...(projetos ?? []).map((p) => p.ordem)) + 1;
     criar.mutate(
       { nome: nome.trim(), data_inicio: inicio, prazo, status, ordem },
       {
@@ -117,6 +147,7 @@ export function ProjetosPanel() {
           setPrazo("");
           setStatus("a_fazer");
         },
+        onError: () => setAddErro("Não foi possível adicionar o projeto."),
       },
     );
   }
@@ -172,6 +203,9 @@ export function ProjetosPanel() {
           <Plus className="h-4 w-4" />
         </button>
       </div>
+      {addErro && (
+        <p className="mt-1.5 text-xs text-destructive">{addErro}</p>
+      )}
 
       {/* Lista editável */}
       {lista.length ? (

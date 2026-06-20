@@ -1,22 +1,22 @@
 import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { dataCurta } from "@/lib/datas";
+import { dataCurta, urgencia, hojeISO, DIA } from "@/lib/datas";
 import type { Projeto } from "@/types/db";
 import { useProjetos } from "./projetos";
 import { useGates } from "./api";
 import { calcularTimeline } from "./timeline";
 
-const DIA = 86_400_000;
-const ms = (iso: string) => new Date(`${iso}T00:00:00`).getTime();
 const LABEL = "9rem";
 
-/** Cor da barra: status + regra de prazo (§10.5 — âmbar perto, vermelho vencido). */
-function corProjeto(p: Projeto, hojeIso: string): { bar: string; texto: string } {
+/** Cor da barra: cor própria (override) > feito > regra de prazo §10.5 (vermelho
+ *  vencido, âmbar ≤2 dias — via `urgencia`, em hora local) > status. */
+function corProjeto(p: Projeto): { bar?: string; texto: string; corHex?: string } {
+  if (p.cor) return { texto: "text-white", corHex: p.cor };
   if (p.status === "feito") return { bar: "bg-fin-dark", texto: "text-white" };
-  if (p.prazo < hojeIso) return { bar: "bg-destructive", texto: "text-white" };
-  const dias = Math.ceil((ms(p.prazo) - ms(hojeIso)) / DIA);
-  if (dias <= 2) return { bar: "bg-warning", texto: "text-white" };
+  const u = urgencia(p.prazo);
+  if (u === "vencido") return { bar: "bg-destructive", texto: "text-white" };
+  if (u === "perto") return { bar: "bg-warning", texto: "text-white" };
   if (p.status === "fazendo") return { bar: "bg-fin", texto: "text-white" };
   return { bar: "bg-fin-light", texto: "text-fin-dark" };
 }
@@ -32,7 +32,7 @@ const LEGENDA: { cls: string; label: string }[] = [
 export function Gantt() {
   const { data: projetos } = useProjetos();
   const { data: gates } = useGates();
-  const hojeIso = new Date().toISOString().slice(0, 10);
+  const hojeIso = hojeISO();
 
   const tl = useMemo(() => {
     const datas: (string | null)[] = [];
@@ -44,6 +44,7 @@ export function Gantt() {
   }, [projetos, gates]);
 
   const lista = projetos ?? [];
+  const span = tl.fimMs - tl.inicioMs;
   const larguraMin = Math.max(560, tl.semanas * 64 + 144);
 
   return (
@@ -61,21 +62,23 @@ export function Gantt() {
       </div>
 
       <div className="relative" style={{ minWidth: larguraMin }}>
-        {/* Cabeçalho de semanas (dinâmico) */}
+        {/* Cabeçalho de semanas — posicionado por % p/ casar com as barras */}
         <div className="grid" style={{ gridTemplateColumns: `${LABEL} 1fr` }}>
           <div />
-          <div
-            className="grid border-b border-border pb-1"
-            style={{ gridTemplateColumns: `repeat(${tl.semanas}, minmax(0,1fr))` }}
-          >
-            {Array.from({ length: tl.semanas }, (_, i) => (
-              <div
-                key={i}
-                className="border-l border-border/60 pl-1 text-[10px] text-muted-foreground"
-              >
-                S{i + 1}
-              </div>
-            ))}
+          <div className="relative h-4 border-b border-border">
+            {Array.from({ length: tl.semanas }, (_, i) => {
+              const left = ((i * 7 * DIA) / span) * 100;
+              if (left > 100) return null;
+              return (
+                <div
+                  key={i}
+                  className="absolute top-0 border-l border-border/60 pl-1 text-[10px] text-muted-foreground"
+                  style={{ left: `${left}%` }}
+                >
+                  S{i + 1}
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -91,7 +94,7 @@ export function Gantt() {
             const left = tl.pos(p.data_inicio) ?? 0;
             const right = tl.pos(p.prazo) ?? 0;
             const width = Math.max(1.5, right - left);
-            const cor = corProjeto(p, hojeIso);
+            const cor = corProjeto(p);
             return (
               <div
                 key={p.id}
@@ -107,7 +110,11 @@ export function Gantt() {
                       "absolute top-0 flex h-6 items-center rounded px-2",
                       cor.bar,
                     )}
-                    style={{ left: `${left}%`, width: `${width}%` }}
+                    style={{
+                      left: `${left}%`,
+                      width: `${width}%`,
+                      ...(cor.corHex ? { backgroundColor: cor.corHex } : {}),
+                    }}
                     title={`${p.nome}: ${dataCurta(p.data_inicio)} → ${dataCurta(p.prazo)}`}
                   >
                     <span className={cn("truncate text-[10px] font-medium", cor.texto)}>

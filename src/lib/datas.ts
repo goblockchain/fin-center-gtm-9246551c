@@ -1,4 +1,12 @@
-const DIA = 86_400_000;
+export const DIA = 86_400_000;
+
+/** Data de HOJE em yyyy-mm-dd, meia-noite LOCAL (nunca via UTC/toISOString). */
+export function hojeISO(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate(),
+  ).padStart(2, "0")}`;
+}
 
 /** Dias de hoje até a data (negativo = passado). null se sem data. */
 export function diasAte(dateISO: string | null | undefined): number | null {

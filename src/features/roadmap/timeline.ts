@@ -1,6 +1,6 @@
+import { DIA } from "@/lib/datas";
 import { SPRINT_INICIO, SPRINT_FIM } from "./api";
 
-const DIA = 86_400_000;
 const ms = (iso: string) => new Date(`${iso}T00:00:00`).getTime();
 const toIso = (m: number) => new Date(m).toISOString().slice(0, 10);
 
