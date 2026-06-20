@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
-import { Bell, ChevronDown, LogOut, Menu, X } from "lucide-react";
+import { Bell, ChevronDown, LogOut, Menu, X, UserCog } from "lucide-react";
 import { NAV_ITEMS } from "@/lib/nav";
 import { useAuth } from "@/features/auth/AuthProvider";
+import { ContaDialog } from "@/features/auth/ContaDialog";
 import { UseFinLogo } from "./UseFinLogo";
 import { cn } from "@/lib/utils";
 
@@ -10,6 +11,7 @@ export function Topbar() {
   const { user, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
+  const [contaOpen, setContaOpen] = useState(false);
   const email = user?.email ?? "";
 
   return (
@@ -88,6 +90,16 @@ export function Topbar() {
                     type="button"
                     onClick={() => {
                       setUserOpen(false);
+                      setContaOpen(true);
+                    }}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[#374151] hover:bg-[#f3f4f6]"
+                  >
+                    <UserCog className="h-4 w-4" /> Conta e perfis
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserOpen(false);
                       signOut();
                     }}
                     className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[#374151] hover:bg-[#f3f4f6]"
@@ -125,6 +137,8 @@ export function Topbar() {
           ))}
         </nav>
       )}
+
+      <ContaDialog open={contaOpen} onOpenChange={setContaOpen} />
     </header>
   );
 }

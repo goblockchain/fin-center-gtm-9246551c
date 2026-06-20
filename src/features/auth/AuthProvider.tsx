@@ -15,6 +15,14 @@ type AuthContextValue = {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
   signOut: () => Promise<void>;
+  /** Troca a senha do usuário logado (não depende de e-mail). */
+  updatePassword: (password: string) => Promise<{ error?: string }>;
+  /** Cria um novo perfil de acesso (via Edge Function, auto-confirmado). */
+  criarPerfil: (input: {
+    email: string;
+    password: string;
+    nome?: string;
+  }) => Promise<{ error?: string }>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -53,6 +61,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       signOut: async () => {
         await supabase.auth.signOut();
+      },
+      updatePassword: async (password) => {
+        const { error } = await supabase.auth.updateUser({ password });
+        return error ? { error: error.message } : {};
+      },
+      criarPerfil: async ({ email, password, nome }) => {
+        const { data, error } = await supabase.functions.invoke("criar-perfil", {
+          body: { email, password, nome },
+        });
+        if (error) {
+          // Erro HTTP da função: a mensagem útil vem no corpo da resposta.
+          let msg = error.message;
+          try {
+            const ctx = (error as { context?: Response }).context;
+            if (ctx && typeof ctx.json === "function") {
+              const j = await ctx.json();
+              if (j?.error) msg = j.error;
+            }
+          } catch {
+            /* mantém msg padrão */
+          }
+          return { error: msg };
+        }
+        if (data?.error) return { error: data.error };
+        return {};
       },
     }),
     [session, loading],
