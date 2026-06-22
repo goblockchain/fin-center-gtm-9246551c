@@ -40,7 +40,9 @@ import {
   useContaOportunidade,
   useAtualizarConta,
   useAtualizarPlano,
+  useAtualizarCanalDaOport,
 } from "./api";
+import { useCanais } from "@/features/canais/api";
 import { useVozesDaConta } from "@/features/voz/api";
 import { TIPO_VOZ_META } from "@/features/voz/tipos";
 import type {
@@ -90,6 +92,7 @@ function Linha({
 type Form = {
   nome: string;
   temperatura: Temperatura;
+  canalId: string;
   responsavel: string;
   telefone: string;
   instagram: string;
@@ -118,8 +121,10 @@ export function ContaSheet({
   const { data: interacoes } = useInteracoes(cid);
   const { data: oport } = useContaOportunidade(cid);
   const { data: vozes } = useVozesDaConta(cid);
+  const { data: canais } = useCanais();
   const atualizarConta = useAtualizarConta();
   const atualizarPlano = useAtualizarPlano();
+  const atualizarCanal = useAtualizarCanalDaOport();
 
   const [editando, setEditando] = useState(false);
   const [form, setForm] = useState<Form | null>(null);
@@ -133,6 +138,7 @@ export function ContaSheet({
     setForm({
       nome: conta.nome ?? "",
       temperatura: conta.temperatura,
+      canalId: conta.canal_origem_id,
       responsavel: conta.responsavel ?? "",
       telefone: conta.telefone ?? "",
       instagram: conta.instagram ?? "",
@@ -154,6 +160,7 @@ export function ContaSheet({
       patch: {
         nome: form.nome.trim() || conta.nome,
         temperatura: form.temperatura,
+        canal_origem_id: form.canalId,
         responsavel: nn(form.responsavel),
         telefone: nn(form.telefone),
         instagram: nn(form.instagram),
@@ -168,10 +175,16 @@ export function ContaSheet({
     if (oport && Number(oport.valor_mrr) !== form.valor) {
       await atualizarPlano.mutateAsync({ oportId: oport.id, valor: form.valor });
     }
+    if (oport && oport.canal_id !== form.canalId) {
+      await atualizarCanal.mutateAsync({ oportId: oport.id, canalId: form.canalId });
+    }
     setEditando(false);
   }
 
-  const salvando = atualizarConta.isPending || atualizarPlano.isPending;
+  const salvando =
+    atualizarConta.isPending ||
+    atualizarPlano.isPending ||
+    atualizarCanal.isPending;
   const set = <K extends keyof Form>(k: K, v: Form[K]) =>
     setForm((f) => (f ? { ...f, [k]: v } : f));
 
@@ -404,6 +417,24 @@ export function ContaSheet({
                   </Select>
                 </Campo>
               </div>
+
+              <Campo label="Canal (fonte)">
+                <Select
+                  value={form.canalId}
+                  onValueChange={(v) => set("canalId", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Canal" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(canais ?? []).map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Campo>
 
               <Campo label="Responsável">
                 <Input

@@ -134,6 +134,26 @@ export function useContaOportunidade(contaId?: string) {
   });
 }
 
+/** Reatribui a oportunidade da conta a outro canal (a "fonte" do lead). */
+export function useAtualizarCanalDaOport() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: { oportId: string; canalId: string }) => {
+      const { error } = await supabase
+        .from("oportunidades")
+        .update({ canal_id: vars.canalId })
+        .eq("id", vars.oportId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["oportunidade", "por-conta"] });
+      qc.invalidateQueries({ queryKey: ["oportunidades"] });
+      qc.invalidateQueries({ queryKey: ["canal_kpis"] });
+      qc.invalidateQueries({ queryKey: ["canal_execucao"] });
+    },
+  });
+}
+
 /** Troca o plano de uma oportunidade (valor_mrr = 250 ou 850). */
 export function useAtualizarPlano() {
   const qc = useQueryClient();
