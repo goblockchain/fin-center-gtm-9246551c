@@ -7,6 +7,7 @@ import {
   useCanalKpis,
 } from "@/features/canais/api";
 import { CanalCard } from "@/features/canais/CanalCard";
+import { CanaisResumo } from "@/features/canais/CanaisResumo";
 
 export function CanaisPage() {
   const { data: canais } = useCanais();
@@ -28,6 +29,8 @@ export function CanaisPage() {
         title="Canais"
         description="Cada canal em um card só: o que já foi feito, quanto custou, o resultado e o prazo."
       />
+
+      <CanaisResumo />
 
       {isLoading ? (
         <div className="flex items-center justify-center gap-2 py-16 text-muted-foreground">
