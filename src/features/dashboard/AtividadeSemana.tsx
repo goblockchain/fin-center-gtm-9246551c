@@ -8,9 +8,33 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import { dataCurta } from "@/lib/datas";
 import { useCanais } from "@/features/canais/api";
 import { usePipelineSemana, agregarSemanas } from "./atividade";
+
+/** Variação % de uma métrica vs. a semana anterior (mais antiga da lista). */
+function Delta({ cur, ant }: { cur: number; ant: number | undefined }) {
+  if (ant == null) return null; // semana mais antiga: nada para comparar
+  if (ant === 0)
+    return cur > 0 ? (
+      <span className="ml-1.5 text-[10px] font-medium text-fin">novo</span>
+    ) : null;
+  const d = (cur - ant) / ant;
+  if (d === 0)
+    return <span className="ml-1.5 text-[10px] text-muted-foreground">0%</span>;
+  const up = d > 0;
+  return (
+    <span
+      className={cn(
+        "ml-1.5 text-[10px] font-medium",
+        up ? "text-fin" : "text-destructive",
+      )}
+    >
+      {up ? "▲" : "▼"} {Math.abs(Math.round(d * 100))}%
+    </span>
+  );
+}
 
 export function AtividadeSemana() {
   const { data: linhas } = usePipelineSemana();
@@ -61,25 +85,31 @@ export function AtividadeSemana() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {semanas.map((s) => (
-                  <tr key={s.semana}>
-                    <td className="px-4 py-2 text-fin-dark">
-                      {dataCurta(s.semana).slice(0, 5)}
-                      <span className="ml-1 text-[11px] text-muted-foreground">
-                        (semana)
-                      </span>
-                    </td>
-                    <td className="px-2 py-2 text-right text-fin-dark">
-                      {s.contatos}
-                    </td>
-                    <td className="px-2 py-2 text-right text-fin-dark">
-                      {s.reunioes}
-                    </td>
-                    <td className="px-4 py-2 text-right font-medium text-fin">
-                      {s.fechamentos}
-                    </td>
-                  </tr>
-                ))}
+                {semanas.map((s, i) => {
+                  const ant = semanas[i + 1];
+                  return (
+                    <tr key={s.semana}>
+                      <td className="px-4 py-2 text-fin-dark">
+                        {dataCurta(s.semana).slice(0, 5)}
+                        <span className="ml-1 text-[11px] text-muted-foreground">
+                          (semana)
+                        </span>
+                      </td>
+                      <td className="px-2 py-2 text-right text-fin-dark">
+                        {s.contatos}
+                        <Delta cur={s.contatos} ant={ant?.contatos} />
+                      </td>
+                      <td className="px-2 py-2 text-right text-fin-dark">
+                        {s.reunioes}
+                        <Delta cur={s.reunioes} ant={ant?.reunioes} />
+                      </td>
+                      <td className="px-4 py-2 text-right font-medium text-fin">
+                        {s.fechamentos}
+                        <Delta cur={s.fechamentos} ant={ant?.fechamentos} />
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
               <tfoot>
                 <tr className="border-t border-border text-sm font-semibold">
@@ -105,7 +135,8 @@ export function AtividadeSemana() {
         <p className="border-t border-border px-4 py-2 text-[11px] text-muted-foreground">
           Atualiza sozinho quando você move um lead no Pipeline — você não marca
           data. Cada lead conta na semana em que virou contato, reunião ou
-          fechamento.
+          fechamento. <span className="font-medium text-fin">▲▼ %</span> = vs. a
+          semana anterior.
         </p>
       </CardContent>
     </Card>

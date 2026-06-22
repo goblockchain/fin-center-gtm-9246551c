@@ -67,6 +67,29 @@
   }
 }
 
+/* Barra de rolagem horizontal visível e branded (usada no Pipeline). Mostra
+   sempre quando há overflow, em vez do scrollbar overlay que some. */
+.scroll-x-bar {
+  scrollbar-color: hsl(var(--fin)) hsl(var(--secondary));
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+}
+.scroll-x-bar::-webkit-scrollbar {
+  height: 10px;
+}
+.scroll-x-bar::-webkit-scrollbar-track {
+  background: hsl(var(--secondary));
+  border-radius: 9999px;
+}
+.scroll-x-bar::-webkit-scrollbar-thumb {
+  background: hsl(var(--fin));
+  border-radius: 9999px;
+  border: 2px solid hsl(var(--secondary));
+}
+.scroll-x-bar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--fin-dark));
+}
+
 /* Impressão / Exportar PDF (aba Relatório). Cores fiéis, margens e sem cortar
    cartões no meio da página. A top bar e os botões usam `print:hidden`. */
 @media print {

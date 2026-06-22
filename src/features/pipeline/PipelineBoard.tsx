@@ -188,7 +188,7 @@ export function PipelineBoard({ canalId }: { canalId: string | "all" }) {
   return (
     <>
       <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
-        <div className="flex gap-3 overflow-x-auto pb-4">
+        <div className="scroll-x-bar flex gap-3 overflow-x-auto pb-4">
           {ESTAGIOS.map((e) => (
             <Coluna
               key={e}
