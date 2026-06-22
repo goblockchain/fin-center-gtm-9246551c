@@ -1,7 +1,7 @@
 -- ============================================================================
 -- UseFin — seed.sql  (base REAL da Sprint de Validação de Canais)
 -- Gerado de: CRM Consolidado (1).xlsx — aba 📋 Prospecção.
--- 5 canais · 212 cafeterias (contas) · 212 oportunidades · 29 tarefas · 2 gates.
+-- 6 canais (inclui tráfego pago) · 212 cafeterias (contas) · 212 oportunidades · 29 tarefas · 2 gates.
 -- Sem dados fictícios. Investimento zerado (a usuária lança custos reais em Roadmap › Custos).
 -- O tracking semanal (pipeline_eventos) é semeado pelas DATAS REAIS de contato e,
 -- daí em diante, atualiza sozinho a cada mudança de estágio (trigger trg_log_pipeline_evento).
@@ -29,6 +29,18 @@ insert into investimentos (canal_id,planejado,executado,periodo) values
 ('ee59e5dc-f871-5187-9cb6-f769b03dd9f6',0,0,'Sprint 16/jun–24/ago'),
 ('84043611-274c-5fbc-9c5f-cf8bf7fd12a6',0,0,'Sprint 16/jun–24/ago'),
 ('ef3be889-0994-57f5-9665-c3e04d1fc4ce',0,0,'Sprint 16/jun–24/ago');
+
+-- ---------- Tipo de cada canal (categorização malleável) + canal de tráfego pago ----------
+update canais set tipo='parceria'   where slug='base-yungas';
+update canais set tipo='comunidade' where slug='member-get-member';
+update canais set tipo='indicacao'  where slug='indicacoes';
+update canais set tipo='outbound'   where slug='outbound';
+update canais set tipo='inbound'    where slug='inbound';
+
+insert into canais (id,slug,nome,prioridade,tipo,hipotese,teste_minimo,metrica_sucesso,meta_vs_baseline,responsavel,gate_data,ordem) values
+('3282e1f7-d559-4eb2-b6ed-4222054b6687','trafego-pago','Tráfego pago',6,'midia','Anúncios pagos (Meta/Google) geram leads qualificados a um CAC previsível.','Campanha de teste com orçamento controlado; medir CAC e qualidade dos leads.','CAC ≤ alvo e leads qualificados.','CAC competitivo vs. canais orgânicos.','Natalia','2026-07-18',6);
+insert into investimentos (canal_id,planejado,executado,periodo) values
+('3282e1f7-d559-4eb2-b6ed-4222054b6687',0,0,'Sprint 16/jun–24/ago');
 
 -- ---------- Gates de decisão ----------
 insert into gates (nome,data,criterio,decisao_possivel,ordem) values

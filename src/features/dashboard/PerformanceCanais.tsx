@@ -13,6 +13,7 @@ const TIPO_LABEL: Record<string, string> = {
   evento: "Evento",
   conteudo: "Conteúdo",
   indicacao: "Indicação",
+  midia: "Mídia paga",
   outro: "Outro",
 };
 
