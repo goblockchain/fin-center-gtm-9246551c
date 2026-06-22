@@ -31,6 +31,18 @@ const RT_KEYS = [
   ["pipeline_semana"],
 ] as const;
 
+/** Divisor de grupo — dá hierarquia/narrativa ao dashboard. */
+function Grupo({ titulo, hint }: { titulo: string; hint?: string }) {
+  return (
+    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 border-b border-border pb-2 pt-3">
+      <h2 className="text-sm font-bold uppercase tracking-wide text-fin-dark">
+        {titulo}
+      </h2>
+      {hint && <span className="text-xs text-muted-foreground">{hint}</span>}
+    </div>
+  );
+}
+
 export function DashboardPage() {
   useRealtime(RT_TABELAS, RT_KEYS);
 
@@ -41,35 +53,28 @@ export function DashboardPage() {
         description="Receita por canal, ao vivo. De onde vêm os clientes, qual canal rende mais e onde focar agora."
       />
 
-      {/* Ação primeiro */}
+      {/* Ação primeiro, depois os números do topo */}
       <FocoHoje />
-
-      {/* Seção 1 — Visão executiva (receita + período + origem) */}
       <VisaoExecutiva />
 
-      {/* Seção 2 — Performance por canal (visão única de CAC/MRR/ROI por canal) */}
+      {/* Decisão de receita: qual canal escalar */}
+      <Grupo titulo="Desempenho por canal" hint="onde investir — CAC, MRR e ROI" />
       <PerformanceCanais />
-
-      {/* Seção 10 — Recomendações automáticas */}
       <Recomendacoes />
 
-      {/* Saúde do pipeline: funil ao vivo + distribuição de contatos */}
+      {/* Saúde comercial: onde estão os negócios agora */}
+      <Grupo titulo="Saúde do pipeline" hint="onde estão os negócios agora" />
       <div className="grid gap-4 [&>*]:min-w-0 lg:grid-cols-2">
         <Funil />
         <FunilDistribuicao />
       </div>
-
-      {/* Seção 3 — Funil por canal */}
       <FunilPorCanal />
-
-      {/* Atividade semanal do pipe (contatos/reuniões/fechamentos) + filtro por canal */}
       <AtividadeSemana />
 
-      {/* Rastreio semanal (grava toda sexta) + Seção 8 — Tendências */}
+      {/* Trajetória: semana a semana e para onde vai */}
+      <Grupo titulo="Evolução no tempo" hint="semana a semana e projeção" />
       <EvolucaoSemanal />
       <TendenciasCanais />
-
-      {/* Projeção transparente */}
       <Projecao />
     </div>
   );
