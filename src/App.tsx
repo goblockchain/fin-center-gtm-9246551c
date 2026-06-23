@@ -36,6 +36,9 @@ const RelatorioPage = lazy(() =>
 const CrescimentoPage = lazy(() =>
   named(import("@/pages/CrescimentoPage"), "CrescimentoPage"),
 );
+const DefinirSenhaPage = lazy(() =>
+  named(import("@/pages/DefinirSenhaPage"), "DefinirSenhaPage"),
+);
 
 function Fallback() {
   return (
@@ -136,6 +139,14 @@ export default function App() {
           element={
             <Suspense fallback={<Fallback />}>
               <CrescimentoPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="definir-senha"
+          element={
+            <Suspense fallback={<Fallback />}>
+              <DefinirSenhaPage />
             </Suspense>
           }
         />
