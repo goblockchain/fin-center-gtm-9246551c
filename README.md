@@ -41,7 +41,8 @@ Todo o backend é reproduzível só com os arquivos deste repo. Para subir uma c
    modelos, a **base real (212 contas/oportunidades)** e os projetos da linha do tempo.
 4. **Auth:** crie o primeiro usuário (e-mail/senha) no painel → Authentication. O app inteiro
    fica atrás do login. (Sem SMTP configurado, deixe `Confirm email` off para o usuário entrar
-   na hora.)
+   na hora.) **Desligue o cadastro público** (Authentication → Sign In/Providers → "Allow new
+   users to sign up" off): novos perfis vêm só pelo menu **Conta e perfis** dentro do app.
 5. *(Opcional)* Edge Function `criar-perfil` (criação de novos perfis) em
    [`supabase/functions/criar-perfil`](supabase/functions/criar-perfil).
 
