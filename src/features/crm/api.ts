@@ -33,7 +33,12 @@ export function useContas(filters: ContaFilters) {
       if (filters.canalId !== "all")
         q = q.eq("canal_origem_id", filters.canalId);
       const busca = filters.busca.trim();
-      if (busca) q = q.or(`nome.ilike.%${busca}%,bairro.ilike.%${busca}%`);
+      if (busca) {
+        // Remove caracteres que o PostgREST interpreta na sintaxe do filtro
+        // (vírgula, parênteses, *, :, ., aspas, %) — evita injeção de filtro.
+        const t = busca.replace(/[,()*:."'\\%]/g, " ").trim();
+        if (t) q = q.or(`nome.ilike.%${t}%,bairro.ilike.%${t}%`);
+      }
       const { data, error } = await q;
       if (error) throw error;
       return data ?? [];
