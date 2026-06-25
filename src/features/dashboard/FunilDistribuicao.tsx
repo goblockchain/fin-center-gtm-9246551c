@@ -4,21 +4,23 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useFunil } from "./api";
 import type { EstagioOport } from "@/types/db";
 
+// Rótulos alinhados ao vocabulário canônico do funil (ESTAGIO_META / Pipeline)
+// — a rosca agrupa as etapas finais, mas usa os mesmos nomes de etapa.
 const SEGMENTOS: {
   nome: string;
   cor: string;
   estagios: EstagioOport[];
 }[] = [
-  { nome: "Sem contato ainda", cor: "#94a3b8", estagios: ["cadastrado"] },
-  { nome: "Contatadas", cor: "#38bdf8", estagios: ["contatado"] },
-  { nome: "Decisor contatado", cor: "#818cf8", estagios: ["qualificado"] },
+  { nome: "Cadastrado", cor: "#94a3b8", estagios: ["cadastrado"] },
+  { nome: "Contatado", cor: "#38bdf8", estagios: ["contatado"] },
+  { nome: "Qualificado", cor: "#818cf8", estagios: ["qualificado"] },
   {
-    nome: "Reuniões agendadas",
+    nome: "Reunião+",
     cor: "#f59e0b",
     estagios: ["reuniao", "proposta", "negociacao"],
   },
   {
-    nome: "Fechadas",
+    nome: "Fechado",
     cor: "#1A7A3A",
     estagios: ["fechado_ganho", "fechado_perdido"],
   },
