@@ -1,7 +1,7 @@
 -- ============================================================================
 -- UseFin — seed.sql  (base REAL da Sprint de Validação de Canais)
 -- Gerado de: CRM Consolidado (1).xlsx — aba 📋 Prospecção.
--- 6 canais (inclui tráfego pago) · 212 cafeterias (contas) · 212 oportunidades · 29 tarefas · 2 gates.
+-- 6 canais (inclui tráfego pago) · 207 cafeterias (212 importadas − 5 dedup) · 29 tarefas · 2 gates.
 -- Sem dados fictícios. Investimento zerado (a usuária lança custos reais em Roadmap › Custos).
 -- O tracking semanal (pipeline_eventos) é semeado pelas DATAS REAIS de contato e,
 -- daí em diante, atualiza sozinho a cada mudança de estágio (trigger trg_log_pipeline_evento).
@@ -624,6 +624,30 @@ insert into interacoes (conta_id,canal_id,tipo,data,resumo,autor) values
 ('05552cd0-8a0f-4084-b7ce-6cffc37a7aba','84043611-274c-5fbc-9c5f-cf8bf7fd12a6','whatsapp','2026-06-20','Primeiro contato via WhatsApp','Nathalia'),
 ('0a0e198a-5a99-4313-9621-060fb25eeef7','84043611-274c-5fbc-9c5f-cf8bf7fd12a6','whatsapp','2026-06-20','Primeiro contato via WhatsApp','Nathalia'),
 ('0e81fb1a-1e74-484f-ab38-4cc4d1c72212','84043611-274c-5fbc-9c5f-cf8bf7fd12a6','whatsapp','2026-06-20','Primeiro contato via WhatsApp','Nathalia');
+
+-- ---------- Dedup das contas (a planilha trouxe repetidas) — mesclagem sem perda ----------
+-- Mantém a de estágio mais avançado, move contatos/interações/provas/log e remove a
+-- duplicata (cascade limpa a oportunidade menos avançada). Roda antes do baseline.
+do $$
+declare g record; keep uuid; d record;
+begin
+  for g in select lower(trim(nome)) n from contas group by 1 having count(*)>1 loop
+    select c.id into keep from contas c join oportunidades o on o.conta_id=c.id
+      where lower(trim(c.nome))=g.n
+      order by array_position(array['fechado_perdido','cadastrado','contatado','qualificado','reuniao','proposta','negociacao','fechado_ganho']::text[], o.estagio::text) desc,
+        (select count(*) from interacoes i where i.conta_id=c.id) desc,
+        (select count(*) from contatos ct where ct.conta_id=c.id) desc, c.created_at asc limit 1;
+    for d in select c.id, c.telefone from contas c where lower(trim(c.nome))=g.n and c.id<>keep loop
+      update contatos      set conta_id=keep where conta_id=d.id;
+      update interacoes     set conta_id=keep where conta_id=d.id;
+      update voz_do_cliente set conta_id=keep where conta_id=d.id;
+      update mensagens_log  set conta_id=keep where conta_id=d.id;
+      update contas set obs = trim(both ' ·' from coalesce(obs,'') || ' · tel. alt.: ' || d.telefone)
+        where id=keep and d.telefone is not null and d.telefone is distinct from (select telefone from contas where id=keep);
+      delete from contas where id=d.id;
+    end loop;
+  end loop;
+end $$;
 
 -- ---------- Tracking semanal: baseline do funil nas DATAS REAIS de contato ----------
 -- Daqui pra frente o trigger registra cada mudança de estágio sozinho (data real BRT).
