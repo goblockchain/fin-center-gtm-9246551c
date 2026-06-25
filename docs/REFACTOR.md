@@ -3,6 +3,12 @@
 > Plano de consolidação das 10 seções → ~6 com função única + Dashboard como
 > camada de leitura. Priorizado, com antes→depois e decisões marcadas **[D#]**.
 > Baseado na auditoria de 10 seções (jun/2026).
+>
+> **Status: ✅ Concluído.** P0–P4 executados — menu **10 → 8 seções** (Dashboard ·
+> Leads · Canais · Roadmap · Tarefas · Mensagens · Voz · Crescimento). Commits:
+> P0 `0540b6e`/`6f3069c` · P1 `7426fdc` · P2 `a5ceabd` ·
+> P3 `675e615`/`636ddf9`/`f271ec2` · P4 `a5f0102`. (Refino opcional pendente:
+> kanban só com etapas ativas — exige edição de etapa na Tabela antes.)
 
 ## Diagnóstico (validado)
 

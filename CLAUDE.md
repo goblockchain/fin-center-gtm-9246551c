@@ -94,16 +94,17 @@ Ramp de apoio: `#102A1E · #2D6A4F · #40916C · #74C69D · #D8F3DC`. Marca = ó
 
 | Rota | Módulo | O que é |
 |---|---|---|
-| `/` | **Dashboard** | Inteligente + tempo real. Abre com "Foco de hoje". Ver `docs/DASHBOARD.md`. |
-| `/pipeline` | **Pipeline** | Kanban de oportunidades (cadastrado → … → fechado-ganho/perdido), drag-and-drop, filtro por canal. |
-| `/crm` | **CRM** | Tabela de contas (filtro por temperatura e canal) + ficha (contatos, interações, voz do cliente) + **Importar base** (CSV). |
-| `/canais` | **Canais** | Card central por canal: anel de % execução, estado derivado, investimento planejado×executado com variância, bloco de KPIs (só em "Gerando dados"). |
+| `/` | **Dashboard** | Inteligente + tempo real. Abre com "Foco de hoje" + botão **Exportar PDF** (o antigo Relatório virou ação). Ver `docs/DASHBOARD.md`. |
+| `/leads` | **Leads** | Pipeline + CRM unificados: toggle **Kanban/Tabela** sobre as mesmas contas, filtro por canal, **Importar base** e ficha do lead (fonte/canal + atribuição a parceiro/evento). `/pipeline` e `/crm` redirecionam aqui. |
+| `/canais` | **Canais** | Visão geral (gráfico + CAC por canal) + card central por canal (anel de % execução, estado derivado, investimento×executado, KPIs só em "Gerando dados") + **input de investimento→CAC**. |
 | `/roadmap` | **Roadmap** | Linha do tempo dirigida por **projetos cadastrados** (1 barra por projeto, editável inline; cor por status/prazo) + painel de gates com dias restantes. |
 | `/tarefas` | **Tarefas** | Lista por canal com dependência (bloqueada se a dependência não está "feito") e prazos coloridos relativos a hoje. |
 | `/mensagens` | **Mensagens** | Biblioteca de modelos por canal/estágio (variáveis `{nome}`, `{cafe}`, `{dor}`, variante A/B) + log manual. |
 | `/voz` | **Voz do Cliente** | Registros (depoimento/mensagem/narrativa/relatório) + upload de imagem (Storage) + tags de uso + "fixar como prova". |
+| `/crescimento` | **Crescimento** | Comunidade, Parcerias e Eventos — métricas **derivadas do pipe** (atribua o lead ao parceiro/evento na ficha); entrada manual só do que não vem do pipe. |
 
-Sidebar fixa (verde escuro) com esses 8 itens.
+Top bar fixa (verde escuro) com **8 itens**: Dashboard · Leads · Canais · Roadmap ·
+Tarefas · Mensagens · Voz do Cliente · Crescimento. (`/login` e `/definir-senha` ficam fora do app.)
 
 ---
 
