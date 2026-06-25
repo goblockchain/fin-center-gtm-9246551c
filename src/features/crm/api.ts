@@ -159,6 +159,30 @@ export function useAtualizarCanalDaOport() {
   });
 }
 
+/** Vincula a oportunidade a um parceiro OU evento (conforme o tipo do canal). */
+export function useAtualizarVinculoOport() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: {
+      oportId: string;
+      parceiroId: string | null;
+      eventoId: string | null;
+    }) => {
+      const { error } = await supabase
+        .from("oportunidades")
+        .update({ parceiro_id: vars.parceiroId, evento_id: vars.eventoId })
+        .eq("id", vars.oportId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["oportunidade", "por-conta"] });
+      qc.invalidateQueries({ queryKey: ["oportunidades"] });
+      qc.invalidateQueries({ queryKey: ["parceiro_kpis"] });
+      qc.invalidateQueries({ queryKey: ["evento_kpis"] });
+    },
+  });
+}
+
 /** Troca o plano de uma oportunidade (valor_mrr = 250 ou 850). */
 export function useAtualizarPlano() {
   const qc = useQueryClient();

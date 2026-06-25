@@ -41,8 +41,10 @@ import {
   useAtualizarConta,
   useAtualizarPlano,
   useAtualizarCanalDaOport,
+  useAtualizarVinculoOport,
 } from "./api";
 import { useCanais } from "@/features/canais/api";
+import { useParceiros, useEventos } from "@/features/crescimento/api";
 import { useVozesDaConta } from "@/features/voz/api";
 import { TIPO_VOZ_META } from "@/features/voz/tipos";
 import type {
@@ -93,6 +95,7 @@ type Form = {
   nome: string;
   temperatura: Temperatura;
   canalId: string;
+  vinculoId: string;
   responsavel: string;
   telefone: string;
   instagram: string;
@@ -122,9 +125,12 @@ export function ContaSheet({
   const { data: oport } = useContaOportunidade(cid);
   const { data: vozes } = useVozesDaConta(cid);
   const { data: canais } = useCanais();
+  const { data: parceiros } = useParceiros();
+  const { data: eventos } = useEventos();
   const atualizarConta = useAtualizarConta();
   const atualizarPlano = useAtualizarPlano();
   const atualizarCanal = useAtualizarCanalDaOport();
+  const atualizarVinculo = useAtualizarVinculoOport();
 
   const [editando, setEditando] = useState(false);
   const [form, setForm] = useState<Form | null>(null);
@@ -139,6 +145,7 @@ export function ContaSheet({
       nome: conta.nome ?? "",
       temperatura: conta.temperatura,
       canalId: conta.canal_origem_id,
+      vinculoId: oport?.parceiro_id ?? oport?.evento_id ?? "",
       responsavel: conta.responsavel ?? "",
       telefone: conta.telefone ?? "",
       instagram: conta.instagram ?? "",
@@ -178,13 +185,29 @@ export function ContaSheet({
     if (oport && oport.canal_id !== form.canalId) {
       await atualizarCanal.mutateAsync({ oportId: oport.id, canalId: form.canalId });
     }
+    if (oport) {
+      const tipoNovo = (canais ?? []).find((c) => c.id === form.canalId)?.tipo;
+      const parceiroId = tipoNovo === "parceria" ? form.vinculoId || null : null;
+      const eventoId = tipoNovo === "evento" ? form.vinculoId || null : null;
+      if (
+        parceiroId !== (oport.parceiro_id ?? null) ||
+        eventoId !== (oport.evento_id ?? null)
+      ) {
+        await atualizarVinculo.mutateAsync({
+          oportId: oport.id,
+          parceiroId,
+          eventoId,
+        });
+      }
+    }
     setEditando(false);
   }
 
   const salvando =
     atualizarConta.isPending ||
     atualizarPlano.isPending ||
-    atualizarCanal.isPending;
+    atualizarCanal.isPending ||
+    atualizarVinculo.isPending;
   const set = <K extends keyof Form>(k: K, v: Form[K]) =>
     setForm((f) => (f ? { ...f, [k]: v } : f));
 
@@ -435,6 +458,42 @@ export function ContaSheet({
                   </SelectContent>
                 </Select>
               </Campo>
+
+              {(() => {
+                const tipo = (canais ?? []).find((c) => c.id === form.canalId)
+                  ?.tipo;
+                if (tipo !== "parceria" && tipo !== "evento") return null;
+                const lista =
+                  tipo === "parceria" ? (parceiros ?? []) : (eventos ?? []);
+                return (
+                  <Campo label={tipo === "parceria" ? "Parceiro" : "Evento"}>
+                    <Select
+                      value={form.vinculoId || "none"}
+                      onValueChange={(v) =>
+                        set("vinculoId", v === "none" ? "" : v)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={
+                            tipo === "parceria"
+                              ? "Selecione o parceiro"
+                              : "Selecione o evento"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">— nenhum —</SelectItem>
+                        {lista.map((x) => (
+                          <SelectItem key={x.id} value={x.id}>
+                            {x.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Campo>
+                );
+              })()}
 
               <Campo label="Responsável">
                 <Input
