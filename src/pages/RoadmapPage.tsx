@@ -2,7 +2,6 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { GatesPanel } from "@/features/roadmap/GatesPanel";
 import { Gantt } from "@/features/roadmap/Gantt";
 import { ProjetosPanel } from "@/features/roadmap/ProjetosPanel";
-import { InvestimentosCanais } from "@/features/roadmap/InvestimentosCanais";
 import { CustosCanais } from "@/features/economia/CustosCanais";
 import { MetasMensais } from "@/features/economia/MetasMensais";
 
@@ -35,19 +34,6 @@ export function RoadmapPage() {
             <Gantt />
             <ProjetosPanel />
           </div>
-        </section>
-        <section>
-          <div className="mb-2">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-fin-dark">
-              Modelo dos canais — investimento → CAC
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              Modelo rápido (ex.: R$100/lead × nº de leads). Use isto OU os
-              custos itemizados abaixo — quando há custo itemizado, ele tem
-              precedência no CAC.
-            </p>
-          </div>
-          <InvestimentosCanais />
         </section>
         <section>
           <div className="mb-2">
