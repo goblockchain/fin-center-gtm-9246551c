@@ -106,6 +106,10 @@ function DraggableCard({
   );
 }
 
+// Quantos cards renderizar por coluna antes do "ver mais". Cada card é um
+// draggable do dnd-kit; centenas de uma vez deixam o board lento.
+const LIMITE_COLUNA = 30;
+
 function Coluna({
   estagio,
   oports,
@@ -118,6 +122,9 @@ function Coluna({
   const { setNodeRef, isOver } = useDroppable({ id: estagio });
   const meta = ESTAGIO_META[estagio];
   const total = oports.reduce((s, o) => s + Number(o.valor_mrr ?? 0), 0);
+  const [verTodos, setVerTodos] = useState(false);
+  const visiveis = verTodos ? oports : oports.slice(0, LIMITE_COLUNA);
+  const ocultos = oports.length - visiveis.length;
   return (
     <div className="flex w-64 shrink-0 flex-col">
       <div className="mb-2 flex items-center justify-between px-1">
@@ -137,9 +144,18 @@ function Coluna({
           isOver && "border-fin bg-accent/30",
         )}
       >
-        {oports.map((o) => (
+        {visiveis.map((o) => (
           <DraggableCard key={o.id} o={o} onOpen={onOpen} />
         ))}
+        {ocultos > 0 && (
+          <button
+            type="button"
+            onClick={() => setVerTodos(true)}
+            className="w-full rounded-md border border-dashed border-border py-2 text-xs font-medium text-muted-foreground transition-colors hover:border-fin hover:text-fin-dark"
+          >
+            + ver mais {ocultos}
+          </button>
+        )}
       </div>
     </div>
   );
