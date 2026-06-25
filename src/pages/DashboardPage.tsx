@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { FileDown } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { useRealtime } from "@/hooks/useRealtime";
 import { FocoHoje } from "@/features/dashboard/FocoHoje";
@@ -51,6 +53,14 @@ export function DashboardPage() {
       <PageHeader
         title="Dashboard"
         description="Receita por canal, ao vivo. De onde vêm os clientes, qual canal rende mais e onde focar agora."
+        actions={
+          <Link
+            to="/relatorio"
+            className="inline-flex h-9 items-center gap-2 rounded-md border border-border bg-card px-3 text-sm font-medium text-fin-dark transition-colors hover:bg-secondary"
+          >
+            <FileDown className="h-4 w-4" /> Exportar PDF
+          </Link>
+        }
       />
 
       {/* Ação primeiro, depois os números do topo */}

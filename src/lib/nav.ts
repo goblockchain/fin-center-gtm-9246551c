@@ -7,7 +7,6 @@ import {
   ListChecks,
   MessageSquareText,
   Quote,
-  FileBarChart2,
   Sprout,
   type LucideIcon,
 } from "lucide-react";
@@ -74,11 +73,5 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Crescimento",
     icon: Sprout,
     description: "Comunidade, parcerias e eventos.",
-  },
-  {
-    to: "/relatorio",
-    label: "Relatório",
-    icon: FileBarChart2,
-    description: "Demonstrativos consolidados e exportação em PDF.",
   },
 ];
