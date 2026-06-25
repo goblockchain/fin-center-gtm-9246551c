@@ -15,10 +15,7 @@ const named = <T extends string>(
 const DashboardPage = lazy(() =>
   named(import("@/pages/DashboardPage"), "DashboardPage"),
 );
-const PipelinePage = lazy(() =>
-  named(import("@/pages/PipelinePage"), "PipelinePage"),
-);
-const CrmPage = lazy(() => named(import("@/pages/CrmPage"), "CrmPage"));
+const LeadsPage = lazy(() => named(import("@/pages/LeadsPage"), "LeadsPage"));
 const CanaisPage = lazy(() => named(import("@/pages/CanaisPage"), "CanaisPage"));
 const RoadmapPage = lazy(() =>
   named(import("@/pages/RoadmapPage"), "RoadmapPage"),
@@ -71,21 +68,16 @@ export default function App() {
           }
         />
         <Route
-          path="pipeline"
+          path="leads"
           element={
             <Suspense fallback={<Fallback />}>
-              <PipelinePage />
+              <LeadsPage />
             </Suspense>
           }
         />
-        <Route
-          path="crm"
-          element={
-            <Suspense fallback={<Fallback />}>
-              <CrmPage />
-            </Suspense>
-          }
-        />
+        {/* Pipeline e CRM viraram Leads — redireciona links antigos */}
+        <Route path="pipeline" element={<Navigate to="/leads" replace />} />
+        <Route path="crm" element={<Navigate to="/leads" replace />} />
         <Route
           path="canais"
           element={

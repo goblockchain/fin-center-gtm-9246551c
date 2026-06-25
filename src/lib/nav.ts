@@ -1,6 +1,5 @@
 import {
   LayoutDashboard,
-  KanbanSquare,
   Users,
   Radio,
   CalendarRange,
@@ -27,16 +26,10 @@ export const NAV_ITEMS: NavItem[] = [
     description: "Foco de hoje, saúde dos canais e funil ao vivo.",
   },
   {
-    to: "/pipeline",
-    label: "Pipeline",
-    icon: KanbanSquare,
-    description: "Kanban de oportunidades por estágio e canal.",
-  },
-  {
-    to: "/crm",
-    label: "CRM",
+    to: "/leads",
+    label: "Leads",
     icon: Users,
-    description: "Contas, contatos, interações e importação da base.",
+    description: "Pipeline e base de contas — kanban e tabela.",
   },
   {
     to: "/canais",
