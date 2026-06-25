@@ -70,6 +70,8 @@ export function useMoverEstagio() {
       qc.invalidateQueries({ queryKey: ["oportunidades"] });
       qc.invalidateQueries({ queryKey: ["canal_execucao"] });
       qc.invalidateQueries({ queryKey: ["canal_kpis"] });
+      qc.invalidateQueries({ queryKey: ["parceiro_kpis"] });
+      qc.invalidateQueries({ queryKey: ["evento_kpis"] });
     },
   });
 }

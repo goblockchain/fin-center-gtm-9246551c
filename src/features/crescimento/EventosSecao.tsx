@@ -4,23 +4,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { brl, pct } from "@/lib/format";
 import { dataCurta } from "@/lib/datas";
-import { useEventos, useCriarEvento, useExcluirEvento } from "./api";
+import { useEventoKpis, useCriarEvento, useExcluirEvento } from "./api";
 
 export function EventosSecao() {
-  const { data: eventos } = useEventos();
+  const { data: eventos } = useEventoKpis();
   const criar = useCriarEvento();
   const excluir = useExcluirEvento();
 
   const [nome, setNome] = useState("");
   const [data, setData] = useState("");
   const [participantes, setParticipantes] = useState("");
-  const [leads, setLeads] = useState("");
-  const [sqls, setSqls] = useState("");
-  const [clientes, setClientes] = useState("");
   const [custo, setCusto] = useState("");
-  const [receita, setReceita] = useState("");
 
-  const lista = eventos ?? [];
+  const lista = [...(eventos ?? [])].sort((a, b) =>
+    (b.data ?? "").localeCompare(a.data ?? ""),
+  );
 
   function adicionar() {
     if (!nome.trim()) return;
@@ -29,22 +27,14 @@ export function EventosSecao() {
         nome: nome.trim(),
         data: data || null,
         participantes: Number(participantes) || 0,
-        leads: Number(leads) || 0,
-        sqls: Number(sqls) || 0,
-        clientes: Number(clientes) || 0,
         custo: Number(custo) || 0,
-        receita: Number(receita) || 0,
       },
       {
         onSuccess: () => {
           setNome("");
           setData("");
           setParticipantes("");
-          setLeads("");
-          setSqls("");
-          setClientes("");
           setCusto("");
-          setReceita("");
         },
       },
     );
@@ -53,56 +43,36 @@ export function EventosSecao() {
   return (
     <Card>
       <CardContent className="p-4">
-        <div className="mb-3 flex items-center gap-2">
+        <div className="mb-1 flex items-center gap-2">
           <CalendarDays className="h-4 w-4 text-fin" />
           <h2 className="text-sm font-semibold text-fin-dark">Eventos</h2>
         </div>
+        <p className="mb-3 text-[11px] text-muted-foreground">
+          Cadastre o evento e o custo; leads, clientes e MRR vêm do pipe (atribua
+          o lead ao evento na ficha). CAC = custo ÷ clientes.
+        </p>
 
-        {/* Novo evento */}
+        {/* Novo evento — nome, data, participantes, custo */}
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-12">
           <Input
-            className="col-span-2 h-9 sm:col-span-3"
+            className="col-span-2 h-9 sm:col-span-5"
             placeholder="Nome do evento"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
           />
           <Input
-            className="col-span-1 h-9 sm:col-span-2"
+            className="col-span-1 h-9 sm:col-span-3"
             type="date"
             value={data}
             onChange={(e) => setData(e.target.value)}
           />
           <Input
-            className="col-span-1 h-9 sm:col-span-2"
+            className="col-span-1 h-9 sm:col-span-1"
             type="number"
             min={0}
             placeholder="particip."
             value={participantes}
             onChange={(e) => setParticipantes(e.target.value)}
-          />
-          <Input
-            className="col-span-1 h-9 sm:col-span-1"
-            type="number"
-            min={0}
-            placeholder="leads"
-            value={leads}
-            onChange={(e) => setLeads(e.target.value)}
-          />
-          <Input
-            className="col-span-1 h-9 sm:col-span-1"
-            type="number"
-            min={0}
-            placeholder="reuniões"
-            value={sqls}
-            onChange={(e) => setSqls(e.target.value)}
-          />
-          <Input
-            className="col-span-1 h-9 sm:col-span-1"
-            type="number"
-            min={0}
-            placeholder="clientes"
-            value={clientes}
-            onChange={(e) => setClientes(e.target.value)}
           />
           <Input
             className="col-span-1 h-9 sm:col-span-2"
@@ -111,14 +81,6 @@ export function EventosSecao() {
             placeholder="R$ custo"
             value={custo}
             onChange={(e) => setCusto(e.target.value)}
-          />
-          <Input
-            className="col-span-1 h-9 sm:col-span-1"
-            type="number"
-            min={0}
-            placeholder="R$ rec."
-            value={receita}
-            onChange={(e) => setReceita(e.target.value)}
           />
           <button
             type="button"
@@ -130,7 +92,6 @@ export function EventosSecao() {
           </button>
         </div>
 
-        {/* Comparação */}
         {lista.length ? (
           <div className="mt-3 overflow-x-auto">
             <table className="w-full text-sm">
@@ -139,23 +100,24 @@ export function EventosSecao() {
                   <th className="px-2 py-1 text-left font-medium">Evento</th>
                   <th className="px-2 py-1 text-left font-medium">Data</th>
                   <th className="px-2 py-1 text-right font-medium">Particip.</th>
+                  <th className="px-2 py-1 text-right font-medium">Leads</th>
                   <th className="px-2 py-1 text-right font-medium">Clientes</th>
                   <th className="px-2 py-1 text-right font-medium">Custo</th>
                   <th className="px-2 py-1 text-right font-medium">CAC</th>
-                  <th className="px-2 py-1 text-right font-medium">Receita</th>
+                  <th className="px-2 py-1 text-right font-medium">MRR</th>
                   <th className="px-2 py-1 text-right font-medium">ROI</th>
                   <th className="px-2 py-1"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {lista.map((ev) => {
+                {lista.map((ev, i) => {
                   const cli = Number(ev.clientes ?? 0);
                   const custoN = Number(ev.custo ?? 0);
-                  const rec = Number(ev.receita ?? 0);
+                  const mrr = Number(ev.mrr ?? 0);
                   const cac = cli > 0 && custoN > 0 ? custoN / cli : null;
-                  const roi = custoN > 0 ? (rec - custoN) / custoN : null;
+                  const roi = custoN > 0 ? (mrr - custoN) / custoN : null;
                   return (
-                    <tr key={ev.id}>
+                    <tr key={ev.evento_id ?? i}>
                       <td className="px-2 py-1.5 font-medium text-fin-dark">
                         {ev.nome}
                       </td>
@@ -164,6 +126,9 @@ export function EventosSecao() {
                       </td>
                       <td className="px-2 py-1.5 text-right text-muted-foreground">
                         {ev.participantes}
+                      </td>
+                      <td className="px-2 py-1.5 text-right text-muted-foreground">
+                        {ev.leads}
                       </td>
                       <td className="px-2 py-1.5 text-right text-fin-dark">
                         {cli}
@@ -175,7 +140,7 @@ export function EventosSecao() {
                         {cac != null ? brl(cac) : "—"}
                       </td>
                       <td className="px-2 py-1.5 text-right text-fin-dark">
-                        {brl(rec)}
+                        {mrr > 0 ? brl(mrr) : "—"}
                       </td>
                       <td className="px-2 py-1.5 text-right">
                         {roi != null ? (
@@ -191,7 +156,9 @@ export function EventosSecao() {
                       <td className="px-2 py-1.5 text-right">
                         <button
                           type="button"
-                          onClick={() => excluir.mutate(ev.id)}
+                          onClick={() =>
+                            ev.evento_id && excluir.mutate(ev.evento_id)
+                          }
                           className="text-muted-foreground hover:text-destructive"
                           aria-label="Excluir evento"
                         >

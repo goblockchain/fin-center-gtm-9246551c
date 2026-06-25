@@ -3,121 +3,65 @@ import { Handshake, Plus, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { brl, pct } from "@/lib/format";
-import {
-  useParceiros,
-  useCriarParceiro,
-  useExcluirParceiro,
-} from "./api";
+import { useParceiroKpis, useCriarParceiro, useExcluirParceiro } from "./api";
 
 export function ParceirosSecao() {
-  const { data: parceiros } = useParceiros();
+  const { data: parceiros } = useParceiroKpis();
   const criar = useCriarParceiro();
   const excluir = useExcluirParceiro();
-
   const [nome, setNome] = useState("");
-  const [leads, setLeads] = useState("");
-  const [sqls, setSqls] = useState("");
-  const [clientes, setClientes] = useState("");
-  const [receita, setReceita] = useState("");
 
-  const lista = parceiros ?? [];
+  const lista = [...(parceiros ?? [])].sort(
+    (a, b) => Number(b.mrr ?? 0) - Number(a.mrr ?? 0),
+  );
   const totais = lista.reduce(
     (a, p) => ({
-      leads: a.leads + Number(p.leads_enviados ?? 0),
-      clientes: a.clientes + Number(p.clientes ?? 0),
-      receita: a.receita + Number(p.receita ?? 0),
+      mrr: a.mrr + Number(p.mrr ?? 0),
       ativos: a.ativos + (p.ativo ? 1 : 0),
     }),
-    { leads: 0, clientes: 0, receita: 0, ativos: 0 },
+    { mrr: 0, ativos: 0 },
   );
 
   function adicionar() {
     if (!nome.trim()) return;
-    criar.mutate(
-      {
-        nome: nome.trim(),
-        leads_enviados: Number(leads) || 0,
-        sqls: Number(sqls) || 0,
-        clientes: Number(clientes) || 0,
-        receita: Number(receita) || 0,
-      },
-      {
-        onSuccess: () => {
-          setNome("");
-          setLeads("");
-          setSqls("");
-          setClientes("");
-          setReceita("");
-        },
-      },
-    );
+    criar.mutate({ nome: nome.trim() }, { onSuccess: () => setNome("") });
   }
 
   return (
     <Card>
       <CardContent className="p-4">
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-1 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Handshake className="h-4 w-4 text-fin" />
             <h2 className="text-sm font-semibold text-fin-dark">Parcerias</h2>
           </div>
           <span className="text-xs text-muted-foreground">
-            {lista.length} cadastrados · {totais.ativos} ativos ·{" "}
-            {brl(totais.receita)}
+            {lista.length} cadastrados · {totais.ativos} ativos · {brl(totais.mrr)}
           </span>
         </div>
+        <p className="mb-3 text-[11px] text-muted-foreground">
+          Cadastre o parceiro; os números (leads, reuniões, clientes, MRR) vêm do
+          pipe — atribua o lead ao parceiro na ficha do lead.
+        </p>
 
-        {/* Novo parceiro */}
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-12">
+        <div className="flex gap-2">
           <Input
-            className="col-span-2 h-9 sm:col-span-3"
+            className="h-9 flex-1"
             placeholder="Nome do parceiro"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
-          />
-          <Input
-            className="col-span-1 h-9 sm:col-span-2"
-            type="number"
-            min={0}
-            placeholder="leads"
-            value={leads}
-            onChange={(e) => setLeads(e.target.value)}
-          />
-          <Input
-            className="col-span-1 h-9 sm:col-span-2"
-            type="number"
-            min={0}
-            placeholder="reuniões"
-            value={sqls}
-            onChange={(e) => setSqls(e.target.value)}
-          />
-          <Input
-            className="col-span-1 h-9 sm:col-span-2"
-            type="number"
-            min={0}
-            placeholder="clientes"
-            value={clientes}
-            onChange={(e) => setClientes(e.target.value)}
-          />
-          <Input
-            className="col-span-1 h-9 sm:col-span-2"
-            type="number"
-            min={0}
-            placeholder="R$ rec."
-            value={receita}
-            onChange={(e) => setReceita(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && adicionar()}
           />
           <button
             type="button"
             onClick={adicionar}
             disabled={criar.isPending || !nome.trim()}
-            className="col-span-1 inline-flex h-9 items-center justify-center rounded-md bg-fin px-3 text-sm font-medium text-white hover:bg-fin-dark disabled:opacity-50"
+            className="inline-flex h-9 items-center justify-center gap-1 rounded-md bg-fin px-3 text-sm font-medium text-white hover:bg-fin-dark disabled:opacity-50"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4" /> Adicionar
           </button>
         </div>
 
-        {/* Ranking */}
         {lista.length ? (
           <div className="mt-3 overflow-x-auto">
             <table className="w-full text-sm">
@@ -126,20 +70,19 @@ export function ParceirosSecao() {
                   <th className="px-2 py-1 text-left font-medium">#</th>
                   <th className="px-2 py-1 text-left font-medium">Parceiro</th>
                   <th className="px-2 py-1 text-right font-medium">Leads</th>
+                  <th className="px-2 py-1 text-right font-medium">Reuniões</th>
                   <th className="px-2 py-1 text-right font-medium">Clientes</th>
                   <th className="px-2 py-1 text-right font-medium">Conv.</th>
-                  <th className="px-2 py-1 text-right font-medium">Receita</th>
+                  <th className="px-2 py-1 text-right font-medium">MRR</th>
                   <th className="px-2 py-1"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {lista.map((p, i) => {
-                  const conv =
-                    Number(p.leads_enviados ?? 0) > 0
-                      ? Number(p.clientes ?? 0) / Number(p.leads_enviados)
-                      : null;
+                  const leads = Number(p.leads ?? 0);
+                  const conv = leads > 0 ? Number(p.clientes ?? 0) / leads : null;
                   return (
-                    <tr key={p.id}>
+                    <tr key={p.parceiro_id ?? i}>
                       <td className="px-2 py-1.5 text-muted-foreground">
                         {i + 1}
                       </td>
@@ -152,7 +95,10 @@ export function ParceirosSecao() {
                         )}
                       </td>
                       <td className="px-2 py-1.5 text-right text-muted-foreground">
-                        {p.leads_enviados}
+                        {p.leads}
+                      </td>
+                      <td className="px-2 py-1.5 text-right text-muted-foreground">
+                        {p.reunioes}
                       </td>
                       <td className="px-2 py-1.5 text-right text-fin-dark">
                         {p.clientes}
@@ -161,12 +107,14 @@ export function ParceirosSecao() {
                         {conv != null ? pct(conv, 1) : "—"}
                       </td>
                       <td className="px-2 py-1.5 text-right font-medium text-fin-dark">
-                        {brl(p.receita)}
+                        {Number(p.mrr ?? 0) > 0 ? brl(p.mrr) : "—"}
                       </td>
                       <td className="px-2 py-1.5 text-right">
                         <button
                           type="button"
-                          onClick={() => excluir.mutate(p.id)}
+                          onClick={() =>
+                            p.parceiro_id && excluir.mutate(p.parceiro_id)
+                          }
                           className="text-muted-foreground hover:text-destructive"
                           aria-label="Excluir parceiro"
                         >

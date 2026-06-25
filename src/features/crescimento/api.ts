@@ -4,6 +4,8 @@ import type {
   ComunidadeMetrica,
   Parceiro,
   Evento,
+  ParceiroKpis,
+  EventoKpis,
   Insert,
   Update,
 } from "@/types/db";
@@ -61,7 +63,10 @@ export function useCriarParceiro() {
       const { error } = await supabase.from("parceiros").insert(p);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["parceiros"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["parceiros"] });
+      qc.invalidateQueries({ queryKey: ["parceiro_kpis"] });
+    },
   });
 }
 
@@ -75,7 +80,10 @@ export function useAtualizarParceiro() {
         .eq("id", vars.id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["parceiros"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["parceiros"] });
+      qc.invalidateQueries({ queryKey: ["parceiro_kpis"] });
+    },
   });
 }
 
@@ -86,7 +94,10 @@ export function useExcluirParceiro() {
       const { error } = await supabase.from("parceiros").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["parceiros"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["parceiros"] });
+      qc.invalidateQueries({ queryKey: ["parceiro_kpis"] });
+    },
   });
 }
 
@@ -113,7 +124,10 @@ export function useCriarEvento() {
       const { error } = await supabase.from("eventos").insert(e);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["eventos"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["eventos"] });
+      qc.invalidateQueries({ queryKey: ["evento_kpis"] });
+    },
   });
 }
 
@@ -124,6 +138,33 @@ export function useExcluirEvento() {
       const { error } = await supabase.from("eventos").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["eventos"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["eventos"] });
+      qc.invalidateQueries({ queryKey: ["evento_kpis"] });
+    },
+  });
+}
+
+/* ---------------- KPIs derivados do pipe (por parceiro/evento) ---------------- */
+
+export function useParceiroKpis() {
+  return useQuery({
+    queryKey: ["parceiro_kpis"],
+    queryFn: async (): Promise<ParceiroKpis[]> => {
+      const { data, error } = await supabase.from("parceiro_kpis").select("*");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+}
+
+export function useEventoKpis() {
+  return useQuery({
+    queryKey: ["evento_kpis"],
+    queryFn: async (): Promise<EventoKpis[]> => {
+      const { data, error } = await supabase.from("evento_kpis").select("*");
+      if (error) throw error;
+      return data ?? [];
+    },
   });
 }
