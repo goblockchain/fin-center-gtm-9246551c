@@ -32,6 +32,8 @@ export type CanalExecucao = Views<"canal_execucao">;
 export type CanalKpis = Views<"canal_kpis">;
 export type CanalEconomia = Views<"canal_economia">;
 export type PipelineSemana = Views<"pipeline_semana">;
+export type ParceiroKpis = Views<"parceiro_kpis">;
+export type EventoKpis = Views<"evento_kpis">;
 
 // Enums
 export type Temperatura = Enums<"temperatura">;

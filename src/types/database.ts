@@ -520,6 +520,8 @@ export type Database = {
         Row: {
           canal_id: string
           conta_id: string
+          evento_id: string | null
+          parceiro_id: string | null
           created_at: string
           data_entrada_estagio: string
           estagio: Database["public"]["Enums"]["estagio_oport"]
@@ -534,6 +536,8 @@ export type Database = {
         Insert: {
           canal_id: string
           conta_id: string
+          evento_id?: string | null
+          parceiro_id?: string | null
           created_at?: string
           data_entrada_estagio?: string
           estagio?: Database["public"]["Enums"]["estagio_oport"]
@@ -548,6 +552,8 @@ export type Database = {
         Update: {
           canal_id?: string
           conta_id?: string
+          evento_id?: string | null
+          parceiro_id?: string | null
           created_at?: string
           data_entrada_estagio?: string
           estagio?: Database["public"]["Enums"]["estagio_oport"]
@@ -1087,6 +1093,32 @@ export type Database = {
           fechamentos: number | null
           reunioes: number | null
           semana: string | null
+        }
+        Relationships: []
+      }
+      parceiro_kpis: {
+        Row: {
+          ativo: boolean | null
+          clientes: number | null
+          leads: number | null
+          mrr: number | null
+          nome: string | null
+          parceiro_id: string | null
+          reunioes: number | null
+        }
+        Relationships: []
+      }
+      evento_kpis: {
+        Row: {
+          clientes: number | null
+          custo: number | null
+          data: string | null
+          evento_id: string | null
+          leads: number | null
+          mrr: number | null
+          nome: string | null
+          participantes: number | null
+          reunioes: number | null
         }
         Relationships: []
       }
