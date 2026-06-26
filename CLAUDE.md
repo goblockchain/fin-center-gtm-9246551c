@@ -45,7 +45,10 @@ poucos usuários, todos do mesmo time.
 
 **Regras de stack:**
 - Conexão Supabase **por variáveis de ambiente** (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`).
-  **Nunca** commitar chaves. `.env` no `.gitignore`; fornecer `.env.example`.
+  A **anon/publishable key** (`sb_publishable_…`, protegida por RLS) e a URL são **públicas por
+  design** (vão embutidas no bundle do cliente) e ficam no `.env` **versionado**. **Segredos
+  reais (service_role / `sb_secret_…`) nunca** são commitados — vão em `.env.local` (ignorado).
+  `.env.example` documenta as variáveis.
 - A **service_role key nunca** vai ao front-end. Só a `anon key` (protegida por RLS).
 - O app inteiro fica **atrás do login**. Sessão persiste (Supabase Auth + refresh).
 - **WhatsApp não é enviado de verdade.** Existe uma edge function placeholder em

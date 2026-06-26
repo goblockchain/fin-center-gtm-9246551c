@@ -10,8 +10,9 @@ dist-ssr
 *.local
 *.tsbuildinfo
 
-# env — NUNCA commitar chaves
-.env
+# env
+# .env guarda SÓ valores PUBLICÁVEIS (URL + anon/publishable key) — pode ser versionado.
+# Segredos reais (service_role/secret) NUNCA: ponha em .env.local (já coberto por *.local).
 .env.*
 !.env.example
 
