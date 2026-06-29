@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useCanais, canalNomePorId } from "@/features/canais/api";
-import { useContas, type ContaFilters } from "@/features/crm/api";
+import { telefoneValido, useContas, type ContaFilters } from "@/features/crm/api";
 import {
   TemperaturaChip,
   TEMP_META,
@@ -177,7 +177,9 @@ export function LeadsPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {contas.map((c) => (
+                    {contas.map((c) => {
+                      const semTelefone = !telefoneValido(c.telefone);
+                      return (
                       <TableRow
                         key={c.id}
                         className="cursor-pointer"
@@ -186,6 +188,14 @@ export function LeadsPage() {
                         <TableCell className="font-medium text-fin-dark">
                           <div className="flex items-center gap-2">
                             <span>{c.nome}</span>
+                            {semTelefone && (
+                              <span
+                                title="Telefone não informado ou inválido"
+                                className="rounded-full border border-red-300 bg-red-50 px-1.5 py-0.5 text-[10px] font-medium text-red-700"
+                              >
+                                sem telefone
+                              </span>
+                            )}
                             {!c.instagram && (
                               <span
                                 title="Instagram não informado"
@@ -209,7 +219,8 @@ export function LeadsPage() {
                           {c.responsavel ?? "—"}
                         </TableCell>
                       </TableRow>
-                    ))}
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </>
