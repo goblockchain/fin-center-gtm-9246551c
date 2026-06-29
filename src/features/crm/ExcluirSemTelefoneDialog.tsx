@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -14,7 +13,7 @@ import {
   useContasSemTelefone,
   useExcluirContasSemTelefone,
 } from "@/features/crm/api";
-import { toast } from "sonner";
+
 
 export function ExcluirSemTelefoneDialog() {
   const [open, setOpen] = useState(false);
