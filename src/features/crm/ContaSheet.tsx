@@ -11,6 +11,7 @@ import {
   Loader2,
   Tag,
   Pin,
+  Trash2,
 } from "lucide-react";
 import {
   Sheet,
@@ -42,6 +43,7 @@ import {
   useAtualizarPlano,
   useAtualizarCanalDaOport,
   useAtualizarVinculoOport,
+  useExcluirConta,
 } from "./api";
 import { useCanais } from "@/features/canais/api";
 import { useParceiros, useEventos } from "@/features/crescimento/api";
@@ -131,6 +133,17 @@ export function ContaSheet({
   const atualizarPlano = useAtualizarPlano();
   const atualizarCanal = useAtualizarCanalDaOport();
   const atualizarVinculo = useAtualizarVinculoOport();
+  const excluir = useExcluirConta();
+
+  async function excluirLead() {
+    if (!conta) return;
+    const ok = window.confirm(
+      `Excluir o lead "${conta.nome}"? Esta ação remove também contatos, interações e a oportunidade vinculada. Não pode ser desfeita.`,
+    );
+    if (!ok) return;
+    await excluir.mutateAsync(conta.id);
+    onOpenChange(false);
+  }
 
   const [editando, setEditando] = useState(false);
   const [form, setForm] = useState<Form | null>(null);
@@ -559,18 +572,33 @@ export function ContaSheet({
               </div>
             </div>
 
-            <div className="mt-auto flex justify-end gap-2 border-t border-border pt-4">
+            <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-4">
               <Button
                 variant="ghost"
-                onClick={() => setEditando(false)}
-                disabled={salvando}
+                onClick={excluirLead}
+                disabled={salvando || excluir.isPending}
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
               >
-                Cancelar
+                {excluir.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
+                Excluir lead
               </Button>
-              <Button onClick={salvar} disabled={salvando}>
-                {salvando && <Loader2 className="h-4 w-4 animate-spin" />}
-                Salvar
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  onClick={() => setEditando(false)}
+                  disabled={salvando}
+                >
+                  Cancelar
+                </Button>
+                <Button onClick={salvar} disabled={salvando}>
+                  {salvando && <Loader2 className="h-4 w-4 animate-spin" />}
+                  Salvar
+                </Button>
+              </div>
             </div>
           </>
         )}
