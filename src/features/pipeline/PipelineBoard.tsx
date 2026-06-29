@@ -96,12 +96,13 @@ function DraggableCard({
     data: { o },
   });
   return (
-    <div ref={setNodeRef} className={cn(isDragging && "opacity-40")}>
-      <CardView
-        o={o}
-        onOpen={() => onOpen(o)}
-        handleProps={{ ...listeners, ...attributes }}
-      />
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      className={cn("touch-none cursor-grab active:cursor-grabbing", isDragging && "opacity-40")}
+    >
+      <CardView o={o} onOpen={() => onOpen(o)} handleProps={{}} />
     </div>
   );
 }
