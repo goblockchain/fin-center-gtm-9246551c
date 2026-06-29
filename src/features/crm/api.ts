@@ -23,17 +23,71 @@ export const crmKeys = {
   interacoes: (id: string) => ["interacoes", id] as const,
 };
 
-const TEXTO_SEM_TELEFONE = /^(sem\s*(telefone|fone|tel)?|nao\s*informado|não\s*informado|n\/a|nenhum|null|undefined)$/i;
+const CONTAS_PAGE_SIZE = 1000;
+
+const TEXTOS_SEM_TELEFONE = new Set([
+  "-",
+  "--",
+  "—",
+  "n/a",
+  "na",
+  "nao informado",
+  "nao informada",
+  "nao possui",
+  "nenhum",
+  "nenhuma",
+  "null",
+  "sem contato",
+  "sem fone",
+  "sem tel",
+  "sem telefone",
+  "telefone nao informado",
+  "undefined",
+]);
+
+function normalizarTelefoneTexto(telefone?: string | null) {
+  return (telefone ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .replace(/[.;,]+$/g, "");
+}
 
 export function telefoneValido(telefone?: string | null) {
-  const valor = telefone?.trim() ?? "";
-  if (!valor || TEXTO_SEM_TELEFONE.test(valor)) return false;
+  const valor = normalizarTelefoneTexto(telefone);
+  if (!valor || TEXTOS_SEM_TELEFONE.has(valor)) return false;
+  if (/^sem\b/.test(valor) || /nao informad[oa]/.test(valor)) return false;
 
   const digitos = valor.replace(/\D/g, "");
   if (digitos.length < 8) return false;
   if (/^(\d)\1+$/.test(digitos)) return false;
+  if (/^99{7,}$/.test(digitos)) return false;
 
   return true;
+}
+
+async function buscarTodasContasOrdenadas(): Promise<Conta[]> {
+  const todas: Conta[] = [];
+
+  for (let from = 0; ; from += CONTAS_PAGE_SIZE) {
+    const to = from + CONTAS_PAGE_SIZE - 1;
+    const { data, error } = await supabase
+      .from("contas")
+      .select("*")
+      .order("nome")
+      .range(from, to)
+      .returns<Conta[]>();
+
+    if (error) throw error;
+
+    const lote = data ?? [];
+    todas.push(...lote);
+    if (lote.length < CONTAS_PAGE_SIZE) break;
+  }
+
+  return todas;
 }
 
 export function useContas(filters: ContaFilters) {
@@ -239,12 +293,8 @@ export function useContasSemTelefone() {
   return useQuery({
     queryKey: ["contas", "sem-telefone"],
     queryFn: async (): Promise<Conta[]> => {
-      const { data, error } = await supabase
-        .from("contas")
-        .select("*")
-        .order("nome");
-      if (error) throw error;
-      return (data ?? []).filter((conta) => !telefoneValido(conta.telefone));
+      const contas = await buscarTodasContasOrdenadas();
+      return contas.filter((conta) => !telefoneValido(conta.telefone));
     },
   });
 }
@@ -255,8 +305,13 @@ export function useExcluirContasSemTelefone() {
   return useMutation({
     mutationFn: async (ids: string[]) => {
       if (!ids.length) return 0;
-      const { error } = await supabase.from("contas").delete().in("id", ids);
-      if (error) throw error;
+
+      for (let i = 0; i < ids.length; i += 100) {
+        const lote = ids.slice(i, i + 100);
+        const { error } = await supabase.from("contas").delete().in("id", lote);
+        if (error) throw error;
+      }
+
       return ids.length;
     },
     onSuccess: () => {

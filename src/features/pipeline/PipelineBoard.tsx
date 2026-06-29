@@ -15,6 +15,7 @@ import { Loader2, GripVertical, Phone, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/format";
 import { ContaSheet } from "@/features/crm/ContaSheet";
+import { telefoneValido } from "@/features/crm/api";
 import { ESTAGIOS, ESTAGIO_META } from "./estagios";
 import { useOportunidades, useMoverEstagio, type OportunidadeCard } from "./api";
 import type { EstagioOport } from "@/types/db";
@@ -31,6 +32,7 @@ function CardView({
   handleProps?: Record<string, unknown>;
 }) {
   const decisor = o.conta?.contatos?.find((c) => c.papel === "decisor")?.nome;
+  const semTelefone = o.conta ? !telefoneValido(o.conta.telefone) : false;
   return (
     <div
       onClick={onOpen}
@@ -45,14 +47,24 @@ function CardView({
           <p className="truncate text-sm font-medium leading-tight text-fin-dark">
             {o.conta?.nome ?? "—"}
           </p>
-          {o.conta && !o.conta.instagram && (
-            <span
-              title="Instagram não informado"
-              className="mt-1 inline-block rounded-full border border-amber-400 bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700"
-            >
-              sem IG
-            </span>
-          )}
+          <div className="mt-1 flex flex-wrap gap-1">
+            {semTelefone && (
+              <span
+                title="Telefone não informado ou inválido"
+                className="inline-block rounded-full border border-red-300 bg-red-50 px-1.5 py-0.5 text-[10px] font-medium text-red-700"
+              >
+                sem telefone
+              </span>
+            )}
+            {o.conta && !o.conta.instagram && (
+              <span
+                title="Instagram não informado"
+                className="inline-block rounded-full border border-amber-400 bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700"
+              >
+                sem IG
+              </span>
+            )}
+          </div>
         </div>
         <span
           {...handleProps}
@@ -68,7 +80,7 @@ function CardView({
       </div>
       <div className="px-3 pb-3 pt-1.5">
         <div className="space-y-1">
-          {o.conta?.telefone && (
+          {o.conta?.telefone && !semTelefone && (
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Phone className="h-3 w-3 shrink-0" />
               <span className="truncate">{o.conta.telefone}</span>
