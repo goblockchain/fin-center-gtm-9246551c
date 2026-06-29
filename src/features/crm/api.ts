@@ -23,6 +23,19 @@ export const crmKeys = {
   interacoes: (id: string) => ["interacoes", id] as const,
 };
 
+const TEXTO_SEM_TELEFONE = /^(sem\s*(telefone|fone|tel)?|nao\s*informado|não\s*informado|n\/a|nenhum|null|undefined)$/i;
+
+export function telefoneValido(telefone?: string | null) {
+  const valor = telefone?.trim() ?? "";
+  if (!valor || TEXTO_SEM_TELEFONE.test(valor)) return false;
+
+  const digitos = valor.replace(/\D/g, "");
+  if (digitos.length < 8) return false;
+  if (/^(\d)\1+$/.test(digitos)) return false;
+
+  return true;
+}
+
 export function useContas(filters: ContaFilters) {
   return useQuery({
     queryKey: crmKeys.contas(filters),
@@ -229,10 +242,9 @@ export function useContasSemTelefone() {
       const { data, error } = await supabase
         .from("contas")
         .select("*")
-        .or("telefone.is.null,telefone.eq.")
         .order("nome");
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []).filter((conta) => !telefoneValido(conta.telefone));
     },
   });
 }
