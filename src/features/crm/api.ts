@@ -220,3 +220,40 @@ export function useExcluirConta() {
     },
   });
 }
+
+/** Lista contas sem telefone (preview da exclusão em massa). */
+export function useContasSemTelefone() {
+  return useQuery({
+    queryKey: ["contas", "sem-telefone"],
+    queryFn: async (): Promise<Conta[]> => {
+      const { data, error } = await supabase
+        .from("contas")
+        .select("*")
+        .or("telefone.is.null,telefone.eq.")
+        .order("nome");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+}
+
+/** Exclui em massa todas as contas sem telefone. */
+export function useExcluirContasSemTelefone() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (ids: string[]) => {
+      if (!ids.length) return 0;
+      const { error } = await supabase.from("contas").delete().in("id", ids);
+      if (error) throw error;
+      return ids.length;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["contas"] });
+      qc.invalidateQueries({ queryKey: ["oportunidades"] });
+      qc.invalidateQueries({ queryKey: ["canal_kpis"] });
+      qc.invalidateQueries({ queryKey: ["canal_execucao"] });
+      qc.invalidateQueries({ queryKey: ["parceiro_kpis"] });
+      qc.invalidateQueries({ queryKey: ["evento_kpis"] });
+    },
+  });
+}
