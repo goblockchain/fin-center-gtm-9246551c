@@ -182,7 +182,17 @@ export function LeadsPage() {
                         onClick={() => abrir(c)}
                       >
                         <TableCell className="font-medium text-fin-dark">
-                          {c.nome}
+                          <div className="flex items-center gap-2">
+                            <span>{c.nome}</span>
+                            {!c.instagram && (
+                              <span
+                                title="Instagram não informado"
+                                className="rounded-full border border-amber-400 bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700"
+                              >
+                                sem IG
+                              </span>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell className="text-muted-foreground">
                           {c.bairro ?? "—"}

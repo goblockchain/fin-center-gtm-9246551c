@@ -41,9 +41,19 @@ function CardView({
       )}
     >
       <div className="flex items-start justify-between gap-2 px-3 pt-3">
-        <p className="min-w-0 flex-1 truncate text-sm font-medium leading-tight text-fin-dark">
-          {o.conta?.nome ?? "—"}
-        </p>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium leading-tight text-fin-dark">
+            {o.conta?.nome ?? "—"}
+          </p>
+          {o.conta && !o.conta.instagram && (
+            <span
+              title="Instagram não informado"
+              className="mt-1 inline-block rounded-full border border-amber-400 bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700"
+            >
+              sem IG
+            </span>
+          )}
+        </div>
         <span
           {...handleProps}
           onClick={(e) => e.stopPropagation()}
