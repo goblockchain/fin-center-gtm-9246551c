@@ -205,7 +205,7 @@ export function PipelineBoard({ canalId }: { canalId: string | "all" }) {
   return (
     <>
       <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
-        <div className="scroll-x-bar flex gap-3 overflow-x-auto pb-4">
+        <PipelineScroller>
           {ESTAGIOS.map((e) => (
             <Coluna
               key={e}
@@ -214,7 +214,7 @@ export function PipelineBoard({ canalId }: { canalId: string | "all" }) {
               onOpen={setAberta}
             />
           ))}
-        </div>
+        </PipelineScroller>
         <DragOverlay>
           {active ? <CardView o={active} dragging /> : null}
         </DragOverlay>
