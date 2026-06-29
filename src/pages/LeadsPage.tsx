@@ -28,6 +28,7 @@ import {
 } from "@/features/crm/temperatura";
 import { ImportarBaseDialog } from "@/features/crm/ImportarBaseDialog";
 import { ContaSheet } from "@/features/crm/ContaSheet";
+import { ExcluirSemTelefoneDialog } from "@/features/crm/ExcluirSemTelefoneDialog";
 import { PipelineBoard } from "@/features/pipeline/PipelineBoard";
 import type { Conta } from "@/types/db";
 
@@ -84,6 +85,7 @@ export function LeadsPage() {
                 </button>
               ))}
             </div>
+            <ExcluirSemTelefoneDialog />
             <ImportarBaseDialog />
           </div>
         }
