@@ -90,7 +90,7 @@ export function ExcluirSemTelefoneDialog() {
           )}
         </div>
 
-        <DialogFooter className="gap-2 sm:gap-2">
+        <div className="flex justify-end gap-2 pt-2">
           <Button variant="ghost" onClick={() => setOpen(false)}>
             Cancelar
           </Button>
@@ -116,7 +116,8 @@ export function ExcluirSemTelefoneDialog() {
                 Confirmar exclusão de {total}
               </Button>
             ))}
-        </DialogFooter>
+        </div>
+
       </DialogContent>
     </Dialog>
   );
