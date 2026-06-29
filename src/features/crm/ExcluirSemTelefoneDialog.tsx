@@ -25,16 +25,16 @@ export function ExcluirSemTelefoneDialog() {
   async function handleExcluir() {
     if (!contas?.length) return;
     try {
-      const n = await excluir.mutateAsync(contas.map((c) => c.id));
-      toast.success(`${n} ${n === 1 ? "lead removido" : "leads removidos"}.`);
+      await excluir.mutateAsync(contas.map((c) => c.id));
       setOpen(false);
       setConfirmando(false);
     } catch (e) {
-      toast.error(
+      window.alert(
         e instanceof Error ? e.message : "Falha ao excluir os leads.",
       );
     }
   }
+
 
   return (
     <Dialog
