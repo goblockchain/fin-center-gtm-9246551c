@@ -20,6 +20,7 @@ export function ExcluirSemTelefoneDialog() {
   const [open, setOpen] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
   const { data: contas, isLoading } = useContasSemTelefone();
+  const { data: totalSistema, isLoading: loadingTotal } = useTotalContas();
   const excluir = useExcluirContasSemTelefone();
   const total = contas?.length ?? 0;
 
