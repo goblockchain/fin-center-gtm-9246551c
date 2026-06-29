@@ -102,9 +102,9 @@ export function ExcluirSemTelefoneDialog() {
               <ul className="max-h-56 space-y-1 overflow-y-auto text-sm text-muted-foreground">
                 {contas!.map((c) => (
                   <li key={c.id} className="flex items-center justify-between gap-2">
-                    <span className="truncate">{c.nome}</span>
+                    <span className="min-w-0 truncate">{c.nome}</span>
                     <span className="shrink-0 text-xs">
-                      {c.bairro ?? "—"}
+                      {c.telefone?.trim() || "vazio"}
                     </span>
                   </li>
                 ))}
