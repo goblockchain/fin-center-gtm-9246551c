@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Loader2, Trash2, AlertTriangle } from "lucide-react";
+import { Loader2, Trash2, AlertTriangle, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
 import {
   useContasSemTelefone,
   useExcluirContasSemTelefone,
+  useTotalContas,
 } from "@/features/crm/api";
 
 
@@ -19,6 +20,7 @@ export function ExcluirSemTelefoneDialog() {
   const [open, setOpen] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
   const { data: contas, isLoading } = useContasSemTelefone();
+  const { data: totalSistema, isLoading: loadingTotal } = useTotalContas();
   const excluir = useExcluirContasSemTelefone();
   const total = contas?.length ?? 0;
 
@@ -61,6 +63,27 @@ export function ExcluirSemTelefoneDialog() {
             (cascade) e não pode ser desfeita.
           </DialogDescription>
         </DialogHeader>
+
+        <div className="flex items-center gap-3 rounded-md border border-border bg-muted/30 p-3">
+          <BarChart3 className="h-5 w-5 text-fin shrink-0" />
+          <div className="text-sm">
+            {isLoading || loadingTotal ? (
+              <span className="text-muted-foreground">Carregando resumo…</span>
+            ) : total === 0 ? (
+              <span className="text-muted-foreground">
+                Nenhum lead sem telefone encontrado.
+              </span>
+            ) : (
+              <>
+                <span className="font-semibold text-fin-dark">{total}</span>{" "}
+                {total === 1 ? "lead sem telefone será removido" : "leads sem telefone serão removidos"}{" "}
+                <span className="text-muted-foreground">
+                  de {totalSistema ?? 0} {totalSistema === 1 ? "lead no sistema" : "leads no sistema"}.
+                </span>
+              </>
+            )}
+          </div>
+        </div>
 
         <div className="rounded-md border border-border bg-muted/30 p-3">
           {isLoading ? (

@@ -257,3 +257,17 @@ export function useExcluirContasSemTelefone() {
     },
   });
 }
+
+/** Conta total de leads no sistema. */
+export function useTotalContas() {
+  return useQuery({
+    queryKey: ["contas", "total"],
+    queryFn: async (): Promise<number> => {
+      const { count, error } = await supabase
+        .from("contas")
+        .select("*", { count: "exact", head: true });
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+}
