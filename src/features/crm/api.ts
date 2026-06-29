@@ -201,3 +201,22 @@ export function useAtualizarPlano() {
     },
   });
 }
+
+/** Exclui um lead (conta). Cascade remove contatos/interações/oportunidade. */
+export function useExcluirConta() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("contas").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["contas"] });
+      qc.invalidateQueries({ queryKey: ["oportunidades"] });
+      qc.invalidateQueries({ queryKey: ["canal_kpis"] });
+      qc.invalidateQueries({ queryKey: ["canal_execucao"] });
+      qc.invalidateQueries({ queryKey: ["parceiro_kpis"] });
+      qc.invalidateQueries({ queryKey: ["evento_kpis"] });
+    },
+  });
+}
