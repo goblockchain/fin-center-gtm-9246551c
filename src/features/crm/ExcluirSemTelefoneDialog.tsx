@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Loader2, Trash2, AlertTriangle } from "lucide-react";
+import { Loader2, Trash2, AlertTriangle, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
 import {
   useContasSemTelefone,
   useExcluirContasSemTelefone,
+  useTotalContas,
 } from "@/features/crm/api";
 
 
