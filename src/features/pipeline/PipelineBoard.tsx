@@ -162,6 +162,90 @@ function Coluna({
   );
 }
 
+/**
+ * Wrapper que (1) renderiza uma barra de rolagem horizontal NO TOPO sincronizada
+ * com o container real e (2) permite arrastar o fundo (click-drag) para rolar
+ * até o final, já que os cards consomem o pointer para o dnd-kit.
+ */
+function PipelineScroller({ children }: { children: React.ReactNode }) {
+  const topRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [innerWidth, setInnerWidth] = useState(0);
+  const syncing = useRef<"top" | "bottom" | null>(null);
+
+  useLayoutEffect(() => {
+    if (!innerRef.current) return;
+    const ro = new ResizeObserver(() => {
+      setInnerWidth(innerRef.current?.scrollWidth ?? 0);
+    });
+    ro.observe(innerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  function onTopScroll() {
+    if (syncing.current === "bottom") return;
+    syncing.current = "top";
+    if (bottomRef.current && topRef.current) {
+      bottomRef.current.scrollLeft = topRef.current.scrollLeft;
+    }
+    requestAnimationFrame(() => (syncing.current = null));
+  }
+  function onBottomScroll() {
+    if (syncing.current === "top") return;
+    syncing.current = "bottom";
+    if (topRef.current && bottomRef.current) {
+      topRef.current.scrollLeft = bottomRef.current.scrollLeft;
+    }
+    requestAnimationFrame(() => (syncing.current = null));
+  }
+
+  // Click-and-drag no fundo da área (entre/abaixo dos cards) para rolar.
+  const drag = useRef<{ x: number; left: number } | null>(null);
+  function onPointerDown(e: React.PointerEvent<HTMLDivElement>) {
+    // só inicia o pan se o alvo for o próprio container (não um card)
+    if (e.target !== e.currentTarget) return;
+    if (!bottomRef.current) return;
+    drag.current = { x: e.clientX, left: bottomRef.current.scrollLeft };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }
+  function onPointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (!drag.current || !bottomRef.current) return;
+    bottomRef.current.scrollLeft = drag.current.left - (e.clientX - drag.current.x);
+  }
+  function onPointerUp(e: React.PointerEvent<HTMLDivElement>) {
+    drag.current = null;
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+  }
+
+  return (
+    <div>
+      <div
+        ref={topRef}
+        onScroll={onTopScroll}
+        className="scroll-x-bar mb-2 overflow-x-auto overflow-y-hidden"
+      >
+        <div style={{ width: innerWidth, height: 1 }} />
+      </div>
+      <div
+        ref={bottomRef}
+        onScroll={onBottomScroll}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        className="scroll-x-bar overflow-x-auto pb-2"
+      >
+        <div ref={innerRef} className="flex cursor-grab gap-3 active:cursor-grabbing">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function PipelineBoard({ canalId }: { canalId: string | "all" }) {
   const { data: oports, isLoading } = useOportunidades(canalId);
   const mover = useMoverEstagio();
