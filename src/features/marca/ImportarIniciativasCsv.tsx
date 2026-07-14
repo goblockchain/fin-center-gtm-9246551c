@@ -110,7 +110,7 @@ export function ImportarIniciativasCsv({
         status: normStatus(r.status ?? "ideia"),
       }));
       onReplace(items);
-      toast.success(`Kanban substituído: ${items.length} iniciativas importadas.`);
+      
       setOpen(false);
       reset();
     } catch (e) {

@@ -138,7 +138,7 @@ export function ImportarSprintCsv() {
 
       await qc.invalidateQueries({ queryKey: ["tarefas"] });
       await qc.invalidateQueries({ queryKey: ["canal_execucao"] });
-      toast.success(`Sprint substituída: ${inserts.length} tarefas importadas.`);
+      
       setOpen(false);
       reset();
     } catch (e) {
