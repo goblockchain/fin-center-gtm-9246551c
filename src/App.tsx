@@ -30,6 +30,9 @@ const MensagensPage = lazy(() =>
 );
 const VozPage = lazy(() => named(import("@/pages/VozPage"), "VozPage"));
 const MarcaPage = lazy(() => named(import("@/pages/MarcaPage"), "MarcaPage"));
+const AgendaPage = lazy(() =>
+  named(import("@/pages/AgendaPage"), "AgendaPage"),
+);
 const DefinirSenhaPage = lazy(() =>
   named(import("@/pages/DefinirSenhaPage"), "DefinirSenhaPage"),
 );
@@ -120,6 +123,14 @@ export default function App() {
           element={
             <Suspense fallback={<Fallback />}>
               <MarcaPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="agenda"
+          element={
+            <Suspense fallback={<Fallback />}>
+              <AgendaPage />
             </Suspense>
           }
         />
