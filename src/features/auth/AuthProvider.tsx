@@ -14,6 +14,12 @@ type AuthContextValue = {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
+  /** Cadastro público (tela de login). Se o projeto exigir confirmação de
+   *  e-mail e não houver sessão de volta, retorna precisaConfirmar=true. */
+  signUp: (
+    email: string,
+    password: string,
+  ) => Promise<{ error?: string; precisaConfirmar?: boolean }>;
   signOut: () => Promise<void>;
   /** Troca a senha do usuário logado (não depende de e-mail). */
   updatePassword: (password: string) => Promise<{ error?: string }>;
@@ -93,6 +99,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           password,
         });
         return error ? { error: error.message } : {};
+      },
+      signUp: async (email, password) => {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+        if (error) return { error: error.message };
+        // Sem sessão de volta = projeto exige confirmação de e-mail.
+        if (!data.session) return { precisaConfirmar: true };
+        return {};
       },
       signOut: async () => {
         await supabase.auth.signOut();
