@@ -8,7 +8,6 @@ import { EventoDialog } from "@/features/agenda/EventoDialog";
 import { useEventos, type EventoComParticipantes } from "@/features/agenda/api";
 import { supabase } from "@/lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 export function AgendaPage() {
   const { data: eventos, isLoading } = useEventos();
@@ -45,14 +44,14 @@ export function AgendaPage() {
         body: { action: "pull" },
       });
       if (error || (data as any)?.error) {
-        toast.error((data as any)?.error ?? error?.message ?? "Erro ao sincronizar");
+        window.alert((data as any)?.error ?? error?.message ?? "Erro ao sincronizar");
         return;
       }
       const { upserts = 0, cancelamentos = 0 } = (data as any) ?? {};
-      toast.success(`Google sincronizado — ${upserts} evento(s), ${cancelamentos} cancelado(s).`);
+      window.alert(`Google sincronizado — ${upserts} evento(s), ${cancelamentos} cancelado(s).`);
       qc.invalidateQueries({ queryKey: ["eventos_agenda"] });
     } catch (e) {
-      toast.error((e as Error).message);
+      window.alert((e as Error).message);
     } finally {
       setSincronizando(false);
     }
