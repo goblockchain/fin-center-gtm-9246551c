@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { parseCSV, downloadText, type CsvRow } from "@/lib/csv";
-import { toast } from "sonner";
+
 
 type Status = "ideia" | "em_teste" | "validada" | "descartada";
 type Categoria = "marca" | "comercial";

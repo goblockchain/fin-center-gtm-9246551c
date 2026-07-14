@@ -14,7 +14,7 @@ import { supabase } from "@/lib/supabase";
 import { useCanais } from "@/features/canais/api";
 import { parseCSV, downloadText, type CsvRow } from "@/lib/csv";
 import type { StatusTarefa } from "@/types/db";
-import { toast } from "sonner";
+
 
 const TEMPLATE = [
   "codigo,frente,titulo,responsavel,data_inicio,prazo,status,canal_slug,depende_de",
