@@ -106,7 +106,7 @@ export function EvolucaoSemanal() {
               type="button"
               onClick={() => capturar.mutate()}
               disabled={capturar.isPending}
-              className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-fin-dark hover:bg-secondary disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-fin-dark hover:bg-secondary disabled:opacity-50 print:hidden"
             >
               <Camera className="h-3.5 w-3.5" />
               {capturar.isPending ? "Capturando…" : "Capturar agora"}

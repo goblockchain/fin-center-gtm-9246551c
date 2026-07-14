@@ -21,6 +21,7 @@ import {
   canalNomePorId,
 } from "@/features/canais/api";
 import { brl } from "@/lib/format";
+import { EvolucaoSemanal } from "@/features/dashboard/EvolucaoSemanal";
 import type { Temperatura } from "@/types/db";
 
 /* Ticket médio default (R$ 4.800 por cliente). Editável para simular cenários. */
@@ -161,6 +162,10 @@ export function ExecutivoPage() {
           isMoney
         />
       </div>
+
+      {/* Evolução semana a semana — foco do relatório para o investidor.
+          Alimentada pelos snapshots (captura automática sexta 18h + manual). */}
+      <EvolucaoSemanal />
 
       {/* Projeção de receita */}
       <section className="rounded-2xl border border-border bg-card p-6">
