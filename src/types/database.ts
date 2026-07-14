@@ -1145,8 +1145,16 @@ export type Database = {
         | "qualificado"
         | "reuniao"
         | "proposta"
+        | "piloto"
+        | "envio_contrato"
+        | "setup_onboarding"
         | "negociacao"
         | "fechado_ganho"
+        | "ticket_aberto"
+        | "nps_recolhido"
+        | "indicacao"
+        | "up_cross_sell"
+        | "retencao"
         | "fechado_perdido"
       papel_contato: "decisor" | "gatekeeper" | "influenciador" | "outro"
       status_gate: "pendente" | "concluido"
@@ -1295,8 +1303,16 @@ export const Constants = {
         "qualificado",
         "reuniao",
         "proposta",
+        "piloto",
+        "envio_contrato",
+        "setup_onboarding",
         "negociacao",
         "fechado_ganho",
+        "ticket_aberto",
+        "nps_recolhido",
+        "indicacao",
+        "up_cross_sell",
+        "retencao",
         "fechado_perdido",
       ],
       papel_contato: ["decisor", "gatekeeper", "influenciador", "outro"],

@@ -157,8 +157,16 @@ const PROB: Record<EstagioOport, number> = {
   qualificado: 25,
   reuniao: 40,
   proposta: 60,
+  piloto: 70,
+  envio_contrato: 90,
+  setup_onboarding: 95,
   negociacao: 75,
   fechado_ganho: 100,
+  ticket_aberto: 100,
+  nps_recolhido: 100,
+  indicacao: 100,
+  up_cross_sell: 100,
+  retencao: 100,
   fechado_perdido: 0,
 };
 
