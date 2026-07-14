@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { Loader2, Lock, Plus } from "lucide-react";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import {
   type TarefaComCanal,
 } from "@/features/tarefas/api";
 import { TarefaFormDialog } from "@/features/tarefas/TarefaFormDialog";
+import { ImportarSprintCsv } from "@/features/tarefas/ImportarSprintCsv";
 import type { StatusTarefa } from "@/types/db";
 
 const STATUS_OPC: { v: StatusTarefa; label: string }[] = [
@@ -25,7 +25,6 @@ const STATUS_LABEL: Record<StatusTarefa, string> = {
   feito: "Feito",
 };
 
-/** Ícone de status estilo Linear (círculo vazio / meio-preenchido / concluído). */
 function StatusIcon({
   status,
   className,
@@ -63,7 +62,6 @@ function StatusIcon({
   );
 }
 
-/** Controle de status: ícone que abre um menu (estilo Linear). */
 function StatusControl({
   status,
   bloqueada,
@@ -179,7 +177,8 @@ function TarefaRow({
   );
 }
 
-export function TarefasPage() {
+/** Lista de tarefas agrupada por frente + ações (Importar CSV, Nova tarefa). */
+export function TarefasList() {
   const { data: tarefas, isLoading } = useTarefas();
   const mutar = useAtualizarStatusTarefa();
   const [editando, setEditando] = useState<TarefaComCanal | null>(null);
@@ -200,40 +199,43 @@ export function TarefasPage() {
 
   return (
     <div>
-      <PageHeader
-        title="Tarefas"
-        description="Tarefas da sprint, agrupadas por frente. Clique na tarefa para editar e no status para mudar. A tarefa fica travada até a tarefa de que ela depende ficar pronta."
-        actions={
-          <div className="flex items-center gap-2">
-            {tarefas?.length ? (
-              <Badge variant="secondary">
-                {feitas}/{tarefas.length} feitas
-              </Badge>
-            ) : null}
-            <Button
-              size="sm"
-              onClick={() => {
-                setEditando(null);
-                setFormOpen(true);
-              }}
-            >
-              <Plus className="h-4 w-4" /> Nova tarefa
-            </Button>
-          </div>
-        }
-      />
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          {tarefas?.length ? (
+            <Badge variant="secondary">
+              {feitas}/{tarefas.length} feitas
+            </Badge>
+          ) : null}
+        </div>
+        <div className="flex items-center gap-2">
+          <ImportarSprintCsv />
+          <Button
+            size="sm"
+            onClick={() => {
+              setEditando(null);
+              setFormOpen(true);
+            }}
+          >
+            <Plus className="h-4 w-4" /> Nova tarefa
+          </Button>
+        </div>
+      </div>
 
       {isLoading ? (
         <div className="flex items-center justify-center gap-2 py-16 text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin" /> Carregando tarefas…
         </div>
+      ) : grupos.size === 0 ? (
+        <Card className="p-8 text-center text-sm text-muted-foreground">
+          Nenhuma tarefa cadastrada. Use “Importar CSV” ou “Nova tarefa”.
+        </Card>
       ) : (
         <div className="space-y-5">
           {[...grupos.entries()].map(([frente, lista]) => (
             <div key={frente}>
-              <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-fin-dark">
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {frente}
-              </h2>
+              </h3>
               <Card className="divide-y divide-border">
                 {lista.map((t) => {
                   const bloqueada =

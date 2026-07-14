@@ -4,21 +4,23 @@ import { Gantt } from "@/features/roadmap/Gantt";
 import { ProjetosPanel } from "@/features/roadmap/ProjetosPanel";
 import { CustosCanais } from "@/features/economia/CustosCanais";
 import { MetasMensais } from "@/features/economia/MetasMensais";
+import { TarefasList } from "@/features/tarefas/TarefasList";
 
 export function RoadmapPage() {
   return (
     <div>
       <PageHeader
         title="Roadmap"
-        description="A linha do tempo se molda aos projetos e prazos que você cadastrar. Os cálculos (conversão vs 2%, CAC, ROI) são automáticos."
+        description="Timeline da sprint, gates, tarefas e economia — tudo em um só lugar. Cálculos (conversão vs 2%, CAC, ROI) são automáticos."
       />
-      <div className="space-y-6">
+      <div className="space-y-8">
         <section>
           <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-fin-dark">
             Gates de decisão
           </h2>
           <GatesPanel />
         </section>
+
         <section>
           <div className="mb-2">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-fin-dark">
@@ -27,7 +29,7 @@ export function RoadmapPage() {
             <p className="text-xs text-muted-foreground">
               Uma barra por projeto cadastrado. Cores: a fazer, fazendo, feito,
               perto do prazo (âmbar) e atrasado (vermelho). Edite os campos
-              abaixo direto — a timeline acompanha.
+              abaixo — a timeline acompanha.
             </p>
           </div>
           <div className="space-y-4">
@@ -35,6 +37,20 @@ export function RoadmapPage() {
             <ProjetosPanel />
           </div>
         </section>
+
+        <section>
+          <div className="mb-2">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-fin-dark">
+              Tarefas da sprint
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Agrupadas por frente. A tarefa fica travada até a dependência ficar
+              pronta. Importe um CSV para substituir toda a sprint de uma vez.
+            </p>
+          </div>
+          <TarefasList />
+        </section>
+
         <section>
           <div className="mb-2">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-fin-dark">
@@ -47,6 +63,7 @@ export function RoadmapPage() {
           </div>
           <CustosCanais />
         </section>
+
         <section>
           <div className="mb-2">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-fin-dark">

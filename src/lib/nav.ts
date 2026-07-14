@@ -3,7 +3,6 @@ import {
   Presentation,
   Users,
   CalendarRange,
-  ListChecks,
   MessageSquareText,
   Quote,
   Sparkles,
@@ -42,13 +41,7 @@ export const NAV_ITEMS: NavItem[] = [
     to: "/roadmap",
     label: "Roadmap",
     icon: CalendarRange,
-    description: "Gantt da sprint e gates de decisão.",
-  },
-  {
-    to: "/tarefas",
-    label: "Tarefas",
-    icon: ListChecks,
-    description: "Tarefas por canal, dependências e prazos.",
+    description: "Timeline, tarefas da sprint, gates e economia.",
   },
   {
     to: "/mensagens",
