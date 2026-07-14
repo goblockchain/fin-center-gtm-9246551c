@@ -71,7 +71,7 @@ export function calcularFoco(
     .forEach((e) =>
       acoes.push({
         texto: `${e.nome} está pronto e parado — comece a abordar os leads`,
-        link: "/canais",
+        link: "/leads",
         urgencia: "perto",
       }),
     );

@@ -16,7 +16,9 @@ const DashboardPage = lazy(() =>
   named(import("@/pages/DashboardPage"), "DashboardPage"),
 );
 const LeadsPage = lazy(() => named(import("@/pages/LeadsPage"), "LeadsPage"));
-const CanaisPage = lazy(() => named(import("@/pages/CanaisPage"), "CanaisPage"));
+const ExecutivoPage = lazy(() =>
+  named(import("@/pages/ExecutivoPage"), "ExecutivoPage"),
+);
 const RoadmapPage = lazy(() =>
   named(import("@/pages/RoadmapPage"), "RoadmapPage"),
 );
@@ -27,12 +29,7 @@ const MensagensPage = lazy(() =>
   named(import("@/pages/MensagensPage"), "MensagensPage"),
 );
 const VozPage = lazy(() => named(import("@/pages/VozPage"), "VozPage"));
-const RelatorioPage = lazy(() =>
-  named(import("@/pages/RelatorioPage"), "RelatorioPage"),
-);
-const CrescimentoPage = lazy(() =>
-  named(import("@/pages/CrescimentoPage"), "CrescimentoPage"),
-);
+const MarcaPage = lazy(() => named(import("@/pages/MarcaPage"), "MarcaPage"));
 const DefinirSenhaPage = lazy(() =>
   named(import("@/pages/DefinirSenhaPage"), "DefinirSenhaPage"),
 );
@@ -79,10 +76,10 @@ export default function App() {
         <Route path="pipeline" element={<Navigate to="/leads" replace />} />
         <Route path="crm" element={<Navigate to="/leads" replace />} />
         <Route
-          path="canais"
+          path="executivo"
           element={
             <Suspense fallback={<Fallback />}>
-              <CanaisPage />
+              <ExecutivoPage />
             </Suspense>
           }
         />
@@ -119,18 +116,10 @@ export default function App() {
           }
         />
         <Route
-          path="relatorio"
+          path="marca"
           element={
             <Suspense fallback={<Fallback />}>
-              <RelatorioPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="crescimento"
-          element={
-            <Suspense fallback={<Fallback />}>
-              <CrescimentoPage />
+              <MarcaPage />
             </Suspense>
           }
         />
