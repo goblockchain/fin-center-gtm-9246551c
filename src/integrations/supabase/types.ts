@@ -14,7 +14,164 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      eventos_agenda: {
+        Row: {
+          conta_id: string | null
+          created_at: string
+          criado_por: string | null
+          descricao: string | null
+          fim: string
+          google_calendar_id: string | null
+          google_event_id: string | null
+          id: string
+          inicio: string
+          local: string | null
+          origem: Database["public"]["Enums"]["origem_evento"]
+          status: Database["public"]["Enums"]["status_evento"]
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          conta_id?: string | null
+          created_at?: string
+          criado_por?: string | null
+          descricao?: string | null
+          fim: string
+          google_calendar_id?: string | null
+          google_event_id?: string | null
+          id?: string
+          inicio: string
+          local?: string | null
+          origem?: Database["public"]["Enums"]["origem_evento"]
+          status?: Database["public"]["Enums"]["status_evento"]
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          conta_id?: string | null
+          created_at?: string
+          criado_por?: string | null
+          descricao?: string | null
+          fim?: string
+          google_calendar_id?: string | null
+          google_event_id?: string | null
+          id?: string
+          inicio?: string
+          local?: string | null
+          origem?: Database["public"]["Enums"]["origem_evento"]
+          status?: Database["public"]["Enums"]["status_evento"]
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      eventos_participantes: {
+        Row: {
+          created_at: string
+          evento_id: string
+          participante_id: string
+          status_convite: Database["public"]["Enums"]["status_convite"]
+        }
+        Insert: {
+          created_at?: string
+          evento_id: string
+          participante_id: string
+          status_convite?: Database["public"]["Enums"]["status_convite"]
+        }
+        Update: {
+          created_at?: string
+          evento_id?: string
+          participante_id?: string
+          status_convite?: Database["public"]["Enums"]["status_convite"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eventos_participantes_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos_agenda"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eventos_participantes_participante_id_fkey"
+            columns: ["participante_id"]
+            isOneToOne: false
+            referencedRelation: "participantes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      participantes: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          email: string | null
+          id: string
+          nome: string
+          telefone: string | null
+          tipo: Database["public"]["Enums"]["tipo_participante"]
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          email?: string | null
+          id?: string
+          nome: string
+          telefone?: string | null
+          tipo?: Database["public"]["Enums"]["tipo_participante"]
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          email?: string | null
+          id?: string
+          nome?: string
+          telefone?: string | null
+          tipo?: Database["public"]["Enums"]["tipo_participante"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      whatsapp_mensagens: {
+        Row: {
+          body: string
+          created_at: string
+          erro: string | null
+          evento_id: string | null
+          from_number: string
+          id: string
+          processado: boolean
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          erro?: string | null
+          evento_id?: string | null
+          from_number: string
+          id?: string
+          processado?: boolean
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          erro?: string | null
+          evento_id?: string | null
+          from_number?: string
+          id?: string
+          processado?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_mensagens_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos_agenda"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +180,10 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      origem_evento: "manual" | "whatsapp"
+      status_convite: "pendente" | "aceito" | "recusado"
+      status_evento: "agendado" | "cancelado" | "realizado"
+      tipo_participante: "interno" | "cliente" | "parceiro" | "outro"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +310,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      origem_evento: ["manual", "whatsapp"],
+      status_convite: ["pendente", "aceito", "recusado"],
+      status_evento: ["agendado", "cancelado", "realizado"],
+      tipo_participante: ["interno", "cliente", "parceiro", "outro"],
+    },
   },
 } as const
