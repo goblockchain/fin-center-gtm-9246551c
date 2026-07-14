@@ -1,13 +1,13 @@
 import {
   LayoutDashboard,
+  Presentation,
   Users,
-  Radio,
   CalendarRange,
-  CalendarDays,
   ListChecks,
   MessageSquareText,
   Quote,
-  Sprout,
+  Sparkles,
+  CalendarDays,
   type LucideIcon,
 } from "lucide-react";
 
@@ -27,16 +27,16 @@ export const NAV_ITEMS: NavItem[] = [
     description: "Foco de hoje, saúde dos canais e funil ao vivo.",
   },
   {
+    to: "/executivo",
+    label: "Visão Executiva",
+    icon: Presentation,
+    description: "Snapshot de 5 minutos: funil, fechamentos e projeção.",
+  },
+  {
     to: "/leads",
     label: "Leads",
     icon: Users,
     description: "Pipeline e base de contas — kanban e tabela.",
-  },
-  {
-    to: "/canais",
-    label: "Canais",
-    icon: Radio,
-    description: "Execução, investimento e KPIs por canal.",
   },
   {
     to: "/roadmap",
@@ -63,10 +63,10 @@ export const NAV_ITEMS: NavItem[] = [
     description: "Depoimentos, provas e narrativas.",
   },
   {
-    to: "/crescimento",
-    label: "Crescimento",
-    icon: Sprout,
-    description: "Comunidade, parcerias e eventos.",
+    to: "/marca",
+    label: "Marca & Iniciativas",
+    icon: Sparkles,
+    description: "Esteira de ideias e testes de marca e comercial.",
   },
   {
     to: "/agenda",
