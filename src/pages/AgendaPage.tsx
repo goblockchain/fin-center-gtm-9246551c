@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { type View } from "react-big-calendar";
-import { CalendarPlus, Info } from "lucide-react";
+import { CalendarPlus, Info, RefreshCw } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { AgendaCalendar } from "@/features/agenda/AgendaCalendar";
 import { EventoDialog } from "@/features/agenda/EventoDialog";
 import { useEventos, type EventoComParticipantes } from "@/features/agenda/api";
+import { supabase } from "@/lib/supabase";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function AgendaPage() {
   const { data: eventos, isLoading } = useEventos();
+  const qc = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editando, setEditando] = useState<EventoComParticipantes | null>(null);
   const [slotInicio, setSlotInicio] = useState<Date | undefined>();
   const [view, setView] = useState<View>("month");
   const [date, setDate] = useState<Date>(new Date());
+  const [sincronizando, setSincronizando] = useState(false);
 
   function novo() {
     setEditando(null);
@@ -33,15 +37,41 @@ export function AgendaPage() {
     setDialogOpen(true);
   }
 
+  async function sincronizarGoogle() {
+    setSincronizando(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("google-calendar-sync", {
+        body: { action: "pull" },
+      });
+      if (error || (data as any)?.error) {
+        window.alert((data as any)?.error ?? error?.message ?? "Erro ao sincronizar");
+        return;
+      }
+      const { upserts = 0, cancelamentos = 0 } = (data as any) ?? {};
+      window.alert(`Google sincronizado — ${upserts} evento(s), ${cancelamentos} cancelado(s).`);
+      qc.invalidateQueries({ queryKey: ["eventos_agenda"] });
+    } catch (e) {
+      window.alert((e as Error).message);
+    } finally {
+      setSincronizando(false);
+    }
+  }
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <PageHeader
         title="Agenda"
-        description="Eventos sincronizados com o Google Calendar. Convidados recebem convite por e-mail."
+        description="Sincronizada com o Google Calendar do time (Natalia). Convidados recebem convite por e-mail."
         actions={
-          <Button onClick={novo}>
-            <CalendarPlus className="h-4 w-4" /> Novo evento
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={sincronizarGoogle} disabled={sincronizando}>
+              <RefreshCw className={`h-4 w-4 ${sincronizando ? "animate-spin" : ""}`} />
+              {sincronizando ? "Sincronizando…" : "Sincronizar Google"}
+            </Button>
+            <Button onClick={novo}>
+              <CalendarPlus className="h-4 w-4" /> Novo evento
+            </Button>
+          </div>
         }
       />
 
