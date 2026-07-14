@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/shared/PageHeader";
+import { ImportarIniciativasCsv } from "@/features/marca/ImportarIniciativasCsv";
 
 type Status = "ideia" | "em_teste" | "validada" | "descartada";
 type Categoria = "marca" | "comercial";
@@ -181,6 +182,7 @@ export function MarcaPage() {
                 </SelectContent>
               </Select>
             </div>
+            <ImportarIniciativasCsv onReplace={(items) => setItems(items)} />
             <NovaIniciativa
               open={createOpen}
               onOpenChange={setCreateOpen}

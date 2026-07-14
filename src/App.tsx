@@ -22,9 +22,6 @@ const ExecutivoPage = lazy(() =>
 const RoadmapPage = lazy(() =>
   named(import("@/pages/RoadmapPage"), "RoadmapPage"),
 );
-const TarefasPage = lazy(() =>
-  named(import("@/pages/TarefasPage"), "TarefasPage"),
-);
 const MensagensPage = lazy(() =>
   named(import("@/pages/MensagensPage"), "MensagensPage"),
 );
@@ -94,14 +91,8 @@ export default function App() {
             </Suspense>
           }
         />
-        <Route
-          path="tarefas"
-          element={
-            <Suspense fallback={<Fallback />}>
-              <TarefasPage />
-            </Suspense>
-          }
-        />
+        {/* Tarefas foi unida ao Roadmap */}
+        <Route path="tarefas" element={<Navigate to="/roadmap" replace />} />
         <Route
           path="mensagens"
           element={
