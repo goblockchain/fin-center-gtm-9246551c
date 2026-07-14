@@ -8,6 +8,7 @@ import {
   Building2,
   Trophy,
   DollarSign,
+  FileDown,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -99,24 +100,33 @@ export function ExecutivoPage() {
         title="Visão executiva"
         description="Uma leitura de 5 minutos: quanto tem no funil, quanto já fechou, quais são os leads quentes e quanto de receita esse pipeline pode gerar."
         actions={
-          <div>
-            <Label className="text-[11px] uppercase tracking-wider text-muted-foreground">
-              Ticket médio
-            </Label>
-            <div className="mt-1 flex items-center gap-1.5">
-              <span className="text-sm text-muted-foreground">R$</span>
-              <Input
-                type="number"
-                min={0}
-                step={100}
-                value={ticket}
-                onChange={(e) =>
-                  setTicket(Math.max(0, Number(e.target.value) || 0))
-                }
-                className="h-9 w-28 tabular-nums"
-              />
-              <span className="text-xs text-muted-foreground">/ cliente</span>
+          <div className="flex items-end gap-3">
+            <div>
+              <Label className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                Ticket médio
+              </Label>
+              <div className="mt-1 flex items-center gap-1.5">
+                <span className="text-sm text-muted-foreground">R$</span>
+                <Input
+                  type="number"
+                  min={0}
+                  step={100}
+                  value={ticket}
+                  onChange={(e) =>
+                    setTicket(Math.max(0, Number(e.target.value) || 0))
+                  }
+                  className="h-9 w-28 tabular-nums"
+                />
+                <span className="text-xs text-muted-foreground">/ cliente</span>
+              </div>
             </div>
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="inline-flex h-9 items-center gap-2 rounded-md border border-border bg-card px-3 text-sm font-medium text-fin-dark transition-colors hover:bg-secondary print:hidden"
+            >
+              <FileDown className="h-4 w-4" /> Exportar PDF
+            </button>
           </div>
         }
       />
