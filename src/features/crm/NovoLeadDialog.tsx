@@ -27,7 +27,10 @@ import { TEMPERATURAS, TEMP_META } from "./temperatura";
 import { TIPOS_NEGOCIO, TIPO_NEGOCIO_META, type TipoNegocio } from "./tipoNegocio";
 import { PLANOS, PLANO_PADRAO } from "@/lib/planos";
 import type { Temperatura, EstagioOport } from "@/types/db";
-import { toast } from "sonner";
+const toast = {
+  success: (m: string) => console.log(m),
+  error: (m: string) => window.alert(m),
+};
 
 const nn = (s: string) => (s.trim() ? s.trim() : null);
 
