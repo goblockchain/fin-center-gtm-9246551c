@@ -1147,7 +1147,6 @@ export type Database = {
         | "proposta"
         | "piloto"
         | "envio_contrato"
-        | "setup_onboarding"
         | "negociacao"
         | "fechado_ganho"
         | "fechado_perdido"
@@ -1300,7 +1299,6 @@ export const Constants = {
         "proposta",
         "piloto",
         "envio_contrato",
-        "setup_onboarding",
         "negociacao",
         "fechado_ganho",
         "fechado_perdido",
