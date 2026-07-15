@@ -33,6 +33,7 @@ const FRENTES: { frente: string; slug: string | null; prefixo: string }[] = [
   { frente: "Indicações", slug: "indicacoes", prefixo: "I" },
   { frente: "Outbound", slug: "outbound", prefixo: "O" },
   { frente: "Inbound", slug: "inbound", prefixo: "N" },
+  { frente: "Meta Ads", slug: "meta-ads", prefixo: "MA" },
   { frente: "ABF", slug: "abf", prefixo: "A" },
   { frente: "Gates", slug: null, prefixo: "G" },
 ];

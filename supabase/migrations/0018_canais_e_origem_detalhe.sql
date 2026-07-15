@@ -7,11 +7,14 @@
 -- CAC/ROI seguem inteiros por canal (um CAC de Inbound, não três) e o detalhe
 -- serve para filtrar e segmentar.
 --
--- Canais finais (6): ABF · Inbound · Outbound · Base Yungas · Indicações ·
---                    Fin Light
--- Meta Ads NÃO é canal: é origem dentro do Inbound (junto de Instagram/
--- LinkedIn/Reddit). ABF é canal à parte — tipo 'abf', para não ser agrupado
--- nas visões de Parcerias/Eventos de Crescimento.
+-- Canais finais (7): ABF · Inbound · Meta Ads · Outbound · Base Yungas ·
+--                    Indicações · Fin Light
+--
+-- Meta Ads é canal PRÓPRIO, tipo 'inbound': o tipo agrupa nas visões, mas o
+-- canal separado mantém o CAC da mídia paga isolado do inbound orgânico —
+-- diluir os dois num CAC só esconderia o custo real do pago.
+-- ABF é canal à parte — tipo 'abf', para não ser agrupado nas visões de
+-- Parcerias/Eventos de Crescimento.
 --
 -- Os SLUGS são preservados de propósito: o código referencia
 -- 'member-get-member' (TarefaFormDialog) e 'outbound' (ImportarBaseDialog).
@@ -30,9 +33,10 @@ comment on column public.contas.origem_detalhe is
 -- Member-get-member passa a se chamar Fin Light. Slug preservado (ver acima).
 update public.canais set nome = 'Fin Light' where slug = 'member-get-member';
 
--- ABF: canal à parte. tipo 'abf' (a coluna é texto livre, §15) para ele não
--- cair nas visões de Parcerias/Eventos.
+-- Canais novos (a coluna tipo é texto livre, §15).
 -- on conflict do nothing => a migration é idempotente.
 insert into public.canais (slug, nome, tipo, prioridade, ordem, responsavel)
-values ('abf', 'ABF', 'abf', 2, 6, 'Natalia')
+values
+  ('abf', 'ABF', 'abf', 2, 6, 'Natalia'),
+  ('meta-ads', 'Meta Ads', 'inbound', 3, 7, 'Natalia')
 on conflict (slug) do nothing;

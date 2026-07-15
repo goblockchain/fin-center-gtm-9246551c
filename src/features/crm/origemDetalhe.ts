@@ -13,10 +13,12 @@ export type DetalheCanal =
   | { modo: "texto"; label: string; placeholder: string };
 
 const POR_SLUG: Record<string, DetalheCanal> = {
+  // Meta Ads NÃO entra aqui: é canal próprio, para o CAC da mídia paga não
+  // diluir no orgânico. Este detalhe é só do inbound orgânico.
   inbound: {
     modo: "select",
     label: "Origem do inbound",
-    opcoes: ["Instagram", "LinkedIn", "Reddit", "Meta Ads"],
+    opcoes: ["Instagram", "LinkedIn", "Reddit"],
   },
   outbound: {
     modo: "select",
