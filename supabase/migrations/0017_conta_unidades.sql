@@ -9,12 +9,12 @@
 -- entra o dado da conta que justifica o valor negociado.
 -- ============================================================================
 
-alter table contas add column if not exists unidades int;
+alter table public.contas add column if not exists unidades int;
 
-comment on column contas.unidades is
+comment on column public.contas.unidades is
   'Nº de unidades da rede (só para tipo_negocio = franqueador). Nulo nos demais tipos.';
 
 -- Nº de unidades, quando informado, é sempre positivo.
-alter table contas drop constraint if exists contas_unidades_positivo;
-alter table contas add constraint contas_unidades_positivo
+alter table public.contas drop constraint if exists contas_unidades_positivo;
+alter table public.contas add constraint contas_unidades_positivo
   check (unidades is null or unidades > 0);
