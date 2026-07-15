@@ -129,6 +129,28 @@ export function LeadsPage() {
                 ))}
               </SelectContent>
             </Select>
+            <Select
+              value={filters.tipoNegocio}
+              onValueChange={(v) =>
+                setFilters((f) => ({
+                  ...f,
+                  tipoNegocio: v as ContaFilters["tipoNegocio"],
+                }))
+              }
+            >
+              <SelectTrigger className="sm:w-48">
+                <SelectValue placeholder="Tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os tipos</SelectItem>
+                {TIPOS_NEGOCIO.map((t) => (
+                  <SelectItem key={t} value={t}>
+                    {TIPO_NEGOCIO_META[t].label}
+                  </SelectItem>
+                ))}
+                <SelectItem value="sem_tag">Sem tag</SelectItem>
+              </SelectContent>
+            </Select>
           </>
         )}
         <Select
