@@ -56,12 +56,6 @@ const PROB_ESTAGIO: Record<EstagioOport, number> = {
   setup_onboarding: 95,
   negociacao: 80,
   fechado_ganho: 100,
-  // Pós-fechamento (cliente já ganho): tratados como 100% para fins de peso.
-  ticket_aberto: 100,
-  nps_recolhido: 100,
-  indicacao: 100,
-  up_cross_sell: 100,
-  retencao: 100,
   fechado_perdido: 0,
 };
 

@@ -10,8 +10,3 @@
 alter type estagio_oport add value if not exists 'piloto';
 alter type estagio_oport add value if not exists 'envio_contrato';
 alter type estagio_oport add value if not exists 'setup_onboarding';
-alter type estagio_oport add value if not exists 'ticket_aberto';
-alter type estagio_oport add value if not exists 'nps_recolhido';
-alter type estagio_oport add value if not exists 'indicacao';
-alter type estagio_oport add value if not exists 'up_cross_sell';
-alter type estagio_oport add value if not exists 'retencao';

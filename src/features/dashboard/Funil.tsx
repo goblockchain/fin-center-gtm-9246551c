@@ -27,11 +27,6 @@ const COR: Record<EstagioOport, string> = {
   setup_onboarding: "#10b981",
   negociacao: "#f97316",
   fechado_ganho: "#1A7A3A",
-  ticket_aberto: "#eab308",
-  nps_recolhido: "#84cc16",
-  indicacao: "#d946ef",
-  up_cross_sell: "#ec4899",
-  retencao: "#16a34a",
   fechado_perdido: "#C0392B",
 };
 
