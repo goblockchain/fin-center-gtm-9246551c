@@ -598,6 +598,15 @@ export function ContaSheet({
                   className="flex w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
               </Campo>
+              <Campo label="Informações enriquecidas">
+                <textarea
+                  value={form.enriquecimento}
+                  onChange={(e) => set("enriquecimento", e.target.value)}
+                  rows={6}
+                  placeholder="Pesquisa sobre a operação, decisores, contexto do negócio, sinais de compra, links, etc."
+                  className="flex w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+              </Campo>
 
               <div className="flex gap-4 pt-1">
                 <Toggle
