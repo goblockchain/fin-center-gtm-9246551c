@@ -100,6 +100,9 @@ export function useContas(filters: ContaFilters) {
         q = q.eq("temperatura", filters.temperatura);
       if (filters.canalId !== "all")
         q = q.eq("canal_origem_id", filters.canalId);
+      if (filters.tipoNegocio === "sem_tag") q = q.is("tipo_negocio", null);
+      else if (filters.tipoNegocio !== "all")
+        q = q.eq("tipo_negocio", filters.tipoNegocio);
       const busca = filters.busca.trim();
       if (busca) {
         // Remove caracteres que o PostgREST interpreta na sintaxe do filtro
