@@ -88,6 +88,7 @@ export type Database = {
           telefone: string | null
           temperatura: Database["public"]["Enums"]["temperatura"]
           tipo_negocio: Database["public"]["Enums"]["tipo_negocio"] | null
+          unidades: number | null
           updated_at: string
           visitada: boolean
         }
@@ -110,6 +111,7 @@ export type Database = {
           telefone?: string | null
           temperatura?: Database["public"]["Enums"]["temperatura"]
           tipo_negocio?: Database["public"]["Enums"]["tipo_negocio"] | null
+          unidades?: number | null
           updated_at?: string
           visitada?: boolean
         }
@@ -132,6 +134,7 @@ export type Database = {
           telefone?: string | null
           temperatura?: Database["public"]["Enums"]["temperatura"]
           tipo_negocio?: Database["public"]["Enums"]["tipo_negocio"] | null
+          unidades?: number | null
           updated_at?: string
           visitada?: boolean
         }

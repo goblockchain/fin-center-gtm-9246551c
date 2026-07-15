@@ -33,7 +33,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/format";
-import { PLANOS, PLANO_PADRAO, rotuloPlano } from "@/lib/planos";
+import {
+  PLANOS,
+  PLANO_PADRAO,
+  rotuloPlano,
+  planoFixo,
+  exigeUnidades,
+  valorParaTipo,
+} from "@/lib/planos";
 import { TemperaturaChip, TEMP_META, TEMPERATURAS } from "./temperatura";
 import { TipoNegocioChip, TIPOS_NEGOCIO, TIPO_NEGOCIO_META, type TipoNegocio } from "./tipoNegocio";
 import {
@@ -98,6 +105,7 @@ type Form = {
   nome: string;
   temperatura: Temperatura;
   tipoNegocio: TipoNegocio | "none";
+  unidades: string;
   canalId: string;
   vinculoId: string;
   responsavel: string;
@@ -161,6 +169,7 @@ export function ContaSheet({
       nome: conta.nome ?? "",
       temperatura: conta.temperatura,
       tipoNegocio: conta.tipo_negocio ?? "none",
+      unidades: conta.unidades ? String(conta.unidades) : "",
       canalId: conta.canal_origem_id,
       vinculoId: oport?.parceiro_id ?? oport?.evento_id ?? "",
       responsavel: conta.responsavel ?? "",
@@ -180,12 +189,14 @@ export function ContaSheet({
 
   async function salvar() {
     if (!conta || !form) return;
+    const tipoSalvo = form.tipoNegocio === "none" ? null : form.tipoNegocio;
     await atualizarConta.mutateAsync({
       id: conta.id,
       patch: {
         nome: form.nome.trim() || conta.nome,
         temperatura: form.temperatura,
-        tipo_negocio: form.tipoNegocio === "none" ? null : form.tipoNegocio,
+        tipo_negocio: tipoSalvo,
+        unidades: exigeUnidades(tipoSalvo) ? Number(form.unidades) : null,
         canal_origem_id: form.canalId,
         responsavel: nn(form.responsavel),
         telefone: nn(form.telefone),
@@ -231,6 +242,29 @@ export function ContaSheet({
   const set = <K extends keyof Form>(k: K, v: Form[K]) =>
     setForm((f) => (f ? { ...f, [k]: v } : f));
 
+  /** Mesma regra do cadastro: franqueado trava no Essencial; só franqueador usa unidades. */
+  const setTipoNegocio = (t: TipoNegocio | "none") => {
+    const tipo = t === "none" ? null : t;
+    setForm((f) =>
+      f
+        ? {
+            ...f,
+            tipoNegocio: t,
+            valor: valorParaTipo(tipo, f.valor),
+            unidades: exigeUnidades(tipo) ? f.unidades : "",
+          }
+        : f,
+    );
+  };
+
+  const tipoEdit = !form || form.tipoNegocio === "none" ? null : form.tipoNegocio;
+  const fixoEdit = planoFixo(tipoEdit);
+  const unidadesEditNum = Number(form?.unidades);
+  const unidadesEditOk =
+    !exigeUnidades(tipoEdit) ||
+    (Number.isInteger(unidadesEditNum) && unidadesEditNum > 0);
+  const podeSalvarEdit = !!form && form.valor > 0 && unidadesEditOk;
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
@@ -267,6 +301,12 @@ export function ContaSheet({
                 <span className="text-muted-foreground">
                   ({brl(oport?.valor_mrr)}/mês)
                 </span>
+                {conta.unidades ? (
+                  <span className="text-muted-foreground">
+                    {" "}
+                    · rede de {conta.unidades} unidades
+                  </span>
+                ) : null}
               </Linha>
               {conta.proxima_acao && (
                 <Linha icon={CalendarCheck}>
@@ -459,29 +499,48 @@ export function ContaSheet({
                     </SelectContent>
                   </Select>
                 </Campo>
-                <Campo label="Plano">
-                  <Select
-                    value={String(form.valor)}
-                    onValueChange={(v) => set("valor", Number(v))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PLANOS.map((p) => (
-                        <SelectItem key={p.id} value={String(p.valor)}>
-                          {p.nome} · {brl(p.valor)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Campo>
+                {fixoEdit ? (
+                  <Campo label="Plano">
+                    <div className="flex h-10 items-center rounded-md border border-input bg-muted px-3 text-sm">
+                      {fixoEdit.nome} · {brl(fixoEdit.valor)}/mês
+                    </div>
+                  </Campo>
+                ) : exigeUnidades(tipoEdit) ? (
+                  <Campo label="Unidades da rede*">
+                    <Input
+                      type="number"
+                      min={1}
+                      step={1}
+                      value={form.unidades}
+                      onChange={(e) => set("unidades", e.target.value)}
+                      placeholder="Ex.: 8"
+                    />
+                  </Campo>
+                ) : (
+                  <Campo label="Plano">
+                    <Select
+                      value={String(form.valor)}
+                      onValueChange={(v) => set("valor", Number(v))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PLANOS.map((p) => (
+                          <SelectItem key={p.id} value={String(p.valor)}>
+                            {p.nome} · {brl(p.valor)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Campo>
+                )}
               </div>
 
               <Campo label="Tipo de negócio">
                 <Select
                   value={form.tipoNegocio}
-                  onValueChange={(v) => set("tipoNegocio", v as TipoNegocio | "none")}
+                  onValueChange={(v) => setTipoNegocio(v as TipoNegocio | "none")}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -496,6 +555,19 @@ export function ContaSheet({
                   </SelectContent>
                 </Select>
               </Campo>
+
+              {exigeUnidades(tipoEdit) && (
+                <Campo label="MRR negociado*">
+                  <Input
+                    type="number"
+                    min={0}
+                    step={50}
+                    value={form.valor || ""}
+                    onChange={(e) => set("valor", Number(e.target.value))}
+                    placeholder="Ex.: 1600"
+                  />
+                </Campo>
+              )}
 
               <Campo label="Canal (fonte)">
                 <Select
@@ -646,7 +718,7 @@ export function ContaSheet({
                 >
                   Cancelar
                 </Button>
-                <Button onClick={salvar} disabled={salvando}>
+                <Button onClick={salvar} disabled={salvando || !podeSalvarEdit}>
                   {salvando && <Loader2 className="h-4 w-4 animate-spin" />}
                   Salvar
                 </Button>

@@ -23,9 +23,17 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/lib/supabase";
 import { useCanais } from "@/features/canais/api";
+import { ESTAGIOS, ESTAGIO_META } from "@/features/pipeline/estagios";
 import { TEMPERATURAS, TEMP_META } from "./temperatura";
 import { TIPOS_NEGOCIO, TIPO_NEGOCIO_META, type TipoNegocio } from "./tipoNegocio";
-import { PLANOS, PLANO_PADRAO } from "@/lib/planos";
+import {
+  PLANOS,
+  PLANO_PADRAO,
+  planoFixo,
+  exigeUnidades,
+  valorParaTipo,
+} from "@/lib/planos";
+import { brl } from "@/lib/format";
 import type { Temperatura, EstagioOport } from "@/types/db";
 const toast = {
   success: (m: string) => console.log(m),
@@ -45,7 +53,9 @@ type Form = {
   nome: string;
   canalId: string;
   temperatura: Temperatura;
+  estagio: EstagioOport;
   tipoNegocio: TipoNegocio | "none";
+  unidades: string;
   telefone: string;
   instagram: string;
   bairro: string;
@@ -59,7 +69,9 @@ const INICIAL: Form = {
   nome: "",
   canalId: "",
   temperatura: "sem_contato",
+  estagio: estagioPorTemperatura("sem_contato"),
   tipoNegocio: "none",
+  unidades: "",
   telefone: "",
   instagram: "",
   bairro: "",
@@ -72,18 +84,22 @@ const INICIAL: Form = {
 export function NovoLeadDialog() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<Form>(INICIAL);
+  // A raia segue a temperatura até a usuária escolhê-la à mão.
+  const [estagioManual, setEstagioManual] = useState(false);
   const { data: canais } = useCanais();
   const qc = useQueryClient();
 
   const criar = useMutation({
     mutationFn: async (f: Form) => {
+      const tipo = f.tipoNegocio === "none" ? null : f.tipoNegocio;
       const { data: conta, error: e1 } = await supabase
         .from("contas")
         .insert({
           nome: f.nome.trim(),
           canal_origem_id: f.canalId,
           temperatura: f.temperatura,
-          tipo_negocio: f.tipoNegocio === "none" ? null : f.tipoNegocio,
+          tipo_negocio: tipo,
+          unidades: exigeUnidades(tipo) ? Number(f.unidades) : null,
           telefone: nn(f.telefone),
           instagram: nn(f.instagram),
           bairro: nn(f.bairro),
@@ -97,7 +113,7 @@ export function NovoLeadDialog() {
       const { error: e2 } = await supabase.from("oportunidades").insert({
         conta_id: conta.id,
         canal_id: f.canalId,
-        estagio: estagioPorTemperatura(f.temperatura),
+        estagio: f.estagio,
         valor_mrr: f.valor,
       });
       if (e2) throw e2;
@@ -109,6 +125,7 @@ export function NovoLeadDialog() {
       qc.invalidateQueries({ queryKey: ["canal_execucao"] });
       toast.success("Lead criado.");
       setForm(INICIAL);
+      setEstagioManual(false);
       setOpen(false);
     },
     onError: (err: Error) => toast.error(err.message ?? "Erro ao criar lead."),
@@ -117,7 +134,40 @@ export function NovoLeadDialog() {
   const set = <K extends keyof Form>(k: K, v: Form[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  const podeSalvar = form.nome.trim().length > 0 && !!form.canalId;
+  const setTemperatura = (t: Temperatura) =>
+    setForm((f) => ({
+      ...f,
+      temperatura: t,
+      estagio: estagioManual ? f.estagio : estagioPorTemperatura(t),
+    }));
+
+  const setEstagio = (e: EstagioOport) => {
+    setEstagioManual(true);
+    set("estagio", e);
+  };
+
+  /** Trocar o tipo aplica a regra de preço: franqueado trava no Essencial; só franqueador usa unidades. */
+  const setTipoNegocio = (t: TipoNegocio | "none") => {
+    const tipo = t === "none" ? null : t;
+    setForm((f) => ({
+      ...f,
+      tipoNegocio: t,
+      valor: valorParaTipo(tipo, f.valor),
+      unidades: exigeUnidades(tipo) ? f.unidades : "",
+    }));
+  };
+
+  const tipo = form.tipoNegocio === "none" ? null : form.tipoNegocio;
+  const fixo = planoFixo(tipo);
+  const unidadesNum = Number(form.unidades);
+  const unidadesOk =
+    !exigeUnidades(tipo) || (Number.isInteger(unidadesNum) && unidadesNum > 0);
+
+  const podeSalvar =
+    form.nome.trim().length > 0 &&
+    !!form.canalId &&
+    form.valor > 0 &&
+    unidadesOk;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -167,7 +217,7 @@ export function NovoLeadDialog() {
               <Label>Temperatura</Label>
               <Select
                 value={form.temperatura}
-                onValueChange={(v) => set("temperatura", v as Temperatura)}
+                onValueChange={(v) => setTemperatura(v as Temperatura)}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -183,14 +233,41 @@ export function NovoLeadDialog() {
             </div>
           </div>
 
+          <div>
+            <Label>Raia do pipe</Label>
+            <Select
+              value={form.estagio}
+              onValueChange={(v) => setEstagio(v as EstagioOport)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ESTAGIOS.map((e) => (
+                  <SelectItem key={e} value={e}>
+                    <span className="flex items-center gap-2">
+                      <span
+                        className={`h-2 w-2 rounded-full ${ESTAGIO_META[e].dot}`}
+                      />
+                      {ESTAGIO_META[e].label}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {!estagioManual && (
+              <p className="pt-1 text-xs text-muted-foreground">
+                Sugerida pela temperatura. Escolha outra para entrar direto na raia certa.
+              </p>
+            )}
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Tipo de negócio</Label>
               <Select
                 value={form.tipoNegocio}
-                onValueChange={(v) =>
-                  set("tipoNegocio", v as TipoNegocio | "none")
-                }
+                onValueChange={(v) => setTipoNegocio(v as TipoNegocio | "none")}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -205,25 +282,65 @@ export function NovoLeadDialog() {
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label>Plano</Label>
-              <Select
-                value={String(form.valor)}
-                onValueChange={(v) => set("valor", Number(v))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PLANOS.map((p) => (
-                    <SelectItem key={p.id} value={String(p.valor)}>
-                      {p.nome}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+
+            {fixo ? (
+              <div>
+                <Label>Plano</Label>
+                <div className="flex h-10 items-center rounded-md border border-input bg-muted px-3 text-sm">
+                  {fixo.nome} · {brl(fixo.valor)}/mês
+                </div>
+              </div>
+            ) : exigeUnidades(tipo) ? (
+              <div>
+                <Label>Unidades da rede*</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  step={1}
+                  value={form.unidades}
+                  onChange={(e) => set("unidades", e.target.value)}
+                  placeholder="Ex.: 8"
+                />
+              </div>
+            ) : (
+              <div>
+                <Label>Plano</Label>
+                <Select
+                  value={String(form.valor)}
+                  onValueChange={(v) => set("valor", Number(v))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PLANOS.map((p) => (
+                      <SelectItem key={p.id} value={String(p.valor)}>
+                        {p.nome} · {brl(p.valor)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
+
+          {exigeUnidades(tipo) && (
+            <div>
+              <Label>MRR negociado*</Label>
+              <Input
+                type="number"
+                min={0}
+                step={50}
+                value={form.valor || ""}
+                onChange={(e) => set("valor", Number(e.target.value))}
+                placeholder="Ex.: 1600"
+              />
+              <p className="pt-1 text-xs text-muted-foreground">
+                Valor mensal fechado com o franqueador
+                {unidadesOk ? ` para as ${unidadesNum} unidades` : ""}.
+              </p>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div>
