@@ -89,6 +89,7 @@ export function LeadsPage() {
               ))}
             </div>
             <ExcluirSemTelefoneDialog />
+            <NovoLeadDialog />
             <ImportarBaseDialog />
           </div>
         }
