@@ -122,6 +122,7 @@ export type Database = {
           responsavel: string | null
           telefone: string | null
           temperatura: Database["public"]["Enums"]["temperatura"]
+          tipo_negocio: Database["public"]["Enums"]["tipo_negocio"] | null
           updated_at: string
           visitada: boolean
         }
@@ -142,6 +143,7 @@ export type Database = {
           responsavel?: string | null
           telefone?: string | null
           temperatura?: Database["public"]["Enums"]["temperatura"]
+          tipo_negocio?: Database["public"]["Enums"]["tipo_negocio"] | null
           updated_at?: string
           visitada?: boolean
         }
@@ -162,6 +164,7 @@ export type Database = {
           responsavel?: string | null
           telefone?: string | null
           temperatura?: Database["public"]["Enums"]["temperatura"]
+          tipo_negocio?: Database["public"]["Enums"]["tipo_negocio"] | null
           updated_at?: string
           visitada?: boolean
         }
@@ -1347,6 +1350,7 @@ export type Database = {
         | "reuniao"
         | "email"
         | "outro"
+      tipo_negocio: "franqueador" | "franqueado" | "independente"
       tipo_participante: "interno" | "cliente" | "parceiro" | "outro"
       tipo_voz: "depoimento" | "mensagem" | "narrativa" | "relatorio"
     }
@@ -1504,6 +1508,7 @@ export const Constants = {
         "email",
         "outro",
       ],
+      tipo_negocio: ["franqueador", "franqueado", "independente"],
       tipo_participante: ["interno", "cliente", "parceiro", "outro"],
       tipo_voz: ["depoimento", "mensagem", "narrativa", "relatorio"],
     },
