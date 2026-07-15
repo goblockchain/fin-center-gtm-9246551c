@@ -123,3 +123,34 @@ describe("linhasPorCanal — CAC/ROI/Payback canônicos", () => {
     expect(c2.mrr).toBe(850);
   });
 });
+
+describe("metricasReceita — esteira pós-fechamento (piloto / envio_contrato)", () => {
+  it("envio_contrato e piloto contam como MQL, SQL e Proposta", () => {
+    // Regressão: entraram no enum na 0016 e ficaram fora das faixas
+    // "em diante" — um negócio quase fechado não aparecia no funil.
+    const m = metricasReceita([op("envio_contrato"), op("piloto")]);
+    expect(m.mql).toBe(2);
+    expect(m.sql).toBe(2);
+    expect(m.propostas).toBe(2);
+  });
+
+  it("envio_contrato e piloto entram no pipeline ponderado — estão abertos", () => {
+    // Antes somavam 0: sumiam da projeção de receita justamente no fim do funil.
+    const m = metricasReceita([
+      op("envio_contrato", 1000), // 90%
+      op("piloto", 1000), // 95%
+    ]);
+    expect(m.pipelinePonderado).toBe(900 + 950);
+  });
+
+  it("piloto vale mais que envio_contrato — vem depois na esteira", () => {
+    const contrato = metricasReceita([op("envio_contrato", 1000)]);
+    const piloto = metricasReceita([op("piloto", 1000)]);
+    expect(piloto.pipelinePonderado).toBeGreaterThan(contrato.pipelinePonderado);
+  });
+
+  it("fechados não entram no pipeline ponderado", () => {
+    const m = metricasReceita([op("fechado_ganho", 1000), op("fechado_perdido", 1000)]);
+    expect(m.pipelinePonderado).toBe(0);
+  });
+});

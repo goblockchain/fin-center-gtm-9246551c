@@ -6,7 +6,7 @@ describe("detalheDoCanal — sub-origem dentro do canal", () => {
     expect(detalheDoCanal("inbound")).toEqual({
       modo: "select",
       label: "Origem do inbound",
-      opcoes: ["Instagram", "LinkedIn", "Reddit"],
+      opcoes: ["Instagram", "LinkedIn", "Reddit", "Meta Ads"],
     });
   });
 
@@ -27,7 +27,6 @@ describe("detalheDoCanal — sub-origem dentro do canal", () => {
     expect(detalheDoCanal("member-get-member")).toBeNull();
     expect(detalheDoCanal("base-yungas")).toBeNull();
     expect(detalheDoCanal("abf")).toBeNull();
-    expect(detalheDoCanal("meta-ads")).toBeNull();
   });
 
   it("canal desconhecido ou ausente não quebra", () => {

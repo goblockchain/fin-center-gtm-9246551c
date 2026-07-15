@@ -17,24 +17,35 @@ import type {
  *   Proposta → proposta/negociação/ganho (chegou a proposta)
  *   Cliente  → fechado_ganho
  */
+// piloto e envio_contrato entraram no enum na 0016 e ficaram de fora destas
+// listas — um negócio em Envio de Contrato (90% de probabilidade) sumia do
+// Pipeline Ponderado e não contava como MQL/SQL/Proposta. Ambos vêm DEPOIS de
+// negociação na esteira, então entram em todas as faixas "em diante".
 const APOS_QUALIFICADO: EstagioOport[] = [
   "qualificado",
   "reuniao",
   "proposta",
   "negociacao",
+  "envio_contrato",
+  "piloto",
   "fechado_ganho",
 ];
 const APOS_REUNIAO: EstagioOport[] = [
   "reuniao",
   "proposta",
   "negociacao",
+  "envio_contrato",
+  "piloto",
   "fechado_ganho",
 ];
 const APOS_PROPOSTA: EstagioOport[] = [
   "proposta",
   "negociacao",
+  "envio_contrato",
+  "piloto",
   "fechado_ganho",
 ];
+/** Aberto = ainda não fechado (ganho ou perdido). Alimenta o Pipeline Ponderado. */
 const ABERTO: EstagioOport[] = [
   "cadastrado",
   "contatado",
@@ -42,6 +53,8 @@ const ABERTO: EstagioOport[] = [
   "reuniao",
   "proposta",
   "negociacao",
+  "envio_contrato",
+  "piloto",
 ];
 
 /** Probabilidade default por estágio quando a oportunidade não tem uma. */
@@ -51,10 +64,10 @@ const PROB_ESTAGIO: Record<EstagioOport, number> = {
   qualificado: 20,
   reuniao: 40,
   proposta: 60,
-  piloto: 70,
-  envio_contrato: 90,
-  
   negociacao: 80,
+  envio_contrato: 90,
+  // Piloto roda com o contrato já enviado — quase fechado.
+  piloto: 95,
   fechado_ganho: 100,
   fechado_perdido: 0,
 };

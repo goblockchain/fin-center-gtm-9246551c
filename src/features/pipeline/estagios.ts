@@ -1,15 +1,19 @@
 import type { EstagioOport } from "@/types/db";
 
-/** Ordem das raias (kanban): funil de vendas + esteira pós-fechamento. */
+/**
+ * Ordem das raias (kanban): funil de vendas + esteira pós-fechamento.
+ * Negocia o valor, manda o contrato, e só então roda o piloto — o piloto é
+ * pós-contrato, não argumento de venda.
+ */
 export const ESTAGIOS: EstagioOport[] = [
   "cadastrado",
   "contatado",
   "qualificado",
   "reuniao",
   "proposta",
-  "piloto",
-  "envio_contrato",
   "negociacao",
+  "envio_contrato",
+  "piloto",
   "fechado_ganho",
   "fechado_perdido",
 ];

@@ -24,13 +24,16 @@ import {
   type TarefaComCanal,
 } from "./api";
 
+// As frentes acompanham os canais. O slug é a chave real (não muda); o rótulo
+// segue o nome do canal. "Fin Light" é o antigo Member-get-member.
 const FRENTES: { frente: string; slug: string | null; prefixo: string }[] = [
   { frente: "Setup", slug: null, prefixo: "S" },
   { frente: "Yungas", slug: "base-yungas", prefixo: "Y" },
-  { frente: "Member-get-member", slug: "member-get-member", prefixo: "M" },
+  { frente: "Fin Light", slug: "member-get-member", prefixo: "M" },
   { frente: "Indicações", slug: "indicacoes", prefixo: "I" },
   { frente: "Outbound", slug: "outbound", prefixo: "O" },
   { frente: "Inbound", slug: "inbound", prefixo: "N" },
+  { frente: "ABF", slug: "abf", prefixo: "A" },
   { frente: "Gates", slug: null, prefixo: "G" },
 ];
 

@@ -16,7 +16,7 @@ const POR_SLUG: Record<string, DetalheCanal> = {
   inbound: {
     modo: "select",
     label: "Origem do inbound",
-    opcoes: ["Instagram", "LinkedIn", "Reddit"],
+    opcoes: ["Instagram", "LinkedIn", "Reddit", "Meta Ads"],
   },
   outbound: {
     modo: "select",
