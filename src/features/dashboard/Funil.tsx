@@ -24,7 +24,7 @@ const COR: Record<EstagioOport, string> = {
   proposta: "#f59e0b",
   piloto: "#06b6d4",
   envio_contrato: "#14b8a6",
-  setup_onboarding: "#10b981",
+  
   negociacao: "#f97316",
   fechado_ganho: "#1A7A3A",
   fechado_perdido: "#C0392B",
