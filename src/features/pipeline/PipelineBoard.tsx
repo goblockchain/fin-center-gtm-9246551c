@@ -57,14 +57,6 @@ function CardView({
                 sem telefone
               </span>
             )}
-            {o.conta && !o.conta.instagram && (
-              <span
-                title="Instagram não informado"
-                className="inline-block rounded-full border border-amber-400 bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700"
-              >
-                sem IG
-              </span>
-            )}
             {o.conta?.tipo_negocio && <TipoNegocioChip tipo={o.conta.tipo_negocio} />}
           </div>
         </div>
