@@ -53,7 +53,7 @@ const PROB_ESTAGIO: Record<EstagioOport, number> = {
   proposta: 60,
   piloto: 70,
   envio_contrato: 90,
-  setup_onboarding: 95,
+  
   negociacao: 80,
   fechado_ganho: 100,
   fechado_perdido: 0,
