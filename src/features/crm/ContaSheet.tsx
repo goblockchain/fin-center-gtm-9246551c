@@ -459,6 +459,25 @@ export function ContaSheet({
                 </Campo>
               </div>
 
+              <Campo label="Tipo de negócio">
+                <Select
+                  value={form.tipoNegocio}
+                  onValueChange={(v) => set("tipoNegocio", v as TipoNegocio | "none")}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">— não informado —</SelectItem>
+                    {TIPOS_NEGOCIO.map((t) => (
+                      <SelectItem key={t} value={t}>
+                        {TIPO_NEGOCIO_META[t].label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Campo>
+
               <Campo label="Canal (fonte)">
                 <Select
                   value={form.canalId}
