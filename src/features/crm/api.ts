@@ -14,6 +14,7 @@ import type { ImportPayload } from "./import";
 export type ContaFilters = {
   temperatura: Temperatura | "all";
   canalId: string | "all";
+  tipoNegocio: "all" | "franqueador" | "franqueado" | "independente" | "sem_tag";
   busca: string;
 };
 
