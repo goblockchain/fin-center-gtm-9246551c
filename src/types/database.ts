@@ -75,6 +75,7 @@ export type Database = {
           created_at: string
           data_primeiro_contato: string | null
           endereco: string | null
+          enriquecimento: string | null
           entrevista_agendada: boolean
           gatekeeper: string | null
           id: string
