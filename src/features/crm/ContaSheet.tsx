@@ -183,6 +183,7 @@ export function ContaSheet({
       patch: {
         nome: form.nome.trim() || conta.nome,
         temperatura: form.temperatura,
+        tipo_negocio: form.tipoNegocio === "none" ? null : form.tipoNegocio,
         canal_origem_id: form.canalId,
         responsavel: nn(form.responsavel),
         telefone: nn(form.telefone),
