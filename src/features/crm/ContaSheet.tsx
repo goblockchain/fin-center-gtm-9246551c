@@ -35,6 +35,7 @@ import { cn } from "@/lib/utils";
 import { brl } from "@/lib/format";
 import { PLANOS, PLANO_PADRAO, rotuloPlano } from "@/lib/planos";
 import { TemperaturaChip, TEMP_META, TEMPERATURAS } from "./temperatura";
+import { TipoNegocioChip, TIPOS_NEGOCIO, TIPO_NEGOCIO_META, type TipoNegocio } from "./tipoNegocio";
 import {
   useContatos,
   useInteracoes,
@@ -96,6 +97,7 @@ function Linha({
 type Form = {
   nome: string;
   temperatura: Temperatura;
+  tipoNegocio: TipoNegocio | "none";
   canalId: string;
   vinculoId: string;
   responsavel: string;
@@ -157,6 +159,7 @@ export function ContaSheet({
     setForm({
       nome: conta.nome ?? "",
       temperatura: conta.temperatura,
+      tipoNegocio: conta.tipo_negocio ?? "none",
       canalId: conta.canal_origem_id,
       vinculoId: oport?.parceiro_id ?? oport?.evento_id ?? "",
       responsavel: conta.responsavel ?? "",
@@ -180,6 +183,7 @@ export function ContaSheet({
       patch: {
         nome: form.nome.trim() || conta.nome,
         temperatura: form.temperatura,
+        tipo_negocio: form.tipoNegocio === "none" ? null : form.tipoNegocio,
         canal_origem_id: form.canalId,
         responsavel: nn(form.responsavel),
         telefone: nn(form.telefone),
@@ -233,6 +237,7 @@ export function ContaSheet({
               <div className="flex items-center gap-2">
                 <TemperaturaChip temp={conta.temperatura} />
                 {canalNome && <Badge variant="outline">{canalNome}</Badge>}
+                <TipoNegocioChip tipo={conta.tipo_negocio} />
               </div>
               <div className="flex items-start justify-between gap-2">
                 <SheetTitle>{conta.nome}</SheetTitle>
@@ -453,6 +458,25 @@ export function ContaSheet({
                   </Select>
                 </Campo>
               </div>
+
+              <Campo label="Tipo de negócio">
+                <Select
+                  value={form.tipoNegocio}
+                  onValueChange={(v) => set("tipoNegocio", v as TipoNegocio | "none")}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">— não informado —</SelectItem>
+                    {TIPOS_NEGOCIO.map((t) => (
+                      <SelectItem key={t} value={t}>
+                        {TIPO_NEGOCIO_META[t].label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Campo>
 
               <Campo label="Canal (fonte)">
                 <Select

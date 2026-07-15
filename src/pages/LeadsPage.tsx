@@ -27,6 +27,7 @@ import {
   TEMPERATURAS,
 } from "@/features/crm/temperatura";
 import { ImportarBaseDialog } from "@/features/crm/ImportarBaseDialog";
+import { TipoNegocioChip, TIPOS_NEGOCIO, TIPO_NEGOCIO_META } from "@/features/crm/tipoNegocio";
 import { ContaSheet } from "@/features/crm/ContaSheet";
 import { ExcluirSemTelefoneDialog } from "@/features/crm/ExcluirSemTelefoneDialog";
 import { PipelineBoard } from "@/features/pipeline/PipelineBoard";
@@ -39,6 +40,7 @@ export function LeadsPage() {
   const [filters, setFilters] = useState<ContaFilters>({
     temperatura: "all",
     canalId: "all",
+    tipoNegocio: "all",
     busca: "",
   });
   const [selected, setSelected] = useState<Conta | null>(null);
@@ -127,6 +129,28 @@ export function LeadsPage() {
                 ))}
               </SelectContent>
             </Select>
+            <Select
+              value={filters.tipoNegocio}
+              onValueChange={(v) =>
+                setFilters((f) => ({
+                  ...f,
+                  tipoNegocio: v as ContaFilters["tipoNegocio"],
+                }))
+              }
+            >
+              <SelectTrigger className="sm:w-48">
+                <SelectValue placeholder="Tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os tipos</SelectItem>
+                {TIPOS_NEGOCIO.map((t) => (
+                  <SelectItem key={t} value={t}>
+                    {TIPO_NEGOCIO_META[t].label}
+                  </SelectItem>
+                ))}
+                <SelectItem value="sem_tag">Sem tag</SelectItem>
+              </SelectContent>
+            </Select>
           </>
         )}
         <Select
@@ -204,6 +228,7 @@ export function LeadsPage() {
                                 sem IG
                               </span>
                             )}
+                            <TipoNegocioChip tipo={c.tipo_negocio} />
                           </div>
                         </TableCell>
                         <TableCell className="text-muted-foreground">

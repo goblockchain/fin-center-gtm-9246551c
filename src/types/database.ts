@@ -86,6 +86,7 @@ export type Database = {
           responsavel: string | null
           telefone: string | null
           temperatura: Database["public"]["Enums"]["temperatura"]
+          tipo_negocio: Database["public"]["Enums"]["tipo_negocio"] | null
           updated_at: string
           visitada: boolean
         }
@@ -106,6 +107,7 @@ export type Database = {
           responsavel?: string | null
           telefone?: string | null
           temperatura?: Database["public"]["Enums"]["temperatura"]
+          tipo_negocio?: Database["public"]["Enums"]["tipo_negocio"] | null
           updated_at?: string
           visitada?: boolean
         }
@@ -126,6 +128,7 @@ export type Database = {
           responsavel?: string | null
           telefone?: string | null
           temperatura?: Database["public"]["Enums"]["temperatura"]
+          tipo_negocio?: Database["public"]["Enums"]["tipo_negocio"] | null
           updated_at?: string
           visitada?: boolean
         }
@@ -1155,6 +1158,7 @@ export type Database = {
       status_mensagem: "rascunho" | "enviado" | "respondido" | "sem_resposta"
       status_tarefa: "a_fazer" | "fazendo" | "feito"
       temperatura: "sem_contato" | "frio" | "morno" | "quente"
+      tipo_negocio: "franqueador" | "franqueado" | "independente"
       tipo_custo: "horas" | "ferramentas" | "midia" | "comissao" | "operacional"
       tipo_interacao:
         | "whatsapp"
@@ -1308,6 +1312,7 @@ export const Constants = {
       status_mensagem: ["rascunho", "enviado", "respondido", "sem_resposta"],
       status_tarefa: ["a_fazer", "fazendo", "feito"],
       temperatura: ["sem_contato", "frio", "morno", "quente"],
+      tipo_negocio: ["franqueador", "franqueado", "independente"],
       tipo_interacao: [
         "whatsapp",
         "ligacao",

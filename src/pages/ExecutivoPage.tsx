@@ -38,6 +38,7 @@ export function ExecutivoPage() {
   const { data: contas = [] } = useContas({
     temperatura: "all",
     canalId: "all",
+    tipoNegocio: "all",
     busca: "",
   });
   const { data: kpis = [] } = useCanalKpis();
