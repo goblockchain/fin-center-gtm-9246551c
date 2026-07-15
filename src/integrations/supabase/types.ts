@@ -776,8 +776,10 @@ export type Database = {
           created_at: string
           data_entrada_estagio: string
           estagio: Database["public"]["Enums"]["estagio_oport"]
+          evento_id: string | null
           id: string
           motivo_perda: string | null
+          parceiro_id: string | null
           previsao_fechamento: string | null
           probabilidade: number | null
           responsavel: string | null
@@ -790,8 +792,10 @@ export type Database = {
           created_at?: string
           data_entrada_estagio?: string
           estagio?: Database["public"]["Enums"]["estagio_oport"]
+          evento_id?: string | null
           id?: string
           motivo_perda?: string | null
+          parceiro_id?: string | null
           previsao_fechamento?: string | null
           probabilidade?: number | null
           responsavel?: string | null
@@ -804,8 +808,10 @@ export type Database = {
           created_at?: string
           data_entrada_estagio?: string
           estagio?: Database["public"]["Enums"]["estagio_oport"]
+          evento_id?: string | null
           id?: string
           motivo_perda?: string | null
+          parceiro_id?: string | null
           previsao_fechamento?: string | null
           probabilidade?: number | null
           responsavel?: string | null
@@ -846,6 +852,34 @@ export type Database = {
             columns: ["conta_id"]
             isOneToOne: false
             referencedRelation: "contas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "oportunidades_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "evento_kpis"
+            referencedColumns: ["evento_id"]
+          },
+          {
+            foreignKeyName: "oportunidades_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "oportunidades_parceiro_id_fkey"
+            columns: ["parceiro_id"]
+            isOneToOne: false
+            referencedRelation: "parceiro_kpis"
+            referencedColumns: ["parceiro_id"]
+          },
+          {
+            foreignKeyName: "oportunidades_parceiro_id_fkey"
+            columns: ["parceiro_id"]
+            isOneToOne: false
+            referencedRelation: "parceiros"
             referencedColumns: ["id"]
           },
         ]
@@ -1243,6 +1277,32 @@ export type Database = {
           roi: number | null
           slug: string | null
           taxa_conversao: number | null
+        }
+        Relationships: []
+      }
+      evento_kpis: {
+        Row: {
+          clientes: number | null
+          custo: number | null
+          data: string | null
+          evento_id: string | null
+          leads: number | null
+          mrr: number | null
+          nome: string | null
+          participantes: number | null
+          reunioes: number | null
+        }
+        Relationships: []
+      }
+      parceiro_kpis: {
+        Row: {
+          ativo: boolean | null
+          clientes: number | null
+          leads: number | null
+          mrr: number | null
+          nome: string | null
+          parceiro_id: string | null
+          reunioes: number | null
         }
         Relationships: []
       }
