@@ -86,6 +86,7 @@ export type Database = {
           responsavel: string | null
           telefone: string | null
           temperatura: Database["public"]["Enums"]["temperatura"]
+          tipo_negocio: Database["public"]["Enums"]["tipo_negocio"] | null
           updated_at: string
           visitada: boolean
         }
