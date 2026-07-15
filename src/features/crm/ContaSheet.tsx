@@ -107,6 +107,7 @@ type Form = {
   bairro: string;
   proxima_acao: string;
   obs: string;
+  enriquecimento: string;
   visitada: boolean;
   entrevista_agendada: boolean;
   valor: number;
