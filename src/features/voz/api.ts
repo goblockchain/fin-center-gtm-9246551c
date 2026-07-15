@@ -2,6 +2,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import type { VozDoCliente, Insert, TipoVoz } from "@/types/db";
 
+/** Allowlist de imagem. SVG fora de propósito: pode carregar script. */
+const EXT_POR_MIME: Record<string, string> = {
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/webp": "webp",
+};
+
 export type VozComConta = VozDoCliente & { conta: { nome: string } | null };
 
 export type VozFiltro = { tipo: TipoVoz | "all"; soFixadas: boolean };
@@ -49,11 +56,14 @@ export function useCriarVoz() {
     }) => {
       let imagem_url = vars.dados.imagem_url ?? null;
       if (vars.imagem) {
-        const ext = vars.imagem.name.split(".").pop() || "jpg";
+        // Extensão derivada do MIME, não de file.name — o nome vem do usuário
+        // e ditava a extensão gravada no bucket.
+        const ext = EXT_POR_MIME[vars.imagem.type];
+        if (!ext) throw new Error("Formato não aceito. Use PNG, JPEG ou WebP.");
         const path = `${crypto.randomUUID()}.${ext}`;
         const { error: upErr } = await supabase.storage
           .from("voz")
-          .upload(path, vars.imagem, { upsert: false });
+          .upload(path, vars.imagem, { upsert: false, contentType: vars.imagem.type });
         if (upErr) throw upErr;
         imagem_url = path;
       }

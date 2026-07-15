@@ -2,10 +2,11 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
 
 const url = import.meta.env.VITE_SUPABASE_URL ?? "";
-const publishableKey =
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
-  import.meta.env.VITE_SUPABASE_ANON_KEY ??
-  "";
+// Sem fallback para VITE_SUPABASE_ANON_KEY: a chave que estava lá era inválida,
+// e o fallback fazia um ambiente sem PUBLISHABLE_KEY falhar todo login em
+// silêncio, com "Invalid API key" — indistinguível de senha errada.
+// Faltando a variável, isSupabaseConfigured fica false e o app diz isso.
+const publishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? "";
 
 /** true quando as variáveis de ambiente do Supabase estão preenchidas. */
 export const isSupabaseConfigured = Boolean(url && publishableKey);
