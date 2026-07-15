@@ -97,6 +97,7 @@ function Linha({
 type Form = {
   nome: string;
   temperatura: Temperatura;
+  tipoNegocio: TipoNegocio | "none";
   canalId: string;
   vinculoId: string;
   responsavel: string;
