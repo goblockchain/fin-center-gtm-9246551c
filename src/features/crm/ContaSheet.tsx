@@ -35,6 +35,7 @@ import { cn } from "@/lib/utils";
 import { brl } from "@/lib/format";
 import { PLANOS, PLANO_PADRAO, rotuloPlano } from "@/lib/planos";
 import { TemperaturaChip, TEMP_META, TEMPERATURAS } from "./temperatura";
+import { TipoNegocioChip, TIPOS_NEGOCIO, TIPO_NEGOCIO_META, type TipoNegocio } from "./tipoNegocio";
 import {
   useContatos,
   useInteracoes,
