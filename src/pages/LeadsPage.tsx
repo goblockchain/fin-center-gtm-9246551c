@@ -39,6 +39,7 @@ export function LeadsPage() {
   const [filters, setFilters] = useState<ContaFilters>({
     temperatura: "all",
     canalId: "all",
+    tipoNegocio: "all",
     busca: "",
   });
   const [selected, setSelected] = useState<Conta | null>(null);
