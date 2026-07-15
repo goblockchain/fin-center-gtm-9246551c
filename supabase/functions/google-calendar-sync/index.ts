@@ -28,6 +28,33 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
+    // Exige chamador autenticado — mesmo padrão de criar-perfil.
+    // Sem isto, qualquer um na internet apaga a agenda da empresa (action:'delete')
+    // ou dispara convites reais por e-mail (action:'create' + sendUpdates=all),
+    // já que o 'pull' escreve com service_role e ignora a RLS.
+    // O webhook do WhatsApp chama esta função com a service_role no Bearer:
+    // esse caso é aceito abaixo (getUser não resolve a service_role).
+    const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+    const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
+    const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !SERVICE_ROLE) {
+      return json({ error: 'Função sem variáveis de ambiente.' }, 500);
+    }
+
+    const authHeader = req.headers.get('Authorization') ?? '';
+    const bearer = authHeader.replace(/^Bearer\s+/i, '');
+    const chamadaInterna = bearer.length > 0 && bearer === SERVICE_ROLE;
+
+    if (!chamadaInterna) {
+      const caller = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user }, error: authErr } = await caller.auth.getUser();
+      if (authErr || !user) {
+        return json({ error: 'Não autorizado — faça login novamente.' }, 401);
+      }
+    }
+
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     const GCAL_KEY = Deno.env.get('GOOGLE_CALENDAR_API_KEY');
     if (!LOVABLE_API_KEY || !GCAL_KEY) {

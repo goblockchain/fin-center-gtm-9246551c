@@ -1,1 +1,21 @@
 project_id = "soyfaqgranrtcgwxczwc"
+
+# Postura de autenticação das edge functions — versionada de propósito.
+# Sem estas seções, verify_jwt fica só no dashboard: invisível ao code review
+# e sujeito a drift. Cada função abaixo também valida auth no próprio código,
+# então isto é a segunda camada, não a única.
+
+[functions.criar-perfil]
+verify_jwt = true
+
+[functions.google-calendar-sync]
+verify_jwt = true
+
+[functions.whatsapp]
+verify_jwt = true
+
+# Público por necessidade: o Twilio não envia Authorization.
+# Quem prova o remetente aqui é a assinatura X-Twilio-Signature, validada no
+# código antes de qualquer escrita. NÃO ligue verify_jwt aqui — quebra o Twilio.
+[functions.whatsapp-webhook]
+verify_jwt = false

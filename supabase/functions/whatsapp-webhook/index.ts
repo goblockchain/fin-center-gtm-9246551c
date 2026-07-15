@@ -5,14 +5,34 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 
 // Endpoint público chamado pelo Twilio — não exigir JWT.
 // (Twilio envia application/x-www-form-urlencoded, sem Authorization.)
+// Como não há JWT, quem prova o remetente é a assinatura X-Twilio-Signature,
+// validada ANTES de qualquer escrita ou chamada de IA. Sem isso, este endpoint
+// escreve no banco com service_role (ignorando a RLS), queima crédito de IA e
+// alcança a agenda real da empresa — a partir de qualquer lugar da internet.
 
 const AI_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
 Deno.serve(async (req) => {
   try {
+    const TWILIO_AUTH_TOKEN = Deno.env.get('TWILIO_AUTH_TOKEN');
+    if (!TWILIO_AUTH_TOKEN) {
+      // Falha fechada: sem o token não há como provar que o Twilio é o remetente.
+      // Configure TWILIO_AUTH_TOKEN nos secrets da function para reativar.
+      console.error('TWILIO_AUTH_TOKEN ausente — webhook recusando tudo.');
+      return new Response('Webhook não configurado.', { status: 503 });
+    }
+
     const form = await req.formData();
+    const params: Record<string, string> = {};
+    for (const [k, v] of form.entries()) params[k] = String(v);
+
+    const assinatura = req.headers.get('X-Twilio-Signature') ?? '';
+    if (!(await assinaturaTwilioValida(TWILIO_AUTH_TOKEN, urlPublica(req), params, assinatura))) {
+      return new Response('Forbidden', { status: 403 });
+    }
+
     const from = String(form.get('From') ?? '');
-    const body = String(form.get('Body') ?? '').trim();
+    const body = String(form.get('Body') ?? '').trim().slice(0, 1000);
 
     const SUPA_URL = Deno.env.get('SUPABASE_URL')!;
     const SUPA_SR = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -166,9 +186,52 @@ Mensagem: """${body}"""`;
     const dataHumano = inicio.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', dateStyle: 'short', timeStyle: 'short' });
     return twiml(`✅ Evento criado: ${extraido.titulo} — ${dataHumano}`);
   } catch (e) {
-    return twiml(`⚠️ Erro: ${(e as Error).message}`);
+    // Detalhe fica no log; o cliente recebe mensagem genérica (o erro cru
+    // expõe nomes de constraint e schema para um endpoint público).
+    console.error('whatsapp-webhook:', (e as Error).message);
+    return twiml('⚠️ Não consegui processar essa mensagem. Tenta de novo.');
   }
 });
+
+/** URL pública que o Twilio assinou (o gateway entrega o request já em https). */
+function urlPublica(req: Request): string {
+  const u = new URL(req.url);
+  u.protocol = 'https:';
+  return u.toString();
+}
+
+/**
+ * Valida X-Twilio-Signature.
+ * Algoritmo do Twilio: HMAC-SHA1(authToken, url + concat(chave+valor de cada
+ * param POST, ordenado por chave)) → base64.
+ */
+async function assinaturaTwilioValida(
+  authToken: string,
+  url: string,
+  params: Record<string, string>,
+  assinatura: string,
+): Promise<boolean> {
+  if (!assinatura) return false;
+  const base = url + Object.keys(params).sort().map((k) => k + params[k]).join('');
+  const chave = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(authToken),
+    { name: 'HMAC', hash: 'SHA-1' },
+    false,
+    ['sign'],
+  );
+  const mac = await crypto.subtle.sign('HMAC', chave, new TextEncoder().encode(base));
+  const esperado = btoa(String.fromCharCode(...new Uint8Array(mac)));
+  return comparaTempoConstante(esperado, assinatura);
+}
+
+/** Comparação em tempo constante — evita timing attack na assinatura. */
+function comparaTempoConstante(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
 
 async function marcarErro(sb: ReturnType<typeof createClient>, id: string | undefined, erro: string) {
   if (!id) return;

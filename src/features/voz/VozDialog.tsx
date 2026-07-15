@@ -22,6 +22,10 @@ import { useCriarVoz } from "./api";
 import { TIPOS_VOZ, TIPO_VOZ_META } from "./tipos";
 import type { TipoVoz } from "@/types/db";
 
+/** SVG fica de fora de propósito: pode carregar script. */
+const TIPOS_IMAGEM = ["image/png", "image/jpeg", "image/webp"];
+const TAMANHO_MAX = 5_000_000;
+
 function Toggle({
   label,
   on,
@@ -124,7 +128,26 @@ export function VozDialog({
   }
 
   function onFile(e: ChangeEvent<HTMLInputElement>) {
-    setImagem(e.target.files?.[0] ?? null);
+    const f = e.target.files?.[0] ?? null;
+    if (!f) {
+      setImagem(null);
+      return;
+    }
+    // O atributo accept é dica de UI, não validação — dá para burlar no DevTools.
+    // Isto aqui é UX: a barreira real são allowed_mime_types/file_size_limit no
+    // bucket, que precisam ser configurados no painel do Supabase.
+    if (!TIPOS_IMAGEM.includes(f.type)) {
+      setErro("Formato não aceito. Use PNG, JPEG ou WebP.");
+      e.target.value = "";
+      return;
+    }
+    if (f.size > TAMANHO_MAX) {
+      setErro(`Imagem muito grande (${(f.size / 1e6).toFixed(1)} MB). Máximo ${TAMANHO_MAX / 1e6} MB.`);
+      e.target.value = "";
+      return;
+    }
+    setErro(null);
+    setImagem(f);
   }
 
   return (
@@ -206,7 +229,7 @@ export function VozDialog({
               </span>
               <input
                 type="file"
-                accept="image/*"
+                accept={TIPOS_IMAGEM.join(",")}
                 className="hidden"
                 onChange={onFile}
               />
