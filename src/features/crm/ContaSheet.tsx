@@ -237,6 +237,7 @@ export function ContaSheet({
               <div className="flex items-center gap-2">
                 <TemperaturaChip temp={conta.temperatura} />
                 {canalNome && <Badge variant="outline">{canalNome}</Badge>}
+                <TipoNegocioChip tipo={conta.tipo_negocio} />
               </div>
               <div className="flex items-start justify-between gap-2">
                 <SheetTitle>{conta.nome}</SheetTitle>
