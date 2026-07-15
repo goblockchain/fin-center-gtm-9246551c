@@ -15,6 +15,7 @@ import { Loader2, GripVertical, Phone, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/format";
 import { ContaSheet } from "@/features/crm/ContaSheet";
+import { TipoNegocioChip } from "@/features/crm/tipoNegocio";
 import { telefoneValido } from "@/features/crm/api";
 import { ESTAGIOS, ESTAGIO_META } from "./estagios";
 import { useOportunidades, useMoverEstagio, type OportunidadeCard } from "./api";
@@ -64,6 +65,7 @@ function CardView({
                 sem IG
               </span>
             )}
+            {o.conta?.tipo_negocio && <TipoNegocioChip tipo={o.conta.tipo_negocio} />}
           </div>
         </div>
         <span
