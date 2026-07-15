@@ -1,115 +1,109 @@
 -- ============================================================================
 -- UseFin — 0019_views_piloto_contrato
 --
--- BUG: 'piloto' e 'envio_contrato' entraram no enum na 0016, mas as views
--- ficaram paradas em ('reuniao','proposta','negociacao','fechado_ganho').
+-- BUG: 'piloto' e 'envio_contrato' entraram no enum (0016) mas as views ficaram
+-- paradas em ('reuniao','proposta','negociacao','fechado_ganho'). Um lead em
+-- Envio de Contrato (praticamente fechado) não contava em reunioes_ou_mais /
+-- reunioes: derrubava a taxa_conversao vs. baseline de 2% (§7.2) e podia
+-- esconder o estado 'Gerando dados' do canal (§7.1).
 --
--- Efeito: um lead em Envio de Contrato (praticamente fechado) NÃO contava em
--- reunioes_ou_mais / reunioes. Isso derrubava a taxa_conversao contato→reunião
--- comparada à baseline de 2% (§7.2) e podia esconder o estado 'Gerando dados'
--- do canal (§7.1) — o card ficaria sem KPI mesmo com negócio quase fechado.
---
--- Latente até agora (nenhuma oportunidade nessas raias), mas a esteira
--- pós-fechamento passou a ser usada. Ordem real do pipe:
+-- Ordem real do pipe:
 --   proposta -> negociacao -> envio_contrato -> piloto -> fechado_ganho
 --
--- Só as duas listas de estágio mudam; o resto das views é idêntico à 0003.
+-- ATENÇÃO — duas linhagens de migration:
+-- Este arquivo reproduz a linhagem GERADA (20260715013830), que é a que está
+-- VIVA no banco — e não a 0003_views.sql manual, que tem outra lista e outra
+-- ORDEM de colunas (0003 traz prioridade/gate_data e pct_execucao como razão
+-- 0–1; a viva traz 'ordem' e pct_execucao como percentual 0–100).
+-- `create or replace view` exige nomes e ordem de coluna idênticos, então
+-- reproduzir a 0003 aqui falha com 42P16. A 0003 está desatualizada em relação
+-- ao banco — resolver essa divergência é trabalho à parte.
+--
+-- Só as duas listas de estágio mudam em relação à linhagem gerada.
 -- ============================================================================
 
--- ---------- canal_execucao: % execução, estado derivado, variância ----------
-create or replace view canal_execucao
-with (security_invoker = on) as
-with t as (
-  select canal_id,
-         count(*)                                  as total_tarefas,
-         count(*) filter (where status = 'feito')  as tarefas_feitas
-  from tarefas
-  where canal_id is not null
-  group by canal_id
+CREATE OR REPLACE VIEW public.canal_execucao
+WITH (security_invoker = on) AS
+WITH t AS (
+  SELECT canal_id,
+         COUNT(*) AS total_tarefas,
+         COUNT(*) FILTER (WHERE status = 'feito') AS tarefas_feitas
+  FROM public.tarefas WHERE canal_id IS NOT NULL GROUP BY canal_id
 ),
-o as (
-  select canal_id,
-         count(*)                                                          as total_oport,
-         count(*) filter (where estagio <> 'cadastrado')                   as contatados,
-         count(*) filter (where estagio in
+i AS (
+  SELECT canal_id,
+         COALESCE(SUM(planejado),0) AS investimento_planejado,
+         COALESCE(SUM(executado),0) AS investimento_executado
+  FROM public.investimentos GROUP BY canal_id
+),
+o AS (
+  SELECT canal_id,
+         COUNT(*) AS total_oport,
+         COUNT(*) FILTER (WHERE estagio <> 'cadastrado') AS contatados,
+         COUNT(*) FILTER (WHERE estagio IN
             ('reuniao','proposta','negociacao','envio_contrato','piloto',
-             'fechado_ganho'))                                             as reunioes_ou_mais,
-         count(*) filter (where estagio = 'fechado_ganho')                 as ganhos
-  from oportunidades
-  group by canal_id
-),
-inv as (
-  select canal_id, sum(planejado) as planejado, sum(executado) as executado
-  from investimentos
-  group by canal_id
+             'fechado_ganho')) AS reunioes_ou_mais,
+         COUNT(*) FILTER (WHERE estagio = 'fechado_ganho') AS ganhos
+  FROM public.oportunidades GROUP BY canal_id
 )
-select
-  c.id as canal_id, c.slug, c.nome, c.prioridade, c.gate_data, c.ordem,
-  coalesce(t.total_tarefas, 0)  as total_tarefas,
-  coalesce(t.tarefas_feitas, 0) as tarefas_feitas,
-  case when coalesce(t.total_tarefas, 0) = 0 then 0
-       else round(t.tarefas_feitas::numeric / t.total_tarefas, 4) end as pct_execucao,
-  coalesce(inv.planejado, 0) as investimento_planejado,
-  coalesce(inv.executado, 0) as investimento_executado,
-  coalesce(inv.executado, 0) - coalesce(inv.planejado, 0) as variancia,
-  case when coalesce(inv.planejado, 0) = 0 then null
-       else round((coalesce(inv.executado,0) - inv.planejado) / inv.planejado, 4) end as variancia_pct,
-  coalesce(o.total_oport, 0)      as total_oport,
-  coalesce(o.contatados, 0)       as contatados,
-  coalesce(o.reunioes_ou_mais, 0) as reunioes_ou_mais,
-  coalesce(o.ganhos, 0)           as ganhos,
-  -- estado derivado (dado real ganha de execução de tarefa)
-  case
-    when coalesce(o.reunioes_ou_mais,0) > 0 or coalesce(o.ganhos,0) > 0 then 'Gerando dados'
-    when coalesce(o.contatados,0) > 0                                   then 'Em execução'
-    when coalesce(t.tarefas_feitas,0) > 0                               then 'Pronto'
-    else 'Em preparação'
-  end as estado
-from canais c
-left join t   on t.canal_id   = c.id
-left join o   on o.canal_id   = c.id
-left join inv on inv.canal_id = c.id;
+SELECT c.id AS canal_id, c.slug, c.nome, c.ordem,
+  COALESCE(t.total_tarefas,0) AS total_tarefas,
+  COALESCE(t.tarefas_feitas,0) AS tarefas_feitas,
+  CASE WHEN COALESCE(t.total_tarefas,0) = 0 THEN 0
+       ELSE ROUND((t.tarefas_feitas::numeric / t.total_tarefas) * 100, 1) END AS pct_execucao,
+  COALESCE(i.investimento_planejado,0) AS investimento_planejado,
+  COALESCE(i.investimento_executado,0) AS investimento_executado,
+  COALESCE(i.investimento_executado,0) - COALESCE(i.investimento_planejado,0) AS variancia,
+  CASE WHEN COALESCE(i.investimento_planejado,0) = 0 THEN NULL
+       ELSE ROUND(((i.investimento_executado - i.investimento_planejado) / i.investimento_planejado) * 100, 1) END AS variancia_pct,
+  COALESCE(o.total_oport,0) AS total_oport,
+  COALESCE(o.contatados,0) AS contatados,
+  COALESCE(o.reunioes_ou_mais,0) AS reunioes_ou_mais,
+  COALESCE(o.ganhos,0) AS ganhos,
+  CASE
+    WHEN COALESCE(o.reunioes_ou_mais,0) > 0 OR COALESCE(o.ganhos,0) > 0 THEN 'Gerando dados'
+    WHEN COALESCE(o.contatados,0) > 0 THEN 'Em execução'
+    WHEN COALESCE(t.tarefas_feitas,0) > 0 THEN 'Pronto'
+    ELSE 'Em preparação'
+  END AS estado
+FROM public.canais c
+LEFT JOIN t ON t.canal_id = c.id
+LEFT JOIN i ON i.canal_id = c.id
+LEFT JOIN o ON o.canal_id = c.id;
 
--- ---------- canal_kpis: só faz sentido em 'Gerando dados' (a UI esconde fora disso) ----------
-create or replace view canal_kpis
-with (security_invoker = on) as
-with o as (
-  select canal_id,
-         count(*)                                                  as oportunidades,
-         count(*) filter (where estagio <> 'cadastrado')           as contatados,
-         count(*) filter (where estagio in
-            ('reuniao','proposta','negociacao','envio_contrato','piloto',
-             'fechado_ganho'))                                     as reunioes,
-         count(*) filter (where estagio = 'fechado_ganho')         as ganhos,
-         count(*) filter (where estagio = 'fechado_perdido')       as perdidos,
-         coalesce(sum(valor_mrr) filter (where estagio = 'fechado_ganho'), 0) as mrr_ganho
-  from oportunidades
-  group by canal_id
+CREATE OR REPLACE VIEW public.canal_kpis
+WITH (security_invoker = on) AS
+WITH o AS (
+  SELECT canal_id,
+    COUNT(*) AS oportunidades,
+    COUNT(*) FILTER (WHERE estagio <> 'cadastrado') AS contatados,
+    COUNT(*) FILTER (WHERE estagio IN
+       ('reuniao','proposta','negociacao','envio_contrato','piloto',
+        'fechado_ganho')) AS reunioes,
+    COUNT(*) FILTER (WHERE estagio = 'fechado_ganho') AS ganhos,
+    COUNT(*) FILTER (WHERE estagio = 'fechado_perdido') AS perdidos,
+    COALESCE(SUM(valor_mrr) FILTER (WHERE estagio = 'fechado_ganho'),0) AS mrr_ganho
+  FROM public.oportunidades GROUP BY canal_id
 ),
-inv as (
-  select canal_id, sum(executado) as executado
-  from investimentos
-  group by canal_id
+i AS (
+  SELECT canal_id, COALESCE(SUM(executado),0) AS investimento_executado
+  FROM public.investimentos GROUP BY canal_id
 )
-select
-  c.id as canal_id, c.slug, c.nome,
-  coalesce(o.oportunidades, 0) as oportunidades,
-  coalesce(o.contatados, 0)    as contatados,
-  coalesce(o.reunioes, 0)      as reunioes,
-  coalesce(o.ganhos, 0)        as ganhos,
-  coalesce(o.perdidos, 0)      as perdidos,
-  -- conversão contato→reunião (comparar com baseline 2%)
-  case when coalesce(o.contatados,0) = 0 then null
-       else round(o.reunioes::numeric / o.contatados, 4) end as taxa_conversao,
-  case when coalesce(o.contatados,0) = 0 then null
-       else round((o.reunioes::numeric / o.contatados) / 0.02, 2) end as multiplo_vs_baseline,
-  coalesce(o.mrr_ganho, 0) as mrr_ganho,
-  -- CAC = investimento executado / ganhos (calculado, nunca armazenado)
-  case when coalesce(o.ganhos,0) = 0 then null
-       else round(coalesce(inv.executado,0)::numeric / o.ganhos, 2) end as cac,
-  -- ROI = (mrr ganho - investimento executado) / investimento executado
-  case when coalesce(inv.executado,0) = 0 then null
-       else round((coalesce(o.mrr_ganho,0) - inv.executado) / inv.executado, 4) end as roi
-from canais c
-left join o   on o.canal_id   = c.id
-left join inv on inv.canal_id = c.id;
+SELECT c.id AS canal_id, c.slug, c.nome,
+  COALESCE(o.oportunidades,0) AS oportunidades,
+  COALESCE(o.contatados,0) AS contatados,
+  COALESCE(o.reunioes,0) AS reunioes,
+  COALESCE(o.ganhos,0) AS ganhos,
+  COALESCE(o.perdidos,0) AS perdidos,
+  COALESCE(o.mrr_ganho,0) AS mrr_ganho,
+  CASE WHEN COALESCE(o.contatados,0) = 0 THEN NULL
+       ELSE ROUND(o.reunioes::numeric / o.contatados, 4) END AS taxa_conversao,
+  CASE WHEN COALESCE(o.contatados,0) = 0 THEN NULL
+       ELSE ROUND((o.reunioes::numeric / o.contatados) / 0.02, 2) END AS multiplo_vs_baseline,
+  CASE WHEN COALESCE(o.ganhos,0) = 0 THEN NULL
+       ELSE ROUND(COALESCE(i.investimento_executado,0) / o.ganhos, 2) END AS cac,
+  CASE WHEN COALESCE(i.investimento_executado,0) = 0 THEN NULL
+       ELSE ROUND((COALESCE(o.mrr_ganho,0) - i.investimento_executado) / i.investimento_executado, 4) END AS roi
+FROM public.canais c
+LEFT JOIN o ON o.canal_id = c.id
+LEFT JOIN i ON i.canal_id = c.id;
