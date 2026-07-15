@@ -1158,6 +1158,7 @@ export type Database = {
       status_mensagem: "rascunho" | "enviado" | "respondido" | "sem_resposta"
       status_tarefa: "a_fazer" | "fazendo" | "feito"
       temperatura: "sem_contato" | "frio" | "morno" | "quente"
+      tipo_negocio: "franqueador" | "franqueado" | "independente"
       tipo_custo: "horas" | "ferramentas" | "midia" | "comissao" | "operacional"
       tipo_interacao:
         | "whatsapp"
