@@ -159,6 +159,7 @@ export function ContaSheet({
     setForm({
       nome: conta.nome ?? "",
       temperatura: conta.temperatura,
+      tipoNegocio: conta.tipo_negocio ?? "none",
       canalId: conta.canal_origem_id,
       vinculoId: oport?.parceiro_id ?? oport?.evento_id ?? "",
       responsavel: conta.responsavel ?? "",
