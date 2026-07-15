@@ -228,6 +228,7 @@ export function LeadsPage() {
                                 sem IG
                               </span>
                             )}
+                            <TipoNegocioChip tipo={c.tipo_negocio} />
                           </div>
                         </TableCell>
                         <TableCell className="text-muted-foreground">
