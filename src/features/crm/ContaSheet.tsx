@@ -43,6 +43,7 @@ import {
 } from "@/lib/planos";
 import { TemperaturaChip, TEMP_META, TEMPERATURAS } from "./temperatura";
 import { TipoNegocioChip, TIPOS_NEGOCIO, TIPO_NEGOCIO_META, type TipoNegocio } from "./tipoNegocio";
+import { detalheDoCanal } from "./origemDetalhe";
 import {
   useContatos,
   useInteracoes,
@@ -107,6 +108,7 @@ type Form = {
   tipoNegocio: TipoNegocio | "none";
   unidades: string;
   canalId: string;
+  origemDetalhe: string;
   vinculoId: string;
   responsavel: string;
   telefone: string;
@@ -171,6 +173,7 @@ export function ContaSheet({
       tipoNegocio: conta.tipo_negocio ?? "none",
       unidades: conta.unidades ? String(conta.unidades) : "",
       canalId: conta.canal_origem_id,
+      origemDetalhe: conta.origem_detalhe ?? "",
       vinculoId: oport?.parceiro_id ?? oport?.evento_id ?? "",
       responsavel: conta.responsavel ?? "",
       telefone: conta.telefone ?? "",
@@ -198,6 +201,7 @@ export function ContaSheet({
         tipo_negocio: tipoSalvo,
         unidades: exigeUnidades(tipoSalvo) ? Number(form.unidades) : null,
         canal_origem_id: form.canalId,
+        origem_detalhe: nn(form.origemDetalhe),
         responsavel: nn(form.responsavel),
         telefone: nn(form.telefone),
         instagram: nn(form.instagram),
@@ -273,7 +277,12 @@ export function ContaSheet({
             <SheetHeader>
               <div className="flex items-center gap-2">
                 <TemperaturaChip temp={conta.temperatura} />
-                {canalNome && <Badge variant="outline">{canalNome}</Badge>}
+                {canalNome && (
+                  <Badge variant="outline">
+                    {canalNome}
+                    {conta.origem_detalhe ? ` · ${conta.origem_detalhe}` : ""}
+                  </Badge>
+                )}
                 <TipoNegocioChip tipo={conta.tipo_negocio} />
               </div>
               <div className="flex items-start justify-between gap-2">
@@ -572,7 +581,12 @@ export function ContaSheet({
               <Campo label="Canal (fonte)">
                 <Select
                   value={form.canalId}
-                  onValueChange={(v) => set("canalId", v)}
+                  onValueChange={(v) =>
+                    // Trocar de canal zera o detalhe — ele só faz sentido no canal de origem.
+                    setForm((f) =>
+                      f ? { ...f, canalId: v, origemDetalhe: "" } : f,
+                    )
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Canal" />
@@ -586,6 +600,40 @@ export function ContaSheet({
                   </SelectContent>
                 </Select>
               </Campo>
+
+              {(() => {
+                const slug = (canais ?? []).find((c) => c.id === form.canalId)
+                  ?.slug;
+                const d = detalheDoCanal(slug);
+                if (!d) return null;
+                return (
+                  <Campo label={d.label}>
+                    {d.modo === "select" ? (
+                      <Select
+                        value={form.origemDetalhe}
+                        onValueChange={(v) => set("origemDetalhe", v)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Escolha" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {d.opcoes.map((o) => (
+                            <SelectItem key={o} value={o}>
+                              {o}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Input
+                        value={form.origemDetalhe}
+                        onChange={(e) => set("origemDetalhe", e.target.value)}
+                        placeholder={d.placeholder}
+                      />
+                    )}
+                  </Campo>
+                );
+              })()}
 
               {(() => {
                 const tipo = (canais ?? []).find((c) => c.id === form.canalId)

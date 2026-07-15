@@ -82,6 +82,7 @@ export type Database = {
           instagram: string | null
           nome: string
           obs: string | null
+          origem_detalhe: string | null
           proxima_acao: string | null
           ref_externa: string | null
           responsavel: string | null
@@ -105,6 +106,7 @@ export type Database = {
           instagram?: string | null
           nome: string
           obs?: string | null
+          origem_detalhe?: string | null
           proxima_acao?: string | null
           ref_externa?: string | null
           responsavel?: string | null
@@ -128,6 +130,7 @@ export type Database = {
           instagram?: string | null
           nome?: string
           obs?: string | null
+          origem_detalhe?: string | null
           proxima_acao?: string | null
           ref_externa?: string | null
           responsavel?: string | null

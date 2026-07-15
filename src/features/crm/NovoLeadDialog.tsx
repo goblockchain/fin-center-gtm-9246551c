@@ -24,6 +24,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import { useCanais } from "@/features/canais/api";
 import { ESTAGIOS, ESTAGIO_META } from "@/features/pipeline/estagios";
+import { detalheDoCanal } from "./origemDetalhe";
 import { TEMPERATURAS, TEMP_META } from "./temperatura";
 import { TIPOS_NEGOCIO, TIPO_NEGOCIO_META, type TipoNegocio } from "./tipoNegocio";
 import {
@@ -52,6 +53,7 @@ function estagioPorTemperatura(t: Temperatura): EstagioOport {
 type Form = {
   nome: string;
   canalId: string;
+  origemDetalhe: string;
   temperatura: Temperatura;
   estagio: EstagioOport;
   tipoNegocio: TipoNegocio | "none";
@@ -68,6 +70,7 @@ type Form = {
 const INICIAL: Form = {
   nome: "",
   canalId: "",
+  origemDetalhe: "",
   temperatura: "sem_contato",
   estagio: estagioPorTemperatura("sem_contato"),
   tipoNegocio: "none",
@@ -97,6 +100,7 @@ export function NovoLeadDialog() {
         .insert({
           nome: f.nome.trim(),
           canal_origem_id: f.canalId,
+          origem_detalhe: nn(f.origemDetalhe),
           temperatura: f.temperatura,
           tipo_negocio: tipo,
           unidades: exigeUnidades(tipo) ? Number(f.unidades) : null,
@@ -134,6 +138,10 @@ export function NovoLeadDialog() {
   const set = <K extends keyof Form>(k: K, v: Form[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
+  /** Trocar de canal zera o detalhe — "Instagram" não faz sentido num lead de Outbound. */
+  const setCanal = (id: string) =>
+    setForm((f) => ({ ...f, canalId: id, origemDetalhe: "" }));
+
   const setTemperatura = (t: Temperatura) =>
     setForm((f) => ({
       ...f,
@@ -156,6 +164,9 @@ export function NovoLeadDialog() {
       unidades: exigeUnidades(tipo) ? f.unidades : "",
     }));
   };
+
+  const slugCanal = (canais ?? []).find((c) => c.id === form.canalId)?.slug;
+  const detalhe = detalheDoCanal(slugCanal);
 
   const tipo = form.tipoNegocio === "none" ? null : form.tipoNegocio;
   const fixo = planoFixo(tipo);
@@ -199,7 +210,7 @@ export function NovoLeadDialog() {
               <Label>Canal*</Label>
               <Select
                 value={form.canalId}
-                onValueChange={(v) => set("canalId", v)}
+                onValueChange={(v) => setCanal(v)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Escolha" />
@@ -232,6 +243,35 @@ export function NovoLeadDialog() {
               </Select>
             </div>
           </div>
+
+          {detalhe && (
+            <div>
+              <Label>{detalhe.label}</Label>
+              {detalhe.modo === "select" ? (
+                <Select
+                  value={form.origemDetalhe}
+                  onValueChange={(v) => set("origemDetalhe", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Escolha" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {detalhe.opcoes.map((o) => (
+                      <SelectItem key={o} value={o}>
+                        {o}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input
+                  value={form.origemDetalhe}
+                  onChange={(e) => set("origemDetalhe", e.target.value)}
+                  placeholder={detalhe.placeholder}
+                />
+              )}
+            </div>
+          )}
 
           <div>
             <Label>Raia do pipe</Label>
