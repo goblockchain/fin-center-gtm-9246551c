@@ -170,6 +170,7 @@ export function ContaSheet({
       bairro: conta.bairro ?? "",
       proxima_acao: conta.proxima_acao ?? "",
       obs: conta.obs ?? "",
+      enriquecimento: conta.enriquecimento ?? "",
       visitada: conta.visitada,
       entrevista_agendada: conta.entrevista_agendada,
       valor: Number(oport?.valor_mrr ?? PLANO_PADRAO.valor),
