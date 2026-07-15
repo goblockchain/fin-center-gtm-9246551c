@@ -288,6 +288,22 @@ export function ContaSheet({
               )}
             </div>
 
+            {/* Informações enriquecidas — espaço para pesquisa/contexto do lead */}
+            <div className="mt-4 rounded-md border border-fin-light/40 bg-fin-light/10 p-3">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-fin-dark">
+                Informações enriquecidas
+              </p>
+              {conta.enriquecimento ? (
+                <p className="whitespace-pre-wrap text-sm text-foreground">
+                  {conta.enriquecimento}
+                </p>
+              ) : (
+                <p className="text-sm italic text-muted-foreground">
+                  Nenhuma informação registrada. Clique em Editar para adicionar contexto, pesquisa, notas sobre a operação, decisores, etc.
+                </p>
+              )}
+            </div>
+
             <Tabs defaultValue="contatos">
               <TabsList className="w-full">
                 <TabsTrigger value="contatos" className="flex-1">
