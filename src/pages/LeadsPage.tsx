@@ -222,14 +222,6 @@ export function LeadsPage() {
                                 sem telefone
                               </span>
                             )}
-                            {!c.instagram && (
-                              <span
-                                title="Instagram não informado"
-                                className="rounded-full border border-amber-400 bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700"
-                              >
-                                sem IG
-                              </span>
-                            )}
                             <TipoNegocioChip tipo={c.tipo_negocio} />
                           </div>
                         </TableCell>
