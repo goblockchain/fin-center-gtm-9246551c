@@ -194,6 +194,7 @@ export function ContaSheet({
         bairro: nn(form.bairro),
         proxima_acao: nn(form.proxima_acao),
         obs: nn(form.obs),
+        enriquecimento: nn(form.enriquecimento),
         visitada: form.visitada,
         entrevista_agendada: form.entrevista_agendada,
       },
