@@ -65,6 +65,7 @@ function CardView({
                 sem IG
               </span>
             )}
+            {o.conta?.tipo_negocio && <TipoNegocioChip tipo={o.conta.tipo_negocio} />}
           </div>
         </div>
         <span
