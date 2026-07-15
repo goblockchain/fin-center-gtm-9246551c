@@ -107,6 +107,7 @@ type Form = {
   bairro: string;
   proxima_acao: string;
   obs: string;
+  enriquecimento: string;
   visitada: boolean;
   entrevista_agendada: boolean;
   valor: number;
@@ -169,6 +170,7 @@ export function ContaSheet({
       bairro: conta.bairro ?? "",
       proxima_acao: conta.proxima_acao ?? "",
       obs: conta.obs ?? "",
+      enriquecimento: conta.enriquecimento ?? "",
       visitada: conta.visitada,
       entrevista_agendada: conta.entrevista_agendada,
       valor: Number(oport?.valor_mrr ?? PLANO_PADRAO.valor),
@@ -192,6 +194,7 @@ export function ContaSheet({
         bairro: nn(form.bairro),
         proxima_acao: nn(form.proxima_acao),
         obs: nn(form.obs),
+        enriquecimento: nn(form.enriquecimento),
         visitada: form.visitada,
         entrevista_agendada: form.entrevista_agendada,
       },
@@ -282,6 +285,22 @@ export function ContaSheet({
               </div>
               {conta.obs && (
                 <p className="pt-1 text-sm text-muted-foreground">{conta.obs}</p>
+              )}
+            </div>
+
+            {/* Informações enriquecidas — espaço para pesquisa/contexto do lead */}
+            <div className="mt-4 rounded-md border border-fin-light/40 bg-fin-light/10 p-3">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-fin-dark">
+                Informações enriquecidas
+              </p>
+              {conta.enriquecimento ? (
+                <p className="whitespace-pre-wrap text-sm text-foreground">
+                  {conta.enriquecimento}
+                </p>
+              ) : (
+                <p className="text-sm italic text-muted-foreground">
+                  Nenhuma informação registrada. Clique em Editar para adicionar contexto, pesquisa, notas sobre a operação, decisores, etc.
+                </p>
               )}
             </div>
 
@@ -576,6 +595,15 @@ export function ContaSheet({
                   value={form.obs}
                   onChange={(e) => set("obs", e.target.value)}
                   rows={2}
+                  className="flex w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+              </Campo>
+              <Campo label="Informações enriquecidas">
+                <textarea
+                  value={form.enriquecimento}
+                  onChange={(e) => set("enriquecimento", e.target.value)}
+                  rows={6}
+                  placeholder="Pesquisa sobre a operação, decisores, contexto do negócio, sinais de compra, links, etc."
                   className="flex w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
               </Campo>
