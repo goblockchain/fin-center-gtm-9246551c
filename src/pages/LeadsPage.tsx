@@ -27,6 +27,7 @@ import {
   TEMPERATURAS,
 } from "@/features/crm/temperatura";
 import { ImportarBaseDialog } from "@/features/crm/ImportarBaseDialog";
+import { TipoNegocioChip, TIPOS_NEGOCIO, TIPO_NEGOCIO_META } from "@/features/crm/tipoNegocio";
 import { ContaSheet } from "@/features/crm/ContaSheet";
 import { ExcluirSemTelefoneDialog } from "@/features/crm/ExcluirSemTelefoneDialog";
 import { PipelineBoard } from "@/features/pipeline/PipelineBoard";
