@@ -118,12 +118,14 @@ export type Database = {
           instagram: string | null
           nome: string
           obs: string | null
+          origem_detalhe: string | null
           proxima_acao: string | null
           ref_externa: string | null
           responsavel: string | null
           telefone: string | null
           temperatura: Database["public"]["Enums"]["temperatura"]
           tipo_negocio: Database["public"]["Enums"]["tipo_negocio"] | null
+          unidades: number | null
           updated_at: string
           visitada: boolean
         }
@@ -140,12 +142,14 @@ export type Database = {
           instagram?: string | null
           nome: string
           obs?: string | null
+          origem_detalhe?: string | null
           proxima_acao?: string | null
           ref_externa?: string | null
           responsavel?: string | null
           telefone?: string | null
           temperatura?: Database["public"]["Enums"]["temperatura"]
           tipo_negocio?: Database["public"]["Enums"]["tipo_negocio"] | null
+          unidades?: number | null
           updated_at?: string
           visitada?: boolean
         }
@@ -162,12 +166,14 @@ export type Database = {
           instagram?: string | null
           nome?: string
           obs?: string | null
+          origem_detalhe?: string | null
           proxima_acao?: string | null
           ref_externa?: string | null
           responsavel?: string | null
           telefone?: string | null
           temperatura?: Database["public"]["Enums"]["temperatura"]
           tipo_negocio?: Database["public"]["Enums"]["tipo_negocio"] | null
+          unidades?: number | null
           updated_at?: string
           visitada?: boolean
         }
@@ -1336,6 +1342,9 @@ export type Database = {
         | "negociacao"
         | "fechado_ganho"
         | "fechado_perdido"
+        | "piloto"
+        | "envio_contrato"
+        | "setup_onboarding"
       origem_evento: "manual" | "whatsapp"
       papel_contato: "decisor" | "gatekeeper" | "influenciador" | "outro"
       status_convite: "pendente" | "aceito" | "recusado"
@@ -1492,6 +1501,9 @@ export const Constants = {
         "negociacao",
         "fechado_ganho",
         "fechado_perdido",
+        "piloto",
+        "envio_contrato",
+        "setup_onboarding",
       ],
       origem_evento: ["manual", "whatsapp"],
       papel_contato: ["decisor", "gatekeeper", "influenciador", "outro"],
