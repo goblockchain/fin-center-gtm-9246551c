@@ -183,8 +183,8 @@ export function NovoLeadDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm">
-          <Plus className="h-4 w-4" /> Novo lead
+        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-fin-dark">
+          <Plus className="h-4 w-4" /> Novo
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
