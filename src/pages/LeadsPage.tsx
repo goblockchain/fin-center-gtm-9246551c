@@ -95,21 +95,21 @@ export function LeadsPage() {
         }
       />
 
-      {/* Filtros — canal é compartilhado; busca/temperatura só na Tabela */}
+      {/* Filtros — busca e canal sempre visíveis; temperatura/tipo só na Tabela */}
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Buscar lead por nome ou bairro…"
+            className="pl-9"
+            value={filters.busca}
+            onChange={(e) =>
+              setFilters((f) => ({ ...f, busca: e.target.value }))
+            }
+          />
+        </div>
         {view === "tabela" && (
           <>
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Buscar por nome ou bairro…"
-                className="pl-9"
-                value={filters.busca}
-                onChange={(e) =>
-                  setFilters((f) => ({ ...f, busca: e.target.value }))
-                }
-              />
-            </div>
             <Select
               value={filters.temperatura}
               onValueChange={(v) =>
@@ -174,7 +174,8 @@ export function LeadsPage() {
       </div>
 
       {view === "kanban" ? (
-        <PipelineBoard canalId={filters.canalId} />
+        <PipelineBoard canalId={filters.canalId} busca={filters.busca} />
+
       ) : (
         <>
           <Card className="overflow-hidden">

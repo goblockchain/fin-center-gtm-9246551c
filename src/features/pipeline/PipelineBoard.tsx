@@ -262,7 +262,13 @@ function PipelineScroller({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function PipelineBoard({ canalId }: { canalId: string | "all" }) {
+export function PipelineBoard({
+  canalId,
+  busca = "",
+}: {
+  canalId: string | "all";
+  busca?: string;
+}) {
   const { data: oports, isLoading } = useOportunidades(canalId);
   const mover = useMoverEstagio();
   const [active, setActive] = useState<OportunidadeCard | null>(null);
@@ -276,11 +282,20 @@ export function PipelineBoard({ canalId }: { canalId: string | "all" }) {
   );
 
   const porEstagio = useMemo(() => {
+    const q = busca.trim().toLowerCase();
+    const filtrados = q
+      ? (oports ?? []).filter((o) => {
+          const nome = o.conta?.nome?.toLowerCase() ?? "";
+          const bairro = o.conta?.bairro?.toLowerCase() ?? "";
+          return nome.includes(q) || bairro.includes(q);
+        })
+      : (oports ?? []);
     const m: Record<string, OportunidadeCard[]> = {};
     for (const e of ESTAGIOS) m[e] = [];
-    (oports ?? []).forEach((o) => m[o.estagio]?.push(o));
+    filtrados.forEach((o) => m[o.estagio]?.push(o));
     return m;
-  }, [oports]);
+  }, [oports, busca]);
+
 
   function onDragStart(e: DragStartEvent) {
     setActive((e.active.data.current?.o as OportunidadeCard) ?? null);
