@@ -47,8 +47,13 @@ export function ExcluirSemTelefoneDialog() {
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="outline" className="text-red-700 hover:text-red-800">
-          <Trash2 className="mr-2 h-4 w-4" /> Excluir sem telefone
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground hover:text-red-700"
+          title="Excluir leads sem telefone"
+        >
+          <Trash2 className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-lg">
