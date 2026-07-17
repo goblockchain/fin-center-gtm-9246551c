@@ -123,9 +123,8 @@ export function ImportarBaseDialog() {
       }}
     >
       <DialogTrigger asChild>
-        <Button>
-          <Upload className="h-4 w-4" />
-          Importar base
+        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-fin-dark">
+          <Upload className="h-4 w-4" /> Importar
         </Button>
       </DialogTrigger>
       <DialogContent>
