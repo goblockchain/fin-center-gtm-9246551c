@@ -204,6 +204,25 @@ export function ImportarBaseDialog() {
             </p>
           </div>
 
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-fin-dark">
+              Em qual raia do pipe?
+            </label>
+            <Select value={estagio} onValueChange={(v) => setEstagio(v as EstagioOport | "auto")}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="auto">Automático (pela temperatura)</SelectItem>
+                {ESTAGIOS.map((e) => (
+                  <SelectItem key={e} value={e}>
+                    {ESTAGIO_META[e].label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-fin-dark">Plano</label>
