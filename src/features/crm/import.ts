@@ -218,7 +218,7 @@ export function buildImportPayload(
       ref_externa: pick(row, "nº", "n°", "nro", "numero") || null,
     });
 
-    const estagio = estagioDe(temperatura, contatado);
+    const estagio = estagioForcado ?? estagioDe(temperatura, contatado);
     oportunidades.push({
       conta_id: id,
       canal_id: canalId,
