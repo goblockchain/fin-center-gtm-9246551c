@@ -34,6 +34,8 @@ import {
   inspecionarColunas,
   type CsvRow,
 } from "./import";
+import { ESTAGIOS, ESTAGIO_META } from "@/features/pipeline/estagios";
+import type { EstagioOport } from "@/types/db";
 
 function Detectada({ ok, label }: { ok: boolean; label: string }) {
   return (
@@ -58,6 +60,7 @@ export function ImportarBaseDialog() {
   const [canalId, setCanalId] = useState("");
   const [valor, setValor] = useState(PLANO_PADRAO.valor);
   const [responsavel, setResponsavel] = useState("");
+  const [estagio, setEstagio] = useState<EstagioOport | "auto">("auto");
   const [erro, setErro] = useState<string | null>(null);
   const [feito, setFeito] = useState<number | null>(null);
 
@@ -75,9 +78,15 @@ export function ImportarBaseDialog() {
   const payload = useMemo(
     () =>
       rows && canalId
-        ? buildImportPayload(rows, canalId, valor, responsavel.trim() || undefined)
+        ? buildImportPayload(
+            rows,
+            canalId,
+            valor,
+            responsavel.trim() || undefined,
+            estagio === "auto" ? undefined : estagio,
+          )
         : null,
-    [rows, canalId, valor, responsavel],
+    [rows, canalId, valor, responsavel, estagio],
   );
 
   function reset() {
@@ -193,6 +202,25 @@ export function ImportarBaseDialog() {
             <p className="text-xs text-muted-foreground">
               Todo lead importado nasce com este canal (FK). Padrão: Outbound.
             </p>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-fin-dark">
+              Em qual raia do pipe?
+            </label>
+            <Select value={estagio} onValueChange={(v) => setEstagio(v as EstagioOport | "auto")}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="auto">Automático (pela temperatura)</SelectItem>
+                {ESTAGIOS.map((e) => (
+                  <SelectItem key={e} value={e}>
+                    {ESTAGIO_META[e].label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
