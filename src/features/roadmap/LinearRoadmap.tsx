@@ -62,25 +62,17 @@ function useLinearData(team: string) {
   return useQuery({
     queryKey: ["linear", team],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke<LinearData>(
-        "linear-sync",
-        { body: null, method: "GET" as any, headers: {} as any },
-      );
-      // supabase.functions.invoke doesn't easily support query params via GET; call fetch directly
-      if (error || !data) {
-        const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/linear-sync?team=${encodeURIComponent(team)}`;
-        const session = await supabase.auth.getSession();
-        const token =
-          session.data.session?.access_token ??
-          (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string);
-        const res = await fetch(url, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.error ?? "Falha ao sincronizar Linear");
-        return json as LinearData;
-      }
-      return data;
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/linear-sync?team=${encodeURIComponent(team)}`;
+      const session = await supabase.auth.getSession();
+      const token =
+        session.data.session?.access_token ??
+        (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string);
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? "Falha ao sincronizar Linear");
+      return json as LinearData;
     },
     staleTime: 60_000,
     retry: 1,
