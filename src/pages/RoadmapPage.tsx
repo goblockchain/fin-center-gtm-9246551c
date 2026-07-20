@@ -2,6 +2,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { GatesPanel } from "@/features/roadmap/GatesPanel";
 import { Gantt } from "@/features/roadmap/Gantt";
 import { ProjetosPanel } from "@/features/roadmap/ProjetosPanel";
+import { LinearRoadmap } from "@/features/roadmap/LinearRoadmap";
 import { CustosCanais } from "@/features/economia/CustosCanais";
 import { MetasMensais } from "@/features/economia/MetasMensais";
 import { TarefasList } from "@/features/tarefas/TarefasList";
@@ -19,6 +20,19 @@ export function RoadmapPage() {
             Gates de decisão
           </h2>
           <GatesPanel />
+        </section>
+
+        <section>
+          <div className="mb-2">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-fin-dark">
+              Linear — team Sprint - View
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Espelho somente-leitura do Linear. Projects viram barras na linha do
+              tempo; issues aparecem agrupadas por estado. Edite no Linear.
+            </p>
+          </div>
+          <LinearRoadmap />
         </section>
 
         <section>
