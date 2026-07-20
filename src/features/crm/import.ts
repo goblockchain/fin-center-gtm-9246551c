@@ -178,6 +178,7 @@ export function buildImportPayload(
   canalId: string,
   valorMrr = 250,
   responsavelPadrao?: string,
+  estagioForcado?: EstagioOport,
 ): ImportPayload {
   const contas: Insert<"contas">[] = [];
   const oportunidades: Insert<"oportunidades">[] = [];
