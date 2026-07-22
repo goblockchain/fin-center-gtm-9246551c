@@ -279,8 +279,9 @@ export function ContaSheet({
   const unidadesEditNum = Number(form?.unidades);
   const unidadesEditOk =
     !exigeUnidades(tipoEdit) ||
+    !form?.unidades ||
     (Number.isInteger(unidadesEditNum) && unidadesEditNum > 0);
-  const podeSalvarEdit = !!form && form.valor > 0 && unidadesEditOk;
+  const podeSalvarEdit = !!form && unidadesEditOk;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
