@@ -764,7 +764,7 @@ export function ContaSheet({
               </p>
             )}
 
-            <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-4"></div>
+            <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-4">
               <Button
                 variant="ghost"
                 onClick={excluirLead}
