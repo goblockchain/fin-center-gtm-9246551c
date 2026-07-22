@@ -187,8 +187,9 @@ export function ContaSheet({
       enriquecimento: conta.enriquecimento ?? "",
       visitada: conta.visitada,
       entrevista_agendada: conta.entrevista_agendada,
-      valor: Number(oport?.valor_mrr ?? PLANO_PADRAO.valor),
+      valor: Number(oport?.valor_mrr) || PLANO_PADRAO.valor,
     });
+    setErroSalvar(null);
     setEditando(true);
   }
 
