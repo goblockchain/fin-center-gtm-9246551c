@@ -758,7 +758,13 @@ export function ContaSheet({
               </div>
             </div>
 
-            <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-4">
+            {erroSalvar && (
+              <p className="mt-3 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {erroSalvar}
+              </p>
+            )}
+
+            <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-4"></div>
               <Button
                 variant="ghost"
                 onClick={excluirLead}
