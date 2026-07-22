@@ -160,9 +160,11 @@ export function ContaSheet({
 
   const [editando, setEditando] = useState(false);
   const [form, setForm] = useState<Form | null>(null);
+  const [erroSalvar, setErroSalvar] = useState<string | null>(null);
 
   useEffect(() => {
     setEditando(false);
+    setErroSalvar(null);
   }, [conta?.id, open]);
 
   function abrirEdicao() {
