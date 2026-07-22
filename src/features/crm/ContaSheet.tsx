@@ -195,50 +195,60 @@ export function ContaSheet({
 
   async function salvar() {
     if (!conta || !form) return;
-    const tipoSalvo = form.tipoNegocio === "none" ? null : form.tipoNegocio;
-    await atualizarConta.mutateAsync({
-      id: conta.id,
-      patch: {
-        nome: form.nome.trim() || conta.nome,
-        temperatura: form.temperatura,
-        tipo_negocio: tipoSalvo,
-        unidades: exigeUnidades(tipoSalvo) ? Number(form.unidades) : null,
-        canal_origem_id: form.canalId,
-        origem_detalhe: nn(form.origemDetalhe),
-        responsavel: nn(form.responsavel),
-        telefone: nn(form.telefone),
-        instagram: nn(form.instagram),
-        endereco: nn(form.endereco),
-        bairro: nn(form.bairro),
-        proxima_acao: nn(form.proxima_acao),
-        obs: nn(form.obs),
-        enriquecimento: nn(form.enriquecimento),
-        visitada: form.visitada,
-        entrevista_agendada: form.entrevista_agendada,
-      },
-    });
-    if (oport && Number(oport.valor_mrr) !== form.valor) {
-      await atualizarPlano.mutateAsync({ oportId: oport.id, valor: form.valor });
-    }
-    if (oport && oport.canal_id !== form.canalId) {
-      await atualizarCanal.mutateAsync({ oportId: oport.id, canalId: form.canalId });
-    }
-    if (oport) {
-      const tipoNovo = (canais ?? []).find((c) => c.id === form.canalId)?.tipo;
-      const parceiroId = tipoNovo === "parceria" ? form.vinculoId || null : null;
-      const eventoId = tipoNovo === "evento" ? form.vinculoId || null : null;
-      if (
-        parceiroId !== (oport.parceiro_id ?? null) ||
-        eventoId !== (oport.evento_id ?? null)
-      ) {
-        await atualizarVinculo.mutateAsync({
-          oportId: oport.id,
-          parceiroId,
-          eventoId,
-        });
+    setErroSalvar(null);
+    try {
+      const tipoSalvo = form.tipoNegocio === "none" ? null : form.tipoNegocio;
+      await atualizarConta.mutateAsync({
+        id: conta.id,
+        patch: {
+          nome: form.nome.trim() || conta.nome,
+          temperatura: form.temperatura,
+          tipo_negocio: tipoSalvo,
+          unidades:
+            exigeUnidades(tipoSalvo) && Number(form.unidades) > 0
+              ? Number(form.unidades)
+              : null,
+          canal_origem_id: form.canalId,
+          origem_detalhe: nn(form.origemDetalhe),
+          responsavel: nn(form.responsavel),
+          telefone: nn(form.telefone),
+          instagram: nn(form.instagram),
+          endereco: nn(form.endereco),
+          bairro: nn(form.bairro),
+          proxima_acao: nn(form.proxima_acao),
+          obs: nn(form.obs),
+          enriquecimento: nn(form.enriquecimento),
+          visitada: form.visitada,
+          entrevista_agendada: form.entrevista_agendada,
+        },
+      });
+      if (oport && form.valor > 0 && Number(oport.valor_mrr) !== form.valor) {
+        await atualizarPlano.mutateAsync({ oportId: oport.id, valor: form.valor });
       }
+      if (oport && oport.canal_id !== form.canalId) {
+        await atualizarCanal.mutateAsync({ oportId: oport.id, canalId: form.canalId });
+      }
+      if (oport) {
+        const tipoNovo = (canais ?? []).find((c) => c.id === form.canalId)?.tipo;
+        const parceiroId = tipoNovo === "parceria" ? form.vinculoId || null : null;
+        const eventoId = tipoNovo === "evento" ? form.vinculoId || null : null;
+        if (
+          parceiroId !== (oport.parceiro_id ?? null) ||
+          eventoId !== (oport.evento_id ?? null)
+        ) {
+          await atualizarVinculo.mutateAsync({
+            oportId: oport.id,
+            parceiroId,
+            eventoId,
+          });
+        }
+      }
+      setEditando(false);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Falha ao salvar. Tente novamente.";
+      setErroSalvar(msg);
+      console.error("Erro ao salvar lead:", e);
     }
-    setEditando(false);
   }
 
   const salvando =
